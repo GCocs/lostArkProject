@@ -99,5 +99,20 @@ public class MemberRestController {
         return false;
     }
 
+    @PostMapping("/check-auth")
+    public String checkAuth(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
+        HttpSession session = request.getSession();
 
+        if (session.getAttribute("checkCode") == null) {
+            return "expiration";
+        }
+
+        if (requestMap.get("authCode").equals((String) session.getAttribute("checkCode"))) {
+            session.invalidate();
+            session.setMaxInactiveInterval(3600); //1 * 60 * 60 1시간
+            return "true";
+        } else {
+            return "false";
+        }
+    }
 }

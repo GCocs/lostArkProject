@@ -4,6 +4,7 @@
                         * 프로젝트 함수
     --------------------------------------------------------------*/
     let isEmailAvailable = false;
+    let isAuthentication = false;
 
     // 내실 API 요청
     $.ajax({
@@ -67,6 +68,10 @@
         } else if (isEmailAvailable == false) {
             alert("이메일 중복 확인을 해주세요.");
             form.checkEmail.focus();
+            return false;
+        } else if (isAuthentication == false) {
+            alert("인증을 완료해주세요.");
+            form.checkAuth.focus();
             return false;
         } else if (form.signupPW.value=="") {
             alert("비밀번호를 입력해주세요.");
@@ -184,7 +189,10 @@
                         url: '/send-email',
                         type: 'POST',
                         contentType: 'application/json',
-                        data: JSON.stringify({ email: email })
+                        data: JSON.stringify({ email: email }),
+                        success: function() {
+                            document.getElementById("inputAuth").style.display = "block";
+                        }
                     })
                 }
             },
@@ -194,6 +202,33 @@
             }
         });
     }
+
+    //인증번호 확인
+window.checkAuthCode = function() {
+    const authCode = $('#checkAuth').val();
+    $.ajax({
+        url: '/member/check-auth',
+        type: 'POST',
+        contentType: 'application/json',
+        data: JSON.stringify({ authCode: authCode }),
+        success: function(response) {
+            if (response === "true") {
+                alert("인증에 성공하였습니다.");
+                document.getElementById('signupId').disabled = true;
+                document.getElementById('sendEmailBtn').disabled = true;
+                document.getElementById('checkAuth').disabled = true;
+                document.getElementById('checkAuthBtn').disabled = true;
+                let isAuthentication = true;
+            } else if (response === "false") {
+                alert("유효하지 않은 인증코드입니다.");
+            } else if (response === "expiration") {
+                alert("인증코드가 만료되었습니다.");
+                window.location.href = "/member/signup";
+            }
+        }
+    });
+};
+
 
     //알람 띄우기
     function showAlert(message) {
