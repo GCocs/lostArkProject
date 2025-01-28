@@ -122,22 +122,12 @@
     //로그인
         window.checkSignin = function() {
             var form = document.signinForm;
-            var emailTest =  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
-            var passwdTest = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
             if(form.signinId.value=="") {
                 alert("이메일을 입력해주세요.");
                 form.signinId.focus();
                 return false;
-            } else if (!emailTest.test(form.signinId.value)) {
-                alert("이메일 형식으로 입력해주세요.");
-                form.signinId.focus();
-                return false;
             } else if (form.signinPW.value=="") {
                 alert("비밀번호를 입력해주세요.");
-                form.signinPW.focus();
-                return false;
-            } else if (!passwdTest.test(form.signinPW.value)) {
-                alert("비밀번호는 영문+숫자로 구성하여야 합니다.");
                 form.signinPW.focus();
                 return false;
             }
@@ -164,7 +154,7 @@
         const email = $('#signupId').val();
         var emailTest =  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
         if (!email) {
-            alert("이메일을 입력해주세요.");
+            alert("아이디를 입력해주세요.");
             return;
         } else if (!emailTest.test(email)) {
             alert("이메일 형식으로 입력해주세요.");
