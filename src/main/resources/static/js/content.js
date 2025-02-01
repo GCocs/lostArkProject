@@ -16,8 +16,8 @@ const domTemplates = {
                         style="width: 40px; height: 40px;"
                     />
                     <div id="content-${content.contentNumber}" class="text-start ms-3">
-                        <h6 class="mb-0">${content.contentName}</h6>
-                        <small class="remain-time">${startTime}</small>
+                        <h6 class="mb-0 content-name">${content.contentName}</h6>
+                        <small class="content-countdown">${startTime}</small>
                     </div>
                 </div>
             </div>
@@ -34,8 +34,8 @@ const domTemplates = {
                         style="width: 40px; height: 40px;"
                     />
                     <div id="content-${content.contentNumber}" class="text-start ms-3">
-                        <h6 class="mb-0">${content.contentName}</h6>
-                        <small class="remain-time">${startTime}</small>
+                        <h6 class="mb-0 content-name">${content.contentName}</h6>
+                        <small class="content-countdown">${startTime}</small>
                     </div>
                 </div>
             </div>
@@ -61,8 +61,15 @@ const domTemplates = {
         <div class="d-flex align-items-center border-bottom py-2">
             <div class="w-100 ms-3">
                 <div class="d-flex align-items-center justify-content-between">
-                    <span class="flex-grow-1">${alarm.contentName}</span>
-                    <span>${alarm.memberId}</span>
+                    <span class="flex-grow-1 content-name">${alarm.contentName}</span>
+                    <small class="content-countdown">
+                        <div class="d-flex align-items-center my-4">
+                            <div class="spinner-border text-light m-2 mx-4" role="status" style="font-size: 14px;">
+                                <span class="sr-only">Loading...</span>
+                            </div>
+                            <p class="my-0">Loading...</p>
+                        </div>
+                    </small> 
                     <button class="btn btn-sm" data-content-name="${alarm.contentName}">
                         <i class="fa fa-times"></i>
                     </button>
@@ -80,26 +87,6 @@ const domTemplates = {
     `,
 };
 
-/** modal 관리 객체입니다. */
-const modalManager = {
-    // 모달 내용 업데이트
-    updateModalBody(bodyDom) {
-        $('#remain-time-modal-body').html(bodyDom);
-    },
-
-    // 모달 열기
-    openModal() {
-        $('#staticBackdrop').modal('show');
-    },
-
-    // 모달 닫기
-    async closeModal() {
-        $('#staticBackdrop').modal('hide');
-        await renderContent();
-        await renderAlarm();
-    }
-};
-
 /** 컨텐츠의 name 테이블입니다. */
 const nameMapping = {
     '[습격]리베르탄-[점령]-[습격]프라이겔리': '[습격] 리베르탄',
@@ -114,6 +101,10 @@ const nameMapping = {
 *******************/
 const memberId = loggedInMember ? loggedInMember.memberId : null;
 
+// contentName 별로 남은 시간을 저장하는 Map 객체
+const countdownMap = new Map();
+
+// 데이터를 관리하는 객체
 const dataManager = (() => {
     let contentCache = null;
 
@@ -151,7 +142,7 @@ const dataManager = (() => {
     }
 
     /**
-     * 유효 시간을 정제해서 content 배열을 반환하는 함수
+     * 컨텐츠 시작날짜 기준으로 전처리한 content 배열을 반환하는 함수
      * 
      * @param {Array} contents - content 배열
      * @returns {Array} 유효 시간으로 오름차순 정렬된 contents 배열
@@ -190,7 +181,7 @@ const dataManager = (() => {
     function formatRemainingTime(startTime) {
         // 1. 남은 일정이 없을 경우
         if (!startTime || startTime.length === 0) {
-            return '출현 대기 중...';
+            return '❕ 출현 대기 중...';
         }
 
         // 2. 당일 출현 컨텐츠인 경우
@@ -200,11 +191,11 @@ const dataManager = (() => {
 
         // 3. 익일 오전 6시 출현 예정인 경우
         if (isNextDay(startTime)) {
-            return `익일 ${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} 출현 예정`;
+            return `❗ 익일 ${startTime.getHours().toString().padStart(2, '0')}:${startTime.getMinutes().toString().padStart(2, '0')} 출현 예정`;
         }
 
         // 4. 이외의 경우
-        return '출현 대기 중...';
+        return '❕ 출현 대기 중...';
     }
 
     /**
@@ -302,18 +293,15 @@ const dataManager = (() => {
 
     async function fetchContent() {
         if (contentCache) {
-            console.log('캐싱된 컨텐츠 데이터를 반환합니다.');
             return contentCache;
         }
         const contents = await fetchContentData();
         contentCache = processContentData(contents);
-        console.log('컨텐츠 데이터를 캐싱 후 반환합니다.');
         return contentCache;
     }
 
     async function fetchAlarmSettings() {
         const alarms = await fetchAlarmSettingsData();
-        console.log('알림 설정 데이터를 반환합니다.');
         return alarms;
     }
 
@@ -336,17 +324,42 @@ $(() => {
     $('[data-bs-dismiss="modal"]').on('click', modalManager.closeModal);
 });
 
+// 모달을 관리하는 객체
+const modalManager = {
+    // 모달 열기
+    openModal() {
+        $('#staticBackdrop').modal('show');
+    },
+
+    // 모달 닫기
+    async closeModal() {
+        $('#staticBackdrop').modal('hide');
+        const contents = await dataManager.fetchContent();
+        const alarms = await dataManager.fetchAlarmSettings();
+
+        renderContent(contents);
+        renderAlarm(alarms);
+    }
+};
+
 // 컨테이너 렌더링 함수
 async function initFunction() {
-    await renderContent();
-    await renderAlarm();
+    const contents = await dataManager.fetchContent();
+    const alarms = await dataManager.fetchAlarmSettings();
+
+    renderContent(contents);
+    renderAlarm(alarms);
+    setCountdownTimer(contents);
 }
 
-// modal 링크(전체) 클릭 시 실행되는 함수
+// 모달 렌더링 함수
 async function handleModalOpen(event) {
     event.preventDefault();
 
-    await renderModal();
+    const contents = await dataManager.fetchContent();
+    const alarms = await dataManager.fetchAlarmSettings();
+
+    renderModal(contents, alarms);
 
     $('.modal-checkbox-wrapper input[type="checkbox"]').each((idx, checkbox) => {
         const $checkbox = $(checkbox);
@@ -381,9 +394,10 @@ async function handleModalOpen(event) {
 // 알림 삭제 버튼 클릭 시 실행되는 함수
 $(document).on('click', '.btn[data-content-name]', async function() {
     const contentName = $(this).data('content-name');
-    console.log('삭제 버튼 클릭: ' + contentName);
     await deleteAlarmSetting(contentName);
-    await renderAlarm();
+
+    const alarms = await dataManager.fetchAlarmSettings();
+    renderAlarm(alarms);
 });
 
 /******************************
@@ -391,12 +405,9 @@ $(document).on('click', '.btn[data-content-name]', async function() {
  ******************************/
 
 /** 컨텐츠 컨테이너 렌더링 함수 */
-async function renderContent() {
+async function renderContent(contents) {
     const $contentContainer = $('.content-container');
     $contentContainer.html(domTemplates.loadingDom());
-
-    // 데이터 가져오기
-    const contents = await dataManager.fetchContent();
 
     // 컨텐츠 데이터 페이징
     const firstFiveContents = getFirstNElements(contents, 5);
@@ -408,32 +419,12 @@ async function renderContent() {
 
     // 컨테이너 렌더링
     $contentContainer.html(contentsDom);
-
-    // 시작 시간이 Date 타입인 데이터만 필터링한 배열을 생성
-    const validContents = firstFiveContents.filter(content => {
-        if (!(content.contentStartTimes instanceof Date)) {
-            updateContentTime(content.contentNumber, content.contentStartTimes);
-            return false;
-        }
-        return true;
-    });
-
-    // 타이머 시작
-    setContentCountdownTimer(
-        validContents,
-        (id, formattedTime) => updateContentTime(id, formattedTime),
-        (id, finalTime) => updateContentTime(id, finalTime),
-    );
 }
 
 /** 모달 컨테이너 렌더링 함수 */
-async function renderModal() {
+function renderModal(contents, alarms) {
     const $modalContainer = $('.modal-container');
     $modalContainer.html(domTemplates.loadingDom());
-
-    // 데이터 가져오기
-    const contents = await dataManager.fetchContent();
-    const alarms = await dataManager.fetchAlarmSettings();
 
     // 알림 설정된 컨텐츠명 배열 생성
     const alarmContentNames = alarms.map(alarm => alarm.contentName);
@@ -450,32 +441,14 @@ async function renderModal() {
 
     // 컨테이너 렌더링
     $modalContainer.html(contentsDom);
-
-    // 유효한 데이터만 필터링
-    const validContents = contents.filter(content => {
-        if (!(content.contentStartTimes instanceof Date)) {
-            updateContentTime(content.contentNumber, content.contentStartTimes);
-            return false;
-        }
-        return true;
-    });
-
-    // 타이머 시작
-    setContentCountdownTimer(
-        validContents,
-        (id, formattedTime) => updateContentTime(id, formattedTime),
-        (id, finalTime) => updateContentTime(id, finalTime),
-    );
 }
 
 /** 알림 컨테이너 렌더링 함수 */
-async function renderAlarm() {
+async function renderAlarm(alarms) {
     const $alarmWrapper = $('.alarm-wrapper');
     $alarmWrapper.html(domTemplates.loadingDom());
     
-    try {
-        const alarms = await dataManager.fetchAlarmSettings();
-        
+    try {        
         if (!memberId) {
             $alarmWrapper.html('<p class="text-center">로그인이 필요합니다.</p>');
             return;
@@ -511,11 +484,13 @@ async function updateAlarmSetting(contentNumber, contentName) {
 /**
  * 특정 컨텐츠의 알람 설정을 해제하는 함수
  * 
- * @param {int} contentName - 컨텐츠명
+ * @param {string} contentName - 컨텐츠명
  */
 async function deleteAlarmSetting(contentName) {
     try {
-        const response = await deleteRequest(`/alarm/${contentName}`);
+        const encodedContentName = encodeURIComponent(contentName);
+        const response = await deleteRequest(`/alarm/${encodedContentName}`);
+        console.log(contentName);
         console.log(response);
     } catch (e) {
         console.error('알림 설정 해제 실패: ', e.responseText);
@@ -525,24 +500,6 @@ async function deleteAlarmSetting(contentName) {
 /**********************
  *  Utility functions
 **********************/
-
-
-
-
-
-/**
- * ui의 남은 시간을 갱신하는 함수
- * 
- * @param {int} contentNumber - content의 number
- * @param {String} formattedTime - 00:00:00 형식의 문자열
- * @param {String} selector - 렌더링할 컨테이너의 dom 선택자
- */
-function updateContentTime(contentNumber, formattedTime) {
-    const $remainTimeDom = $(`#content-${contentNumber} .remain-time`);
-    if ($remainTimeDom) {
-        $remainTimeDom.text(formattedTime);
-    }
-}
 
 /**
  * 특정 개수의 원소를 가지는 contents 배열을 반환하는 함수
@@ -555,7 +512,7 @@ function getFirstNElements(array, n) {
     return array.slice(0, n);
 }
 
-/** @type {Function | null} */
+// 타이머 실행 여부
 let contentTimer = null;
 
 /**
@@ -565,30 +522,72 @@ let contentTimer = null;
  * @param {Function} onTick - 매초 호출되는 함수
  * @param {Function} onComplete - 타이머 종료 시 호출되는 함수
  */
-function setContentCountdownTimer(contents, onTick, onComplete) {
-    // 초기화
-    clearInterval(contentTimer);
-    contentTimer = null;
+function setCountdownTimer(contents) {
+    // 기존 타이머 종료
+    if (contentTimer) return;
 
-    // 타이머 이벤트 설정
-    const timer = setInterval(() => {
+    // contentName 별로 카운트다운 저장
+    contents.forEach(content => {
+        if (content.contentStartTimes instanceof Date) {
+            const diff = content.contentStartTimes - new Date();
+            countdownMap.set(content.contentName, '⏳ ' + formatTime(decrementTime(diff)));
+        } else {
+            countdownMap.set(content.contentName, content.contentStartTimes);
+        }
+    });
+    
+    // 타이머 실행
+    contentTimer = setInterval(() => {
         const now = new Date();
+        
         contents.forEach(content => {
-            const diff = content.contentStartTimes - now;
-
-            if (diff > 1000) {
-                onTick(content.contentNumber, formatTime(decrementTime(diff)));
+            if (content.contentStartTimes instanceof Date) {
+                const diff = content.contentStartTimes - now;
+                const formattedTime = diff > 1000 ? '⏳ ' + formatTime(decrementTime(diff)) : '🚨 출현 중';
+                countdownMap.set(content.contentName, formattedTime);
             } else {
-                onComplete(content.contentNumber, '---출현 중---');
+                countdownMap.set(content.contentName, content.contentStartTimes);
             }
         });
-    }, 1000);
 
-    // 타이머 실행
-    if (!contentTimer) {
-        console.log('컨텐츠 타이머를 실행합니다.');
-        contentTimer = timer;
-    }
+        updateContentCountdown();
+        updateAlarmCountdown();
+    }, 1000);
+}
+
+/**
+ * ui의 남은 시간을 갱신하는 함수
+ * 
+ * @param {int} contentNumber - content의 number
+ * @param {String} formattedTime - 00:00:00 형식의 문자열
+ * @param {String} selector - 렌더링할 컨테이너의 dom 선택자
+ */
+function updateContentCountdown() {
+    $('.content-container .content-countdown').each(function() {
+        const contentName = $(this).closest('.d-flex').find('.content-name').text();
+        const $countdownElement = $(this);
+        
+        if (countdownMap.has(contentName)) {
+            $countdownElement.text(countdownMap.get(contentName));
+        }
+    });
+}
+
+function updateAlarmCountdown() {
+    $('.alarm-wrapper .content-countdown').each(function() {
+        const contentName = $(this).closest('.d-flex').find('.content-name').text();
+        const $countdownElement = $(this);
+
+        if (countdownMap.has(contentName)) {
+            const countdownValue = countdownMap.get(contentName);
+            
+            if ($countdownElement.find('.spinner-border').length > 0) {
+                $countdownElement.html(countdownValue);
+            } else {
+                $countdownElement.text(countdownValue);
+            }
+        }
+    });
 }
 
 /** 

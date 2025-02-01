@@ -3,11 +3,9 @@ package com.teamProject.lostArkProject.alarm.controller;
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
 import com.teamProject.lostArkProject.member.config.SessionUtils;
-import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @Slf4j
 public class AlarmController {
     private final AlarmService alarmService;
@@ -34,7 +33,7 @@ public class AlarmController {
     // 특정 사용자의 알림을 설정하는 메서드
     @PostMapping("/api/alarm")
     public ResponseEntity<?> insertAlarm(HttpSession session,
-                                         @Validated @RequestBody Alarm alarm,
+                                         @RequestBody Alarm alarm,
                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException("유효하지 않은 입력입니다.");
@@ -50,7 +49,7 @@ public class AlarmController {
     // 특정 알림을 해제하는 메서드
     @DeleteMapping("/api/alarm/{contentName}")
     public ResponseEntity<?> deleteAlarm(HttpSession session,
-                                         @Validated @PathVariable("contentName") String contentName) {
+                                         @PathVariable("contentName") String contentName) {
         String memberId = SessionUtils.getMemberId(session);
 
         alarmService.deleteAlarm(memberId, contentName);
