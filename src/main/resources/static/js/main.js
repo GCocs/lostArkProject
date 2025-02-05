@@ -53,6 +53,7 @@
 
     //회원가입
     window.checkSignup = function() {
+        console.log('isAuthentication');
         //유효성 검사
         var form = document.signupForm;
         var emailTest =  /^[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*@[0-9a-zA-Z]([-_.]?[0-9a-zA-Z])*.[a-zA-Z]{2,3}$/i;
@@ -65,11 +66,11 @@
             alert("이메일 형식으로 입력해주세요.");
             form.signupId.focus();
             return false;
-        } else if (isEmailAvailable == false) {
-            alert("이메일 중복 확인을 해주세요.");
+        } else if (isEmailAvailable === false) {
+            alert("이메일 인증을 해주세요.");
             form.checkEmail.focus();
             return false;
-        } else if (isAuthentication == false) {
+        } else if (isAuthentication === false) {
             alert("인증을 완료해주세요.");
             form.checkAuth.focus();
             return false;
@@ -120,34 +121,34 @@
     }
 
     //로그인
-        window.checkSignin = function() {
-            var form = document.signinForm;
-            if(form.signinId.value=="") {
-                alert("이메일을 입력해주세요.");
-                form.signinId.focus();
-                return false;
-            } else if (form.signinPW.value=="") {
-                alert("비밀번호를 입력해주세요.");
-                form.signinPW.focus();
-                return false;
-            }
-
-            $.ajax({
-                url: '/member/signin-process',
-                type: 'POST',
-                contentType: 'application/json',
-                data: JSON.stringify({ email: form.signinId.value, PW: form.signinPW.value, saveId: form.saveId.checked }),
-                success: function(response) {
-                    if(response) {
-                        alert("로그인 되었습니다.");
-                        window.location.href = "/"
-                    } else {
-                        alert("아이디 혹은 비밀번호가 틀렸습니다.");
-                        window.location.href = "/member/signin"
-                    }
-                }
-            });
+    window.checkSignin = function() {
+        var form = document.signinForm;
+        if(form.signinId.value=="") {
+            alert("이메일을 입력해주세요.");
+            form.signinId.focus();
+            return false;
+        } else if (form.signinPW.value=="") {
+            alert("비밀번호를 입력해주세요.");
+            form.signinPW.focus();
+            return false;
         }
+
+        $.ajax({
+            url: '/member/signin-process',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ email: form.signinId.value, PW: form.signinPW.value, saveId: form.saveId.checked }),
+            success: function(response) {
+                if(response) {
+                    alert("로그인 되었습니다.");
+                    window.location.href = "/"
+                } else {
+                    alert("아이디 혹은 비밀번호가 틀렸습니다.");
+                    window.location.href = "/member/signin"
+                }
+            }
+        });
+    }
 
     //이메일 중복확인 및 인증번호 발송
     window.sendEmail = function() {
@@ -194,30 +195,30 @@
     }
 
     //인증번호 확인
-window.checkAuthCode = function() {
-    const authCode = $('#checkAuth').val();
-    $.ajax({
-        url: '/member/check-auth',
-        type: 'POST',
-        contentType: 'application/json',
-        data: JSON.stringify({ authCode: authCode }),
-        success: function(response) {
-            if (response === "true") {
-                alert("인증에 성공하였습니다.");
-                document.getElementById('signupId').disabled = true;
-                document.getElementById('sendEmailBtn').disabled = true;
-                document.getElementById('checkAuth').disabled = true;
-                document.getElementById('checkAuthBtn').disabled = true;
-                let isAuthentication = true;
-            } else if (response === "false") {
-                alert("유효하지 않은 인증코드입니다.");
-            } else if (response === "expiration") {
-                alert("인증코드가 만료되었습니다.");
-                window.location.href = "/member/signup";
+    window.checkAuthCode = function() {
+        const authCode = $('#checkAuth').val();
+        $.ajax({
+            url: '/member/check-auth',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ authCode: authCode }),
+            success: function(response) {
+                if (response === "true") {
+                    isAuthentication = true;
+                    alert("인증에 성공하였습니다.")
+                    document.getElementById('signupId').disabled = true;
+                    document.getElementById('sendEmailBtn').disabled = true;
+                    document.getElementById('checkAuth').disabled = true;
+                    document.getElementById('checkAuthBtn').disabled = true;
+                } else if (response === "false") {
+                    alert("유효하지 않은 인증코드입니다.");
+                } else if (response === "expiration") {
+                    alert("인증코드가 만료되었습니다.");
+                    window.location.href = "/member/signup";
+                }
             }
-        }
-    });
-};
+        });
+    };
 
 
     //알람 띄우기
