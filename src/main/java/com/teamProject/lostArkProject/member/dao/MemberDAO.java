@@ -9,4 +9,5 @@ public interface MemberDAO {
     String getMemberPW(String memberId);
     String getRepresentativeCharacter(String memberId);
     String checkMemberId(String memberId);
+    void updateMemberPW(String memberId, String memberPW);
 }

@@ -98,6 +98,11 @@ public class MemberRestController {
         }
         return false;
     }
+    @PostMapping("/changePassword-process")
+    public boolean changePasswordProcess(@RequestBody Map<String, String> requestMap) {
+        memberService.changePassword(requestMap.get("email"),requestMap.get("PW"));
+        return true;
+    }
 
     @PostMapping("/check-auth")
     public String checkAuth(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {

@@ -39,4 +39,7 @@ public class MemberService {
         if(memberDAO.checkMemberId(memberId)==null) return false;
         return true;
     }
+    public void changePassword(String memberId, String memberPW) {
+        memberDAO.updateMemberPW(memberId, memberPW);
+    }
 }

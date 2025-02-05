@@ -46,6 +46,9 @@ public class MemberController {
         return "member/signin";
     }
 
+    @GetMapping("/findPassword")
+    public String findPasswrod() { return "member/findPassword"; }
+
     // 로그아웃
     @GetMapping("/signout")
     public String signout(HttpSession session) {
