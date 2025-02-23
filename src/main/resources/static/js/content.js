@@ -552,16 +552,14 @@ function setCountdownTimer(contents) {
 
         updateContentCountdown();
         updateAlarmCountdown();
+
+        if ($('#staticBackdrop').hasClass('show')) {
+            updateModalCountdown();
+        }
     }, 1000);
 }
 
-/**
- * ui의 남은 시간을 갱신하는 함수
- * 
- * @param {int} contentNumber - content의 number
- * @param {String} formattedTime - 00:00:00 형식의 문자열
- * @param {String} selector - 렌더링할 컨테이너의 dom 선택자
- */
+/** 컨텐츠 ui의 남은 시간을 갱신하는 함수 */
 function updateContentCountdown() {
     $('.content-container .content-countdown').each(function() {
         const contentName = $(this).closest('.d-flex').find('.content-name').text();
@@ -573,6 +571,19 @@ function updateContentCountdown() {
     });
 }
 
+/** 모달 ui의 남은 시간을 갱신하는 함수 */
+function updateModalCountdown() {
+    $('.modal-container .content-countdown').each(function() {
+        const contentName = $(this).closest('.d-flex').find('.content-name').text();
+        const $countdownElement = $(this);
+        
+        if (countdownMap.has(contentName)) {
+            $countdownElement.text(countdownMap.get(contentName));
+        }
+    });
+}
+
+/** 알림 ui의 남은 시간을 갱신하는 함수 */
 function updateAlarmCountdown() {
     $('.alarm-wrapper .content-countdown').each(function() {
         const contentName = $(this).closest('.d-flex').find('.content-name').text();
