@@ -107,6 +107,8 @@ const countdownMap = new Map();
 // 데이터를 관리하는 객체
 const dataManager = (() => {
     let contentCache = null;
+    let alarmSettingsCache = null;
+    const notifiedContents = new Set();
 
     /** 컨텐츠 데이터를 가져오는 함수 */
     async function fetchContentData() {
@@ -288,7 +290,8 @@ const dataManager = (() => {
     }
 
     /** 알림 설정 데이터를 전처리하는 함수 */
-    async function processAlarmSettingsData(alarms) {
+    function processAlarmSettingsData(alarms) {
+        return alarms;
     }
 
     async function fetchContent() {
@@ -301,8 +304,17 @@ const dataManager = (() => {
     }
 
     async function fetchAlarmSettings() {
+        if (alarmSettingsCache) {
+            return alarmSettingsCache;
+        }
         const alarms = await fetchAlarmSettingsData();
-        return alarms;
+        alarmSettingsCache = processAlarmSettingsData(alarms);
+        return alarmSettingsCache;
+    }
+
+    function isAlarmSettings(contentName) {
+        if (!Array.isArray(alarmSettingsCache)) return false;
+        return alarmSettingsCache.some(alarm => alarm.contentName === contentName);
     }
 
     function clearContentCache() {
@@ -310,10 +322,32 @@ const dataManager = (() => {
         console.log('컨텐츠 캐시 데이터를 초기화하였습니다.');
     }
 
+    function clearAlarmSettingsCache() {
+        alarmSettingsCache = null;
+        console.log('알람 설정 캐시 데이터를 초기화하였습니다.');
+    }
+
+    function addNotified(contentName) {
+        notifiedContents.add(contentName);
+    }
+
+    function isNotified(contentName) {
+        return notifiedContents.has(contentName);
+    }
+
+    function clearNotified() {
+        notifiedContents.clear();
+    }
+
     return {
         fetchContent,
         fetchAlarmSettings,
+        isAlarmSettings,
         clearContentCache,
+        clearAlarmSettingsCache,
+        addNotified,
+        isNotified,
+        clearNotified,
     };
 })();
 
@@ -512,6 +546,35 @@ function getFirstNElements(array, n) {
     return array.slice(0, n);
 }
 
+/**
+ * 알림 패널을 출력하는 함수
+ * @param {string} contentName - 컨텐츠명
+ */
+function showAlert(contentName) {
+    if (dataManager.isAlarmSettings(contentName) && !dataManager.isNotified(contentName)) {
+        console.warn(`${contentName}가 등장했습니다`);
+        dataManager.addNotified(contentName);
+
+        const now = new Date();
+        const time = new Date(now.getTime() + 1000);
+
+        const toastInstance = Toastify({
+            text: `시간 ${time.getHours().toString().padStart(2,'0')}:${time.getMinutes().toString().padStart(2,'0')}
+                컨텐츠 시작 알림: ${contentName}`,
+            duration: 60000,
+            style: {
+              background: "linear-gradient(to right, #888, #494949)",
+            },
+            offset: {
+                y: 65
+            },
+            onClick: function() {
+                toastInstance.hideToast();
+            }
+          }).showToast();
+    }
+}
+
 // 타이머 실행 여부
 let contentTimer = null;
 
@@ -537,14 +600,19 @@ function setCountdownTimer(contents) {
     });
     
     // 타이머 실행
-    contentTimer = setInterval(() => {
+    contentTimer = setInterval(() => {      
         const now = new Date();
-        
+
         contents.forEach(content => {
             if (content.contentStartTimes instanceof Date) {
                 const diff = content.contentStartTimes - now;
-                const formattedTime = diff > 1000 ? '⏳ ' + formatTime(decrementTime(diff)) : '🚨 출현 중';
-                countdownMap.set(content.contentName, formattedTime);
+
+                if (diff > 1000) {
+                    countdownMap.set(content.contentName, '⏳ ' + formatTime(decrementTime(diff)));
+                } else {
+                    countdownMap.set(content.contentName, '🚨 출현 중');
+                    showAlert(content.contentName);
+                }
             } else {
                 countdownMap.set(content.contentName, content.contentStartTimes);
             }
