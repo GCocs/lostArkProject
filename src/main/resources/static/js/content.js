@@ -368,6 +368,7 @@ const modalManager = {
     // 모달 닫기
     async closeModal() {
         $('#staticBackdrop').modal('hide');
+        dataManager.clearAlarmSettingsCache();
         const contents = await dataManager.fetchContent();
         const alarms = await dataManager.fetchAlarmSettings();
 
@@ -430,6 +431,7 @@ $(document).on('click', '.btn[data-content-name]', async function() {
     const contentName = $(this).data('content-name');
     await deleteAlarmSetting(contentName);
 
+    dataManager.clearAlarmSettingsCache();
     const alarms = await dataManager.fetchAlarmSettings();
     renderAlarm(alarms);
 });
