@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>LostArkProject</title>
+  <link rel="stylesheet" href="/css/academy.css" />
+</head>
+
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid pt-4 px-4 d-flex justify-content-center align-items-center" style="flex-direction: column;">
+    <div class="col-md-8 text-center mt-4">
+      <form action="/academy/write" method="post">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h2 class="mb-5">글 게시</h2>
+
+          <div class="form-floating mb-3">
+            <input class="form-control" id="title" placeholder="제목" name="title">
+            <label for="title">제목</label>
+          </div>
+
+          <div class="form-floating mb-3" style="width: 100%;">
+            <textarea class="form-control" id="content" name="content" placeholder="내용" style="height: 200px; resize: none;"></textarea>
+            <label for="content">내용</label>
+          </div>
+
+          <h6 class="mt-4 mb-3" style="text-align : left;">콘텐츠</h6>
+          <div class="d-flex align-items-start gap-3 mb-4">
+            <!-- 컨텐츠 버튼 -->
+            <div class="nav nav-pills flex-column me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+              <button class="nav-link active" id="avyss-match-tab" data-bs-toggle="pill"
+                      data-bs-target="#avyss-match" type="button" role="tab"
+                      aria-controls="avyss-match" aria-selected="true">어비스 던전</button>
+              <button class="nav-link" id="commander-raid-tab" data-bs-toggle="pill"
+                      data-bs-target="#commander-raid" type="button" role="tab"
+                      aria-controls="commander-raid" aria-selected="false">군단장 레이드</button>
+              <button class="nav-link" id="epic-raid-tab" data-bs-toggle="pill"
+                      data-bs-target="#epic-raid" type="button" role="tab"
+                      aria-controls="epic-raid" aria-selected="false">에픽 레이드</button>
+              <button class="nav-link" id="kazeros-raid-tab" data-bs-toggle="pill"
+                      data-bs-target="#kazeros-raid" type="button" role="tab"
+                      aria-controls="kazeros-raid" aria-selected="false">카제로스 레이드</button>
+            </div>
+
+            <!-- 컨텐츠 내용 -->
+            <div class="tab-content" id="v-pills-tabContent">
+              <div class="tab-pane fade show active" id="avyss-match" role="tabpanel" aria-labelledby="avyss-match-tab">
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-1" name="selectedRaid" value="카양겔">
+                  <label class="ms-2" for="raid-1">카양겔</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-2" name="selectedRaid" value="상아탑">
+                  <label class="ms-2" for="raid-2">혼돈의 상아탑</label>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="commander-raid" role="tabpanel" aria-labelledby="commander-raid-tab">
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-3" name="selectedRaid" value="발탄">
+                  <label class="ms-2" for="raid-3">부활한 마수의 심장 (발탄)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-4" name="selectedRaid" value="비아키스">
+                  <label class="ms-2" for="raid-4">목마른 쾌락의 정원 (비아키스)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-5" name="selectedRaid" value="쿠크세이튼">
+                  <label class="ms-2" for="raid-5">한밤중의 서커스 (쿠크세이튼)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-6" name="selectedRaid" value="아브렐슈드">
+                  <label class="ms-2" for="raid-6">몽환의 아스텔지어 (아브렐슈드)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-7" name="selectedRaid" value="일리아칸">
+                  <label class="ms-2" for="raid-7">부패한 군주의 판데모니움 (일리아칸)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-8" name="selectedRaid" value="카멘">
+                  <label class="ms-2" for="raid-8">어둠의 바라트론 (카멘)</label>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="epic-raid" role="tabpanel" aria-labelledby="epic-raid-tab">
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-9" name="selectedRaid" value="베히모스">
+                  <label class="ms-2" for="raid-9">폭풍의 지휘관, 베히모스</label>
+                </div>
+              </div>
+              <div class="tab-pane fade" id="kazeros-raid" role="tabpanel" aria-labelledby="kazeros-raid-tab">
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-10" name="selectedRaid" value="에키드나">
+                  <label class="ms-2" for="raid-10">서막:붉어진 백야의 나선 (에키드나)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-11" name="selectedRaid" value="에기르">
+                  <label class="ms-2" for="raid-11">1막: 대지를 부수는 업화의 궤적 (에기르)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-12" name="selectedRaid" value="아브렐슈드">
+                  <label class="ms-2" for="raid-12">2막: 부유하는 악몽의 진혼곡 (아브렐슈드)</label>
+                </div>
+                <div class="d-flex align-items-center">
+                  <input class="form-check-input m-0" type="radio" id="raid-13" name="selectedRaid" value="모르둠">
+                  <label class="ms-2" for="raid-13">3막: 칠흑, 폭풍의 밤 (모르둠)</label>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-outline-primary w-100 mb-4" id="write-post">작성</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+</body>
+</html>

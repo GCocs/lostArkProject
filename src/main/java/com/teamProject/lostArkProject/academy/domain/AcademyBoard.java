@@ -14,6 +14,7 @@ public class AcademyBoard {
     private String writer;
     private String title;
     private String content;
+    private String raid;
     private String image;
     private LocalDateTime createdAt;
 }

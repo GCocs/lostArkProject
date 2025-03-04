@@ -13,4 +13,9 @@ public class AcademyController {
     public String academy() {
         return "academy/academyList";
     }
+
+    @GetMapping("/academy/write")
+    public String writeAcademy() {
+        return "academy/academyWrite";
+    }
 }

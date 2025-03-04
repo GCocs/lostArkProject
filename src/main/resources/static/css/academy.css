@@ -1,0 +1,7 @@
+.tab-content > .tab-pane > div {
+  margin-bottom: 5px;
+}
+
+.tab-content > .tab-pane > div:last-child {
+  margin-bottom: 0;
+}
