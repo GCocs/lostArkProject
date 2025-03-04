@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>academy</title>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid vh-100 pt-4 px-4">
+    <!-- Content Start -->
+    <div class="row">
+      <div class="col-12">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h3 class="mb-4">학원팟</h3>
+          <div class="table-responsive w-100">
+            <table class="table">
+              <tr>
+                <th class="col-md-1" scope="col">번호</th>
+                <th class="col-md-2" scope="col">작성자</th>
+                <th class="col-md-7" scope="col">제목</th>
+                <th class="col-md-2" scope="col">작성일</th>
+              </tr>
+              <tr>
+                <td th:text="1"></td>
+                <td>밤피린</td>
+                <td>학원생 구합니다</td>
+                <td>2023</td>
+              </tr>
+              <!-- <tr th:each="mentor,iterStat : ${mentors}">
+                  <td th:text="${iterStat.index + 1}"></td>
+                  <td>ㅁㄴㅇㅁㄴㅇ</td>
+              </tr> -->
+            </table>
+
+            <div class="d-flex justify-content-center mt-5">
+              <a href="/academy/write" class="btn btn-link">작성</a>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4 gap-3">
+              <a class="p-1" href="/academy"><i class="fa-solid fa-angles-left"></i></a>
+              <a class="p-1" style="margin-right: 40px;" href="/academy"><i class="fa-solid fa-angle-left"></i></a>
+              <th:block>
+                <a class="p-1" href="/academy">1</a>
+                <a class="p-1" href="/academy">2</a>
+                <a class="p-1" href="/academy">3</a>
+                <a class="p-1" href="/academy">4</a>
+                <a class="p-1" href="/academy">5</a>
+              </th:block>
+              <a class="p-1" style="margin-left: 40px;" href="/academy"><i class="fa-solid fa-angle-right"></i></a>
+              <a class="p-1" href="/academy"><i class="fa-solid fa-angles-right"></i></a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Content End -->
+</div>
+</body>
+</html>
