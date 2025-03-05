@@ -3,11 +3,20 @@
 <head>
   <title>LostArkProject</title>
   <link rel="stylesheet" href="/css/academy.css" />
+  <script>
+    window.onload = () => {
+      $(() => {
+        $('#navigate-list').click(() => {
+          location.href = '/academy';
+        });
+      });
+    };
+  </script>
 </head>
 
 <body>
 <div layout:fragment="content">
-  <div class="container-fluid pt-4 px-4 d-flex justify-content-center align-items-center" style="flex-direction: column;">
+  <div class="container-fluid pt-4 px-4 d-flex justify-content-center align-items-center flex-column">
     <div class="col-md-8 text-center mt-4">
       <form action="/academy/write" method="post">
         <div class="bg-secondary rounded h-100 p-4">
@@ -18,13 +27,12 @@
             <label for="title">제목</label>
           </div>
 
-          <div class="form-floating mb-3" style="width: 100%;">
+          <div class="form-floating mb-3 w-100">
             <textarea class="form-control" id="content" name="content" placeholder="내용" style="height: 200px; resize: none;"></textarea>
             <label for="content">내용</label>
           </div>
 
-          <h6 class="mt-4 mb-3" style="text-align : left;">콘텐츠</h6>
-          <div class="d-flex align-items-start gap-3 mb-4">
+          <div class="d-flex align-items-start gap-3 mt-4">
             <!-- 컨텐츠 버튼 -->
             <div class="nav nav-pills flex-column me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
               <button class="nav-link active" id="avyss-match-tab" data-bs-toggle="pill"
@@ -88,7 +96,7 @@
               <div class="tab-pane fade" id="kazeros-raid" role="tabpanel" aria-labelledby="kazeros-raid-tab">
                 <div class="d-flex align-items-center">
                   <input class="form-check-input m-0" type="radio" id="raid-10" name="selectedRaid" value="에키드나">
-                  <label class="ms-2" for="raid-10">서막:붉어진 백야의 나선 (에키드나)</label>
+                  <label class="ms-2" for="raid-10">서막: 붉어진 백야의 나선 (에키드나)</label>
                 </div>
                 <div class="d-flex align-items-center">
                   <input class="form-check-input m-0" type="radio" id="raid-11" name="selectedRaid" value="에기르">
@@ -106,7 +114,10 @@
             </div>
           </div>
 
-          <button type="submit" class="btn btn-outline-primary w-100 mb-4" id="write-post">작성</button>
+          <div class="d-flex justify-content-end gap-3">
+            <button type="button" class="btn btn-light mt-4" id="navigate-list">목록</button>
+            <button type="submit" class="btn btn-primary mt-4" id="write-post">작성</button>
+          </div>
         </div>
       </form>
     </div>
