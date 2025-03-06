@@ -2,6 +2,7 @@ package com.teamProject.lostArkProject.alarm.controller;
 
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
+import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
 import com.teamProject.lostArkProject.member.config.SessionUtils;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
@@ -25,6 +26,10 @@ public class AlarmController {
     public ResponseEntity<List<Alarm>> getAllAlarm(HttpSession session) {
         String memberId = SessionUtils.getMemberId(session);
 
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
         List<Alarm> alarms = alarmService.getAllAlarm(memberId);
         log.info("알람 데이터: {}", alarms);
         return ResponseEntity.ok(alarms);
@@ -40,6 +45,11 @@ public class AlarmController {
         }
 
         String memberId = SessionUtils.getMemberId(session);
+
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
         alarm.setMemberId(memberId);
 
         alarmService.insertAlarm(alarm);
@@ -51,6 +61,10 @@ public class AlarmController {
     public ResponseEntity<?> deleteAlarm(HttpSession session,
                                          @PathVariable("contentName") String contentName) {
         String memberId = SessionUtils.getMemberId(session);
+
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
 
         alarmService.deleteAlarm(memberId, contentName);
         return ResponseEntity.ok("알림 해제에 성공했습니다.");
