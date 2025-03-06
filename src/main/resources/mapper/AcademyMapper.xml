@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamProject.lostArkProject.academy.dao.AcademyDAO">
+    <insert id="createAcademyPost">
+        INSERT INTO academy_board(writer, title, content, raid, image)
+        VALUES (#{writer},
+                #{title},
+                #{content},
+                #{raid},
+                #{image})
+    </insert>
+</mapper>

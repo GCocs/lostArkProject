@@ -9,6 +9,34 @@
         $('#navigate-list').click(() => {
           location.href = '/academy';
         });
+
+        $('#write-button').click((e) => {
+          const $title = $('#title');
+          const $content = $('#content');
+          const $selectedRaid = $('input[name="selectedRaid"]:checked').val();
+
+          if (!$title.val()) {
+            alert('제목을 입력하세요.');
+            e.preventDefault();
+            $title.focus();
+            return;
+          };
+
+          if (!$content.val()) {
+            alert('내용을 입력하세요.');
+            e.preventDefault();
+            $content.focus();
+            return;
+          };
+
+          if (!$selectedRaid) {
+            alert('레이드를 필수로 선택해야 합니다.');
+            e.preventDefault();
+            return;
+          };
+
+          $('#write-form').submit();
+        });
       });
     };
   </script>
@@ -18,7 +46,7 @@
 <div layout:fragment="content">
   <div class="container-fluid pt-4 px-4 d-flex justify-content-center align-items-center flex-column">
     <div class="col-md-8 text-center mt-4">
-      <form action="/academy/write" method="post">
+      <form id="write-form" action="/academy/write" method="post">
         <div class="bg-secondary rounded h-100 p-4">
           <h2 class="mb-5">글 게시</h2>
 
@@ -32,7 +60,7 @@
             <label for="content">내용</label>
           </div>
 
-          <div class="d-flex align-items-start gap-3 mt-4">
+          <div class="d-flex align-items-start gap-3 mt-5">
             <!-- 컨텐츠 버튼 -->
             <div class="nav nav-pills flex-column me-3" id="v-pills-tab" role="tablist" aria-orientation="vertical">
               <button class="nav-link active" id="avyss-match-tab" data-bs-toggle="pill"
@@ -116,7 +144,7 @@
 
           <div class="d-flex justify-content-end gap-3">
             <button type="button" class="btn btn-light mt-4" id="navigate-list">목록</button>
-            <button type="submit" class="btn btn-primary mt-4" id="write-post">작성</button>
+            <button type="submit" class="btn btn-primary mt-4" id="write-button">작성</button>
           </div>
         </div>
       </form>
