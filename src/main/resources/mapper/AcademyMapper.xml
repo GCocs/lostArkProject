@@ -11,4 +11,15 @@
                 #{raid},
                 #{image})
     </insert>
+
+    <select id="getAcademyList">
+        SELECT *
+        FROM academy_board
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(academy_board_number)
+        FROM academy_board
+    </select>
 </mapper>

@@ -1,17 +1,21 @@
 package com.teamProject.lostArkProject.academy.controller;
 
+import com.teamProject.lostArkProject.academy.domain.AcademyBoard;
 import com.teamProject.lostArkProject.academy.dto.AcademyRequestDTO;
 import com.teamProject.lostArkProject.academy.service.AcademyService;
-import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
+import com.teamProject.lostArkProject.common.dto.PaginatedResponseDTO;
 import com.teamProject.lostArkProject.member.config.SessionUtils;
 import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
+
+import java.util.List;
 
 @Controller
 @RequiredArgsConstructor
@@ -20,7 +24,9 @@ public class AcademyController {
     private final AcademyService academyService;
 
     @GetMapping("/academy")
-    public String getAcademyList() {
+    public String getAcademyList(Model model) {
+        PaginatedResponseDTO<AcademyBoard> response = academyService.getAcademyList(1);
+        model.addAttribute("response", response);
         return "academy/academyList";
     }
 
