@@ -1,3 +1,16 @@
+/**
+ *  AcademyList.html
+ */
+ td.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+ }
+
+/**
+ *  AcademyWrite.html
+ */
 .tab-content > .tab-pane > div {
   margin-bottom: 5px;
 }
