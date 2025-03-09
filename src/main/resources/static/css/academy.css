@@ -1,12 +1,28 @@
 /**
  *  AcademyList.html
  */
- td.title {
+.title {
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
   max-width: 200px;
- }
+}
+
+/**
+ *  AcademyList.html
+ */
+.tag {
+  background-color: #ccc;
+  color: #333;
+  border-radius: 2rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+}
+
+.title-detail {
+  margin-left: 10px;
+  font-size: 20px;
+}
 
 /**
  *  AcademyWrite.html

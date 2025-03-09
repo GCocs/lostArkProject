@@ -13,6 +13,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 
 import java.util.List;
@@ -28,6 +29,14 @@ public class AcademyController {
         PaginatedResponseDTO<AcademyBoard> response = academyService.getAcademyList(1);
         model.addAttribute("response", response);
         return "academy/academyList";
+    }
+
+    @GetMapping("/academy/{id}")
+    public String getAcademyDetail(Model model,
+                                   @PathVariable int id) {
+        AcademyBoard academy = academyService.getAcademy(id);
+        model.addAttribute("academy", academy);
+        return "academy/academyDetail";
     }
 
     @GetMapping("/academy/write")

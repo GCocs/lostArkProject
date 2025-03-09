@@ -3,6 +3,7 @@
 <head>
     <meta charset="utf-8">
     <title>academy</title>
+    <link rel="stylesheet" href="/css/academy.css" />
 </head>
 <body>
 <div layout:fragment="content">
@@ -25,7 +26,7 @@
                 <tr th:each="academy: ${response.data}">
                   <td th:text="${academy.raid}"></td>
                   <td th:text="${academy.writer}"></td>
-                  <td class="title" th:text="${academy.title}"></td>
+                  <td class="title"><a th:href="@{/academy/{id}(id=${academy.academyBoardNumber})}" th:text="${academy.title}"></a></td>
                   <td th:text="${#temporals.format(academy.createdAt, 'yy.MM.dd')}"></td>
                 </tr>
               </th:block>
