@@ -62,4 +62,25 @@ public class TeachingController {
 //아이디로 상세정보가져오기
         return "teaching/mentorListDetail";
     }
+    @GetMapping("/teaching/acceptMentee/{menteeId}")
+    public String acceptMenteeForm(@PathVariable("menteeId") Long menteeId,
+                                   Model model) {
+        // 멘티 ID로 필요한 정보를 DB에서 조회해 모델에 넣거나,
+        // 단순히 menteeId만 넘길 수도 있습니다.
+        model.addAttribute("menteeMemeberId", menteeId);
+
+        // templates 폴더 아래 acceptMentee.html (또는 다른 이름)로 렌더링
+        return "teaching/acceptMentee";
+    }
+
+
+
+    @PostMapping("/teaching/acceptMentee")
+    public String acceptMenteeSubmit(@RequestParam("menteeMemberId") Long menteeMemberId) {
+        // menteeMemberId 로 멘티 수락 로직 수행
+        // 예: Service 호출 -> DB 업데이트 -> 알림 전송 등
+
+        // 처리 후, 다른 경로로 리다이렉트
+        return "redirect:/member/myPage";
+    }
 }
