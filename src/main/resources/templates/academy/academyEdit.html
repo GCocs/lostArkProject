@@ -39,7 +39,7 @@
 <div layout:fragment="content">
   <div class="container-fluid pt-4 px-4 d-flex justify-content-center align-items-center flex-column">
     <div class="col-md-8 text-center mt-4">
-      <form id="edit-form" action="/academy/edit" method="post">
+      <form id="edit-form" th:action="@{/academy/{id}/edit(id=${academy.academyBoardNumber})}" method="post">
         <div class="bg-secondary rounded h-100 p-4">
           <h2 class="mb-5">글 수정</h2>
 

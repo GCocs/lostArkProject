@@ -45,8 +45,8 @@ public class AcademyService {
         return new PaginatedResponseDTO<>(academyList, pagination);
     }
 
-    public AcademyBoard getAcademy(int id) {
-        AcademyBoard academy = academyDAO.getAcademy(id);
+    public AcademyBoard getAcademy(int academyId) {
+        AcademyBoard academy = academyDAO.getAcademy(academyId);
         return academy;
     }
 }
