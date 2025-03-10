@@ -25,6 +25,13 @@
         WHERE academy_board_number = #{academyId}
     </select>
 
+    <update id="editAcademyPost" parameterType="com.teamProject.lostArkProject.academy.domain.AcademyBoard">
+        UPDATE academy_board
+        SET title=#{title}, content=#{content}
+        WHERE writer = #{writer}
+        AND academy_board_number = #{academyBoardNumber}
+    </update>
+
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(academy_board_number)
         FROM academy_board

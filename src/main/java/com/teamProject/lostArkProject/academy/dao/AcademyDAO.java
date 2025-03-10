@@ -12,6 +12,7 @@ public interface AcademyDAO {
 
     List<AcademyBoard> getAcademyList(@Param("size") int size, @Param("offset") int offset);
     AcademyBoard getAcademy(@Param("academyId") int academyId);
+    void editAcademyPost(AcademyBoard academyBoard);
 
     int getTotalCount();
 }

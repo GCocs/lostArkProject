@@ -5,12 +5,14 @@ import com.teamProject.lostArkProject.academy.domain.AcademyBoard;
 import com.teamProject.lostArkProject.academy.dto.AcademyRequestDTO;
 import com.teamProject.lostArkProject.common.dto.PaginatedResponseDTO;
 import com.teamProject.lostArkProject.common.dto.Pagination;
+import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
 import com.teamProject.lostArkProject.member.domain.Member;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.NoSuchElementException;
 
 @Service
 @RequiredArgsConstructor
@@ -48,5 +50,27 @@ public class AcademyService {
     public AcademyBoard getAcademy(int academyId) {
         AcademyBoard academy = academyDAO.getAcademy(academyId);
         return academy;
+    }
+
+    public void editAcademyPost(int academyId, AcademyRequestDTO academyRequestDTO, Member member) {
+        AcademyBoard academy = academyDAO.getAcademy(academyId);
+        if (academy == null) {
+            throw new NoSuchElementException("해당 학원팟 게시글이 존재하지 않습니다.");
+        }
+        if (!academy.getRaid().equals(academyRequestDTO.getSelectedRaid())) {
+            throw new IllegalArgumentException("레이드는 수정할 수 없습니다.");
+        }
+        if (!academy.getWriter().equals(member.getRepresentativeCharacterNickname())) {
+            throw new UnauthorizedException("게시글 수정 권한이 없습니다.");
+        }
+
+        AcademyBoard academyBoard = AcademyBoard.builder()
+                .academyBoardNumber(academyId)
+                .writer(member.getRepresentativeCharacterNickname())
+                .title(academyRequestDTO.getTitle())
+                .content(academyRequestDTO.getContent())
+                .build();
+
+        academyDAO.editAcademyPost(academyBoard);
     }
 }

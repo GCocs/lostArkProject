@@ -71,4 +71,18 @@ public class AcademyController {
         academyService.createAcademyPost(academyRequestDTO, member);
         return "redirect:/academy";
     }
+
+    @PostMapping("/academy/{academyId}/edit")
+    public String editAcademyPost(HttpSession session,
+                                   @PathVariable int academyId,
+                                   @ModelAttribute AcademyRequestDTO academyRequestDTO) {
+        Member member = SessionUtils.getMember(session);
+
+        if (member == null) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
+        academyService.editAcademyPost(academyId, academyRequestDTO, member);
+        return "redirect:/academy";
+    }
 }
