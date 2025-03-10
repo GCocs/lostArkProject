@@ -34,3 +34,10 @@
 .tab-content > .tab-pane > div:last-child {
   margin-bottom: 0;
 }
+
+/**
+ *  AcademyEdit.html
+ */
+.raid-edit {
+  opacity: 0.4;
+}

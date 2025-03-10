@@ -1,9 +1,38 @@
 <!DOCTYPE html>
 <html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <head>
-    <meta charset="utf-8">
-    <title>academy</title>
-    <link rel="stylesheet" href="/css/academy.css" />
+  <title>academy</title>
+  <link rel="stylesheet" href="/css/academy.css" />
+  <script>
+    window.onload = () => {
+      $(() => {
+        $('#edit-button').click(() => {
+          location.href = location.pathname + '/edit';
+        });
+
+        $('#navigate-list').click(() => {
+          location.href = '/academy';
+        })
+
+        $('#delete-button').click(() => {
+          if (confirm('정말 삭제하시겠습니까?')) {
+            $.ajax({
+              url: `${location.pathname}/delete`,
+              method: 'DELETE',
+              success: (result) => {
+                alert('삭제 성공');
+                location.href = '/academy';
+              },
+              error: (xhr, status, error) => {
+                alert('삭제 실패');
+                console.error(xhr, status, error);
+              }
+            })
+          }
+        });
+      });
+    };
+  </script>
 </head>
 <body>
 <div layout:fragment="content">
@@ -29,11 +58,9 @@
             </div>
       
             <div class="d-flex justify-content-center gap-4 mt-5">
-              <button class="btn btn-primary" type="button">수정</button>
-              
-              <button class="btn btn-danger" type="button">삭제</button>
-      
-              <button class="btn btn-primary" type="button">목록</button>
+              <button class="btn btn-primary" type="button" id="edit-button">수정</button>
+              <button class="btn btn-danger" type="button" id="delete-button">삭제</button>
+              <button class="btn btn-primary" type="button" id="navigate-list">목록</button>
             </div>
           </div>
         </div>

@@ -50,6 +50,14 @@ public class AcademyController {
         return "academy/academyWrite";
     }
 
+    @GetMapping("/academy/{id}/edit")
+    public String editAcademyDetail(Model model,
+                                    @PathVariable int id) {
+        AcademyBoard academy = academyService.getAcademy(id);
+        model.addAttribute("academy", academy);
+        return "academy/academyEdit";
+    }
+
     @PostMapping("/academy/write")
     public String writeAcademyPost(HttpSession session,
                                    @ModelAttribute AcademyRequestDTO academyRequestDTO) {
