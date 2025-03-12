@@ -53,8 +53,16 @@ public class AcademyController {
 
     @GetMapping("/academy/{academyId}/edit")
     public String getEditAcademy(Model model,
-                                    @PathVariable int academyId) {
-        AcademyBoard academy = academyService.getAcademy(academyId);
+                                 HttpSession session,
+                                 @PathVariable int academyId) {
+        Member member = SessionUtils.getMember(session);
+
+        if (member == null) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
+        AcademyBoard academy = academyService.getAcademyWithPermissionCheck(academyId, member);
+
         model.addAttribute("academy", academy);
         return "academy/academyEdit";
     }

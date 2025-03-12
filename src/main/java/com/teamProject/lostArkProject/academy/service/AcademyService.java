@@ -51,6 +51,15 @@ public class AcademyService {
         AcademyBoard academy = academyDAO.getAcademy(academyId);
         return academy;
     }
+    public AcademyBoard getAcademyWithPermissionCheck(int academyId, Member member) {
+        AcademyBoard academy = academyDAO.getAcademy(academyId);
+
+        if (!academy.getWriter().equals(member.getRepresentativeCharacterNickname())) {
+            throw new UnauthorizedException("게시글 권한이 없습니다.");
+        }
+
+        return academy;
+    }
 
     public void editAcademyPost(int academyId, AcademyRequestDTO academyRequestDTO, Member member) {
         AcademyBoard academy = academyDAO.getAcademy(academyId);
