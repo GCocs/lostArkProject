@@ -29,10 +29,10 @@ public class AcademyController {
         return "academy/academyList";
     }
 
-    @GetMapping("/academy/{academyId}")
+    @GetMapping("/academy/{academyBoardNumber}")
     public String getAcademyDetail(Model model,
-                                   @PathVariable int academyId) {
-        AcademyBoard academy = academyService.getAcademy(academyId);
+                                   @PathVariable int academyBoardNumber) {
+        AcademyBoard academy = academyService.getAcademy(academyBoardNumber);
         model.addAttribute("academy", academy);
         return "academy/academyDetail";
     }
@@ -48,17 +48,17 @@ public class AcademyController {
         return "academy/academyWrite";
     }
 
-    @GetMapping("/academy/{academyId}/edit")
+    @GetMapping("/academy/{academyBoardNumber}/edit")
     public String getEditAcademy(Model model,
                                  HttpSession session,
-                                 @PathVariable int academyId) {
+                                 @PathVariable int academyBoardNumber) {
         Member member = SessionUtils.getMember(session);
 
         if (member == null) {
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
 
-        AcademyBoard academy = academyService.getAcademyWithPermissionCheck(academyId, member);
+        AcademyBoard academy = academyService.getAcademyWithPermissionCheck(academyBoardNumber, member);
 
         model.addAttribute("academy", academy);
         return "academy/academyEdit";
@@ -77,9 +77,9 @@ public class AcademyController {
         return "redirect:/academy";
     }
 
-    @PostMapping("/academy/{academyId}/edit")
+    @PostMapping("/academy/{academyBoardNumber}/edit")
     public String editAcademyPost(HttpSession session,
-                                   @PathVariable int academyId,
+                                   @PathVariable int academyBoardNumber,
                                    @ModelAttribute AcademyRequestDTO academyRequestDTO) {
         Member member = SessionUtils.getMember(session);
 
@@ -87,7 +87,20 @@ public class AcademyController {
             throw new UnauthorizedException("로그인이 필요합니다.");
         }
 
-        academyService.editAcademyPost(academyId, academyRequestDTO, member);
+        academyService.editAcademyPost(academyBoardNumber, academyRequestDTO, member);
+        return "redirect:/academy";
+    }
+
+    @PostMapping("/academy/{academyBoardNumber}/delete")
+    public String deleteAcademyPost(HttpSession session,
+                                    @PathVariable int academyBoardNumber) {
+        Member member = SessionUtils.getMember(session);
+
+        if (member == null) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
+        academyService.deleteAcademyPost(academyBoardNumber, member);
         return "redirect:/academy";
     }
 }

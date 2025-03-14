@@ -47,12 +47,12 @@ public class AcademyService {
         return new PaginatedResponseDTO<>(academyList, pagination);
     }
 
-    public AcademyBoard getAcademy(int academyId) {
-        AcademyBoard academy = academyDAO.getAcademy(academyId);
+    public AcademyBoard getAcademy(int academyBoardNumber) {
+        AcademyBoard academy = academyDAO.getAcademy(academyBoardNumber);
         return academy;
     }
-    public AcademyBoard getAcademyWithPermissionCheck(int academyId, Member member) {
-        AcademyBoard academy = academyDAO.getAcademy(academyId);
+    public AcademyBoard getAcademyWithPermissionCheck(int academyBoardNumber, Member member) {
+        AcademyBoard academy = academyDAO.getAcademy(academyBoardNumber);
 
         if (!academy.getWriter().equals(member.getRepresentativeCharacterNickname())) {
             throw new UnauthorizedException("게시글 권한이 없습니다.");
@@ -61,8 +61,8 @@ public class AcademyService {
         return academy;
     }
 
-    public void editAcademyPost(int academyId, AcademyRequestDTO academyRequestDTO, Member member) {
-        AcademyBoard academy = academyDAO.getAcademy(academyId);
+    public void editAcademyPost(int academyBoardNumber, AcademyRequestDTO academyRequestDTO, Member member) {
+        AcademyBoard academy = academyDAO.getAcademy(academyBoardNumber);
         if (academy == null) {
             throw new NoSuchElementException("해당 학원팟 게시글이 존재하지 않습니다.");
         }
@@ -74,12 +74,24 @@ public class AcademyService {
         }
 
         AcademyBoard academyBoard = AcademyBoard.builder()
-                .academyBoardNumber(academyId)
+                .academyBoardNumber(academyBoardNumber)
                 .writer(member.getRepresentativeCharacterNickname())
                 .title(academyRequestDTO.getTitle())
                 .content(academyRequestDTO.getContent())
                 .build();
 
         academyDAO.editAcademyPost(academyBoard);
+    }
+
+    public void deleteAcademyPost(int academyBoardNumber, Member member) {
+        AcademyBoard academy = academyDAO.getAcademy(academyBoardNumber);
+        if (academy == null) {
+            throw new NoSuchElementException("해당 학원팟 게시글이 존재하지 않습니다.");
+        }
+        if (!academy.getWriter().equals(member.getRepresentativeCharacterNickname())) {
+            throw new UnauthorizedException("게시글 삭제 권한이 없습니다.");
+        }
+
+        academyDAO.deleteAcademyPost(academyBoardNumber);
     }
 }

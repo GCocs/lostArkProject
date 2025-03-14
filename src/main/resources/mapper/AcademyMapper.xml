@@ -22,7 +22,7 @@
     <select id="getAcademy">
         SELECT *
         FROM academy_board
-        WHERE academy_board_number = #{academyId}
+        WHERE academy_board_number = #{academyBoardNumber}
     </select>
 
     <update id="editAcademyPost" parameterType="com.teamProject.lostArkProject.academy.domain.AcademyBoard">
@@ -31,6 +31,11 @@
         WHERE writer = #{writer}
         AND academy_board_number = #{academyBoardNumber}
     </update>
+
+    <delete id="deleteAcademyPost" parameterType="int">
+        DELETE FROM academy_board
+        WHERE academy_board_number = #{academyBoardNumber}
+    </delete>
 
     <select id="getTotalCount" resultType="int">
         SELECT COUNT(academy_board_number)

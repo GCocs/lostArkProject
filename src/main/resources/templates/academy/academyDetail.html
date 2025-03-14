@@ -18,7 +18,7 @@
           if (confirm('정말 삭제하시겠습니까?')) {
             $.ajax({
               url: `${location.pathname}/delete`,
-              method: 'DELETE',
+              method: 'POST',
               success: (result) => {
                 alert('삭제 성공');
                 location.href = '/academy';
