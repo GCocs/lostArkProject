@@ -13,10 +13,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.annotation.Validated;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequiredArgsConstructor
@@ -26,8 +23,8 @@ public class AcademyController {
     private final AcademyService academyService;
 
     @GetMapping("/academy")
-    public String getAcademyList(Model model) {
-        PaginatedResponseDTO<AcademyBoard> response = academyService.getAcademyList(1);
+    public String getAcademyList(@RequestParam(value = "page", defaultValue = "1") int page, Model model) {
+        PaginatedResponseDTO<AcademyBoard> response = academyService.getAcademyList(page);
         model.addAttribute("response", response);
         return "academy/academyList";
     }
