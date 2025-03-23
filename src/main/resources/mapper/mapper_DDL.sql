@@ -6,7 +6,8 @@ CREATE TABLE MEMBER (
     MEMBER_ID VARCHAR(50) PRIMARY KEY,
     MEMBER_PASSWD VARCHAR(255) NOT NULL,
     REGISTRATION_DATE DATETIME NOT NULL DEFAULT NOW(),
-    REPRESENTATIVE_CHARACTER_NICKNAME VARCHAR(50) NOT NULL
+    REPRESENTATIVE_CHARACTER_NICKNAME VARCHAR(50) NOT NULL,
+    VERIFIED_NICKNAME VARCHAR(50) NULL UNIQUE
 );
 
 -- 캐릭터 테이블
@@ -111,9 +112,32 @@ CREATE TABLE ACADEMY_BOARD (
     WRITER VARCHAR(50) NOT NULL,
     TITLE VARCHAR(100) NOT NULL,
     CONTENT VARCHAR(500) NOT NULL,
+    RAID VARCHAR(50) NOT NULL,
     IMAGE VARCHAR(100),
     CREATED_AT DATETIME NOT NULL DEFAULT NOW(),
     FOREIGN KEY (WRITER) REFERENCES MEMBER(REPRESENTATIVE_CHARACTER_NICKNAME) ON UPDATE CASCADE
+);
+
+-- 어비스 던전 목록
+CREATE TABLE ABYSS_DUNGEON_LIST (
+	`CODE` VARCHAR(20) PRIMARY KEY COMMENT "aby-6",
+	ABYSS_NAME VARCHAR(20) NOT NULL COMMENT "카양겔",
+    BOSS_NAME VARCHAR(20) COMMENT "라우리엘",
+    LOCATION VARCHAR(30) COMMENT "영원한 빛의 요람",
+    LEVEL_SINGLE INT COMMENT "1540",
+    LEVEL_NORMAL INT COMMENT "1540",
+    LEVEL_HARD INT COMMENT "1580"
+);
+
+-- 레이드 목록
+CREATE TABLE RAID_LIST (
+	`CODE` VARCHAR(20) PRIMARY KEY COMMENT "com-1",
+	BOSS_NAME VARCHAR(20) NOT NULL COMMENT "발탄",
+    BOSS_ROLE VARCHAR(20) COMMENT "마수군단장",
+    LOCATION VARCHAR(30) COMMENT "부활한 마수의 심장",
+    LEVEL_SINGLE INT COMMENT "1415",
+    LEVEL_NORMAL INT COMMENT "1415",
+    LEVEL_HARD INT COMMENT "1445"
 );
 
 -- 어드민
@@ -121,3 +145,33 @@ CREATE TABLE ADMIN (
     ADMIN_ID VARCHAR(50) PRIMARY KEY,
     ADMIN_PASSWD VARCHAR(255)
 );
+
+
+INSERT INTO ABYSS_DUNGEON_LIST (CODE, ABYSS_NAME, BOSS_NAME, LOCATION, LEVEL_SINGLE, LEVEL_NORMAL, LEVEL_HARD) VALUES
+    -- 어비스 던전 (Abyss Dungeon)
+    ('aby-1', '고대 유적 엘베리아', NULL, NULL, NULL, 500, NULL),
+    ('aby-2', '몽환의 궁전', NULL, NULL, NULL, 635, NULL),
+    ('aby-3', '오만의 방주', NULL, NULL, NULL, 805, NULL),
+    ('aby-4', '낙원의 문', NULL, NULL, NULL, 960, NULL),
+    ('aby-5', '오레하의 우물', '알비온', NULL, NULL, 1340, 1370),
+    ('aby-6', '카양겔', '라우리엘', '영원한 빛의 요람', 1540, 1540, 1580),
+    ('aby-7', '혼돈의 상아탑', '라자람', '짓밟힌 정원', 1600, 1600, 1620);
+    
+
+INSERT INTO RAID_LIST (CODE, BOSS_NAME, BOSS_ROLE, LOCATION, LEVEL_SINGLE, LEVEL_NORMAL, LEVEL_HARD) VALUES
+    -- 군단장 레이드 (Commander Legion Raid)
+    ('com-1', '발탄', '마수군단장', '부활한 마수의 심장', 1415, 1415, 1445),
+    ('com-2', '비아키스', '욕망군단장', '목마른 쾌락의 정원', 1430, 1430, 1460),
+    ('com-3', '쿠크세이튼', '광기군단장', '한밤중의 서커스', 1475, 1475, NULL),
+    ('com-4', '아브렐슈드', '몽환군단장', '몽환의 아스탤지어', 1490, 1490, 1540),
+    ('com-5', '일리아칸', '질병군단장', '부패한 군주의 판데모니움', 1580, 1580, 1600),
+    ('com-6', '카멘', '어둠군단장', '어둠의 바라트론', 1610, 1610, 1630),
+
+    -- 에픽 레이드 (Epic Raid)
+    ('epi-1', '베히모스', '', '사일락 동굴', NULL, 1640, NULL),
+
+    -- 카제로스 레이드 (Kazeros Raid)
+    ('kaz-1', '에키드나', '서막: 붉어진 백야의 나선', '카르가 고원', 1620, 1620, 1640),
+    ('kaz-2', '에기르', '1막 : 대지를 부수는 업화의 궤적', '아베크 골짜기', NULL, 1660, 1680),
+    ('kaz-3', '아브렐슈드', '2막 : 부유하는 악몽의 진혼곡', '센나르 분지', NULL, 1670, 1690),
+    ('kaz-4', '모르둠', '3막 : 칠흑, 폭풍의 밤', '안타레스 산맥', NULL, 1680, 1700);

@@ -33,7 +33,7 @@
                   <td class="pt-3 pb-3" th:text="${academy.raid}"></td>
                   <td class="pt-3 pb-3" th:text="${academy.writer}"></td>
                   <td class="title pt-3 pb-3"><a th:href="@{/academy/{id}(id=${academy.academyBoardNumber})}" th:text="${academy.title}"></a></td>
-                  <td class="pt-3 pb-3" th:text="${#temporals.format(academy.createdAt, 'yy.MM.dd')}"></td>
+                  <td class="pt-3 pb-3" th:text="${#temporals.format(academy.createdAt, 'YY.MM.dd')}"></td>
                 </tr>
               </th:block>
               <th:block th:if="${response.pagination.totalCount <= 0}">
