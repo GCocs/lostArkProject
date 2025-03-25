@@ -116,7 +116,11 @@ public class TeachingServiceImpl implements TeachingService {
     }
 
 
-
+    @Override
+    public void acceptMentee(Long menteeMemberId, String mentorDiscordId) {
+        // 실제 멘티 수락 DB 처리 로직 추가
+        // teachingDAO.updateMenteeStatus(menteeMemberId, "ACCEPTED");
+    }
 
 
 
