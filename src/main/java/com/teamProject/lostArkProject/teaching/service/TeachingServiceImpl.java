@@ -114,15 +114,14 @@ public class TeachingServiceImpl implements TeachingService {
 
         return resultList;
     }
+
+    @Override
+    public String getMentorDiscordId(String mentorMemberId) {
+        return teachingDAO.findDiscordIdByMentorId(mentorMemberId);
+    }
     @Override
     public void acceptMentee(String menteeMemberId, String mentorId){
 
-
-    @Override
-    public void acceptMentee(Long menteeMemberId, String mentorDiscordId) {
-        // 실제 멘티 수락 DB 처리 로직 추가
-        // teachingDAO.updateMenteeStatus(menteeMemberId, "ACCEPTED");
-    }
 
     }
 

@@ -12,5 +12,6 @@ public interface TeachingService {
     public void newMentee(MenteeDTO menteeDTO);
     public List<MentorListDTO> getMentorList();
     public List<MentorListDTO> getMentorDetail(String mentorMemberId);
-    public void acceptMentee(String menteememberid, String mentorid);
+    public void acceptMentee(String menteeMemberId, String mentorDiscordId);
+    String getMentorDiscordId(String mentorMemberId);
 }

@@ -3,6 +3,7 @@ package com.teamProject.lostArkProject.teaching.controller;
 
 import com.teamProject.lostArkProject.teaching.dto.MentorDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorListDTO;
+import com.teamProject.lostArkProject.teaching.service.NotificationService;
 import com.teamProject.lostArkProject.teaching.service.TeachingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -67,66 +68,65 @@ public class TeachingController {
         return "teaching/mentorListDetail";
     }
 
-    @GetMapping("/teaching/acceptMentee/{menteeId}")
-    public String acceptMenteeForm(@PathVariable("menteeId") Long menteeId,
-                                   Model model) {
-        // 멘티 ID로 필요한 정보를 DB에서 조회해 모델에 넣거나,
-        // 단순히 menteeId만 넘길 수도 있음.
-        model.addAttribute("menteeMemeberId", menteeId);
+    @Autowired
+    private NotificationService notificationService;
 
-        // templates 폴더 아래 acceptMentee.html (또는 다른 이름)로 렌더링
-        return "teaching/acceptMentee";
+    // ======================
+    // 멘토용 구독 엔드포인트
+    // ======================
+    @GetMapping(value = "/teaching/subscribe/mentor/{mentorMemberId}", produces = "text/event-stream")
+    public SseEmitter subscribeMentor(@PathVariable String mentorMemberId) {
+        return notificationService.subscribeMentor(mentorMemberId);
+    }
+
+    // ======================
+    // 멘티용 구독 엔드포인트
+    // ======================
+    @GetMapping(value = "/teaching/subscribe/mentee/{menteeMemberId}", produces = "text/event-stream")
+    public SseEmitter subscribeMentee(@PathVariable String menteeMemberId) {
+        return notificationService.subscribeMentee(menteeMemberId);
     }
 
 
+    /**
+     * 멘티가 신청을 하면, 멘토에게 알림을 보낼 수 있는 예시 (선택 구현)
+     */
+    @PostMapping("/teaching/applyMentee")
+    public String applyMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+                              @RequestParam("menteeMemberId") String menteeMemberId) {
+        // DB에 신청 정보 저장
+        // teachingService.applyMentee(mentorId, menteeId); // 가정
 
-    // SSE emitters를 관리하기 위한 ConcurrentHashMap 추가
-    private final Map<String, SseEmitter> sseEmitters = new ConcurrentHashMap<>();
+        // SSE로 "새로운 멘티 신청" 알림을 멘토에게 전송
+        notificationService.sendNotificationToMentor(mentorMemberId, "새로운 신청이 있습니다.", menteeMemberId);
 
-    // SSE 연결 유지 시간 설정 (30분)
-    private static final Long DEFAULT_TIMEOUT = 1800000L;
-
-    // SSE 구독 Endpoint 추가
-    @GetMapping(value = "/teaching/subscribe/{userId}", produces = "text/event-stream")
-    public SseEmitter subscribe(@PathVariable String userId) {
-        SseEmitter emitter = new SseEmitter(DEFAULT_TIMEOUT);
-        sseEmitters.put(userId, emitter);
-
-        emitter.onCompletion(() -> sseEmitters.remove(userId));
-        emitter.onTimeout(() -> sseEmitters.remove(userId));
-        emitter.onError(e -> sseEmitters.remove(userId));
-
-        // 연결 초기화용 더미 데이터 전송
-        try {
-            emitter.send(SseEmitter.event().name("INIT").data("connected"));
-        } catch (IOException e) {
-            emitter.completeWithError(e);
-        }
-        return emitter;
+        return "redirect:/somePage";
     }
 
-    // 멘티 신청 수락 처리 및 SSE 알림 전송을 함께 진행하는 메서드
+    /**
+     * 멘토가 멘티 신청을 수락하는 경우 -> 멘티에게 '수락됨' + '멘토 디스코드' 를 전송
+     */
     @PostMapping("/teaching/acceptMentee")
-    public String acceptMenteeSubmit(@RequestParam("menteeMemberId") Long menteeMemberId) {
-        // menteeMemberId 로 멘티 수락 로직 수행
-        // 예: Service 호출 -> DB 업데이트 -> 알림 전송 등
+    public String acceptMenteeSubmit(@RequestParam("mentorMemberId") String mentorMemberId,
+                                     @RequestParam("menteeMemberId") String menteeMemberId) {
+        // (1) DB 상에서 멘티 수락 처리
+        teachingService.acceptMentee(menteeMemberId, mentorMemberId);
 
-        // (2) SSE로 알림을 전송하는 로직 추가
-        sendNotificationToClient(menteeMemberId.toString(), "MENTEE_ACCEPTED", mentorDiscordId);
+        // (2) 멘토 디스코드 ID를 조회
+        String mentorDiscordId = teachingService.getMentorDiscordId(mentorMemberId);
+
+        // (3) SSE로 알림(멘토 디스코드 ID)을 멘티에게 전송
+        notificationService.sendNotificationToMentee(
+                menteeMemberId,
+                "디스코드 아이디를 수락합니다.",
+                mentorDiscordId
+        );
 
         return "redirect:/member/myPage";
     }
 
-    // SSE 알림 전송 메서드 추가
-    private void sendNotificationToClient(String userId, String eventName, String data) {
-        SseEmitter emitter = sseEmitters.get(userId);
-        if (emitter != null) {
-            try {
-                emitter.send(SseEmitter.event().name(eventName).data(data));
-            } catch (IOException e) {
-                emitter.completeWithError(e);
-                sseEmitters.remove(userId);
-            }
-        }
-    }
+
+
+
+
 }

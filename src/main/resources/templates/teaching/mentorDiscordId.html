@@ -1,30 +1,58 @@
 <!DOCTYPE html>
-<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
 <head>
   <title>LostArkProject</title>
 </head>
-
 <body>
 <div layout:fragment="content">
 
-  <!-- Blank Start -->
+  <!-- 화면: 멘티가 멘토 디스코드 아이디를 수신하는 페이지 -->
   <div class="container-fluid pt-4 px-4">
     <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
       <div class="col-md-6 text-center">
-        <h2 class="mb-4">멘토 디스코드 아이디 도착</h2>
-        <p><span>멘토 디스코드 아이디 입니다(개인적으로 연락하시고 다른곳에 유포하지 않으시길 바랍니다.)</span></p>
-        <form th:action="@{/teaching/mentorDiscordId}" method="get">
-          <tr>
-            <td>멘토 디스코드 아이디</td>
-            <td th:text="${mentorMap.mentorDiscordId}"></td>
-          </tr>
-        </form>
+        <h2 class="mb-4">멘토 디스코드 아이디 대기</h2>
+        <p>
+          멘토가 신청을 수락하면<br/>
+          디스코드 아이디가 여기에 표시됩니다:
+        </p>
+
+        <!-- SSE로 받은 mentorDiscordId를 표시할 영역 -->
+        <h4>멘토 디스코드 아이디: <span id="discordIdSpan"></span></h4>
 
       </div>
     </div>
   </div>
-  <!-- Blank End -->
 
+  <script th:inline="javascript">
+    /*
+      - menteeMemberId라는 모델 속성이 있다고 가정 (컨트롤러의 model.addAttribute("menteeMemberId", ...))
+      - 렌더링 시점에 menteeMemberId가 실제 값(예: "abc123")으로 치환됨
+      - 뒤에 'fallback'은 값이 없을 경우 기본값으로 쓰는 예시
+    */
+    const menteeMemberId = /*[[${menteeMemberId}]]*/ 'fallback';
+
+    // 1) SSE 구독: /teaching/subscribe/mentee/{menteeMemberId}
+    const eventSource = new EventSource('/teaching/subscribe/mentee/' + menteeMemberId);
+
+    // 2) 연결 확인용 이벤트 (INIT)
+    eventSource.addEventListener("INIT", function(e) {
+      console.log("멘티 SSE 연결 완료:", e.data);
+    });
+
+    // 3) 멘토가 수락했을 때("MENTEE_ACCEPTED") 이벤트 수신
+    eventSource.addEventListener("MENTEE_ACCEPTED", function(e) {
+      const mentorDiscordId = e.data; // 서버에서 보내준 디스코드 아이디
+      document.getElementById("discordIdSpan").innerText = mentorDiscordId;
+      alert("멘토가 신청을 수락했습니다! 디스코드 ID: " + mentorDiscordId);
+    });
+
+    // 4) 에러 처리
+    eventSource.onerror = function(error) {
+      console.warn("에러 발생:", error);
+    }
+  </script>
 
 </div>
 </body>
