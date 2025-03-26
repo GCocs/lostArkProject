@@ -1,5 +1,6 @@
 package com.teamProject.lostArkProject.teaching.controller;
 
+
 import com.teamProject.lostArkProject.teaching.dto.MentorDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorListDTO;
 import com.teamProject.lostArkProject.teaching.service.TeachingService;
@@ -106,13 +107,9 @@ public class TeachingController {
 
     // 멘티 신청 수락 처리 및 SSE 알림 전송을 함께 진행하는 메서드
     @PostMapping("/teaching/acceptMentee")
-    public String acceptMenteeSubmit(@RequestParam("menteeMemberId") Long menteeMemberId, HttpSession session) {
-
-        // (1) 멘티 수락 처리 로직 추가
-        // 예시로, 세션에서 멘토의 DiscordId를 가져와 멘티에게 전송하는 방식입니다.
-        Object mentor = session.getAttribute("member");
-        String mentorDiscordId = "[멘토의 Discord ID]"; // mentor 객체에서 discordId 가져오기
-        teachingService.acceptMentee(menteeMemberId, mentorDiscordId);
+    public String acceptMenteeSubmit(@RequestParam("menteeMemberId") Long menteeMemberId) {
+        // menteeMemberId 로 멘티 수락 로직 수행
+        // 예: Service 호출 -> DB 업데이트 -> 알림 전송 등
 
         // (2) SSE로 알림을 전송하는 로직 추가
         sendNotificationToClient(menteeMemberId.toString(), "MENTEE_ACCEPTED", mentorDiscordId);

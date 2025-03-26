@@ -114,6 +114,8 @@ public class TeachingServiceImpl implements TeachingService {
 
         return resultList;
     }
+    @Override
+    public void acceptMentee(String menteeMemberId, String mentorId){
 
 
     @Override
@@ -122,6 +124,7 @@ public class TeachingServiceImpl implements TeachingService {
         // teachingDAO.updateMenteeStatus(menteeMemberId, "ACCEPTED");
     }
 
+    }
 
 
 }
