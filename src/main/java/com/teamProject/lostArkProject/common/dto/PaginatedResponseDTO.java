@@ -6,8 +6,8 @@ import java.util.List;
 
 @Getter
 public class PaginatedResponseDTO<T> {
-    private List<T> data;
-    private Pagination pagination;
+    private final List<T> data;
+    private final Pagination pagination;
 
     public PaginatedResponseDTO(List<T> data, Pagination pagination) {
         this.data = data;
