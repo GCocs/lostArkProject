@@ -20,14 +20,10 @@ public interface TeachingDAO {
     public List<Map<String,Object>> getMemberCharacter();
 //    public Map<String,Object> getMentorListDetail(long mentorId);
     String findDiscordIdByMentorId(@Param("mentorMemberId") String mentorMemberId);
-
+    // 멘티의 신청 상태 + 멘토 ID 조회
+    List<Map<String, Object>> getApplyStatusByMentee(@Param("menteeMemberId") String menteeMemberId);
     //sse
-    // 1) 멘티가 멘토에게 신청 (INSERT)
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTO);
-
-    // 2) 멘토가 신청을 'ACCEPTED'로 (수락) 업데이트
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);
-
-    // 3) 멘토가 신청을 'REJECTED'로 (거절) 업데이트
     void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
 }

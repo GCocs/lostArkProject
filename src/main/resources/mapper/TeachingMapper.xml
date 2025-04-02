@@ -82,6 +82,12 @@
         WHERE mentor_member_id = #{mentorMemberId}
     </select>
 
+    <select id="getApplyStatusByMentee" resultType="map">
+        SELECT apply_status, mentor_member_id
+        FROM MENTEE_APPLY
+        WHERE mentee_member_id = #{menteeMemberId}
+    </select>
+
     <!-- 1) 멘티가 멘토에게 신청 INSERT -->
     <insert id="insertMenteeApply" parameterType="MenteeApplyDTO">
         INSERT INTO MENTEE_APPLY (

@@ -26,33 +26,26 @@
   </div>
 
   <script th:inline="javascript">
-    /*
-      - menteeMemberId라는 모델 속성이 있다고 가정 (컨트롤러의 model.addAttribute("menteeMemberId", ...))
-      - 렌더링 시점에 menteeMemberId가 실제 값(예: "abc123")으로 치환됨
-      - 뒤에 'fallback'은 값이 없을 경우 기본값으로 쓰는 예시
-    */
     const menteeMemberId = /*[[${menteeMemberId}]]*/ 'fallback';
 
-    // 1) SSE 구독: /teaching/subscribe/mentee/{menteeMemberId}
-    const eventSource = new EventSource('/teaching/subscribe/mentee/' + menteeMemberId);
-
-    // 2) 연결 확인용 이벤트 (INIT)
-    eventSource.addEventListener("INIT", function(e) {
-      console.log("멘티 SSE 연결 완료:", e.data);
-    });
-
-    // 3) 멘토가 수락했을 때("MENTEE_ACCEPTED") 이벤트 수신
-    eventSource.addEventListener("MENTEE_ACCEPTED", function(e) {
-      const mentorDiscordId = e.data; // 서버에서 보내준 디스코드 아이디
-      document.getElementById("discordIdSpan").innerText = mentorDiscordId;
-      alert("멘토가 신청을 수락했습니다! 디스코드 ID: " + mentorDiscordId);
-    });
-
-    // 4) 에러 처리
-    eventSource.onerror = function(error) {
-      console.warn("에러 발생:", error);
+    function pollApplyStatus() {
+      fetch('/teaching/mentee/apply-status-detail/' + menteeMemberId)
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(status => {
+            if (status.apply_status === 'ACCEPTED') {
+              document.getElementById("discordIdSpan").innerText = status.discord_id;
+              alert("멘토가 신청을 수락했습니다! 디스코드 ID: " + status.discord_id);
+            } else if (status.apply_status === 'REJECTED') {
+              alert("멘토가 신청을 거절했습니다.");
+            }
+          });
+        });
     }
+
+    setInterval(pollApplyStatus, 10000); // 10초마다 확인
   </script>
+
 
 </div>
 </body>

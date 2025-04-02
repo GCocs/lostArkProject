@@ -1,6 +1,7 @@
 package com.teamProject.lostArkProject.teaching.service;
 
 import com.teamProject.lostArkProject.teaching.dao.TeachingDAO;
+import com.teamProject.lostArkProject.teaching.dto.MenteeApplyDTO;
 import com.teamProject.lostArkProject.teaching.dto.MenteeDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorListDTO;
@@ -124,6 +125,16 @@ public class TeachingServiceImpl implements TeachingService {
 
 
     }
+
+    @Override
+    public List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId) {
+        return teachingDAO.getApplyStatusByMentee(menteeMemberId);
+    }
+    @Override
+    public void insertMenteeApply(MenteeApplyDTO menteeApplyDTO) {
+        teachingDAO.insertMenteeApply(menteeApplyDTO);
+    }
+
 
 
 }
