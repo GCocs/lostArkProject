@@ -16,4 +16,5 @@ public class Member {
     private String memberPasswd;
     private LocalDate registrationDate;
     private String representativeCharacterNickname;
+    private String verifiedNickname;
 }
