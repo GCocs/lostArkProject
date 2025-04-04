@@ -5,8 +5,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamProject.lostArkProject.collectible.dao.CollectibleDAO;
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.domain.CollectiblePoint;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -25,21 +27,6 @@ public class CollectibleService {
         this.webClient = webClient;
         this.objectMapper = objectMapper;
         this.collectibleDAO = collectibleDAO;
-    }
-
-    public Mono<List<CharacterInfo>> getCharacterInfo(String characterName) {
-        return webClient.get()
-                .uri("/characters/" + characterName + "/siblings")
-                .retrieve()
-                .bodyToMono(String.class)
-                .flatMap(apiResponse -> {
-                    try {
-                        List<CharacterInfo> characterInfos = objectMapper.readValue(apiResponse, new TypeReference<List<CharacterInfo>>() {});
-                        return Mono.just(characterInfos);
-                    } catch (Exception e) {
-                        return Mono.error(e);
-                    }
-                });
     }
 
     // 내실 내용 가져오는 메소드
@@ -84,5 +71,13 @@ public class CollectibleService {
 
     public List<CollectiblePointSummaryDTO> getCollectiblePointSummary(String memberId) {
         return collectibleDAO.getCollectiblePointSummary(memberId);
+    }
+
+    public List<RecommendCollectible> getRecommendCollectible(String memberId){
+        return collectibleDAO.getRecommendCollectible(memberId);
+    }
+
+    public void clearCollectible(String memberId, int clearCollectibleId) {
+        collectibleDAO.insertClearCollectible(memberId, clearCollectibleId);
     }
 }

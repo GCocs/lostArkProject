@@ -3,7 +3,6 @@
 <head>
   <meta charset="utf-8">
   <title>LostArkProject - 회원가입 페이지</title>
-  <link rel="stylesheet" href="/css/member.css" />
 </head>
 
 <body>
@@ -23,12 +22,12 @@
           <div class="form-floating mb-3 d-flex">
             <input type="email" class="form-control" id="signupId" placeholder="" name="signupId">
             <label for="signupId">이메일을 입력하세요</label>
-            <button class="btn btn-outline-primary nowrap" type="button" onclick="sendEmail()">인증번호 발송</button>
+            <button class="btn btn-outline-primary nowrap" type="button" id="sendEmailBtn" onclick="sendEmail()">인증코드 발송</button>
           </div>
-          <div class="form-floating mb-3 d-flex">
-              <input type="text" class="form-control" id="checkAuthentication" placeholder="" name="checkAuthentication">
-              <label for="checkAuthentication">인증번호를 입력하세요</label>
-              <button class="btn btn-outline-primary nowrap" type="button" onclick="checkAuthentication()">인증번호 확인</button>
+          <div class="form-floating mb-3 d-flex" style="display: none !important;" id="inputAuth">
+              <input type="text" class="form-control" id="checkAuth" placeholder="" name="checkAuth">
+              <label for="checkAuth">인증코드를 입력하세요</label>
+              <button class="btn btn-outline-primary nowrap" type="button" id="checkAuthBtn" onclick="checkAuthCode()">인증코드 확인</button>
           </div>
           <div class="form-floating mb-3">
             <input type="password" class="form-control" id="floatingInput" placeholder="" name="signupPW">
@@ -67,7 +66,6 @@
               <input type="checkbox" class="form-check-input" id="exampleCheck1" name="signupAgreement">
               <label class="form-check-label" for="exampleCheck1">개인정보 이용동의</label>
             </div>
-            <!--<a href="">비밀번호 찾기</a>-->
           </div>
           <button type="button" class="btn btn-primary py-3 w-100 mb-4" onclick="checkSignup()">회원가입</button>
           <p class="text-center mb-0">계정을 이미 가지고 있나요? <a href="/member/signin">로그인</a></p>

@@ -15,8 +15,8 @@ CREATE TABLE MEMBER_CHARACTER (
     CHARACTER_NICKNAME VARCHAR(50) PRIMARY KEY,
     SERVER_NAME VARCHAR(50) NOT NULL,
     CHARACTER_CLASS VARCHAR(50) NOT NULL,
-    ITEM_LEVEL INT NOT NULL,
-    ROSTER_LEVEL INT NOT NULL,
+    ITEM_LEVEL VARCHAR(50) NOT NULL,
+    ROSTER_LEVEL VARCHAR(50) NOT NULL,
     MEMBER_ID VARCHAR(50),
     FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER(MEMBER_ID) ON DELETE CASCADE
 );
@@ -158,6 +158,21 @@ CREATE TABLE ADMIN (
     ADMIN_PASSWD VARCHAR(255)
 );
 
+-- 추천 내실
+CREATE TABLE RECOMMEND_COLLECTIBLE (
+	RECOMMEND_COLLECTIBLE_ID INT AUTO_INCREMENT PRIMARY KEY,
+	RECOMMEND_COLLECTIBLE_NAME VARCHAR(50),
+	RECOMMEND_COLLECTIBLE_URL VARCHAR(255)
+);
+
+-- 해결 내실 목록
+CREATE TABLE CLEAR_COLLECTIBLE (
+	MEMBER_ID VARCHAR(50),
+	RECOMMEND_COLLECTIBLE_ID INT,
+	PRIMARY KEY (MEMBER_ID, RECOMMEND_COLLECTIBLE_ID),
+	FOREIGN KEY (MEMBER_ID) REFERENCES MEMBER(MEMBER_ID) ON DELETE CASCADE,
+	FOREIGN KEY (RECOMMEND_COLLECTIBLE_ID) REFERENCES RECOMMEND_COLLECTIBLE(RECOMMEND_COLLECTIBLE_ID)
+);
 
 INSERT INTO ABYSS_DUNGEON_LIST (CODE, ABYSS_NAME, BOSS_NAME, LOCATION, LEVEL_SINGLE, LEVEL_NORMAL, LEVEL_HARD) VALUES
     -- 어비스 던전 (Abyss Dungeon)
@@ -168,7 +183,7 @@ INSERT INTO ABYSS_DUNGEON_LIST (CODE, ABYSS_NAME, BOSS_NAME, LOCATION, LEVEL_SIN
     ('aby-5', '오레하의 우물', '알비온', NULL, NULL, 1340, 1370),
     ('aby-6', '카양겔', '라우리엘', '영원한 빛의 요람', 1540, 1540, 1580),
     ('aby-7', '혼돈의 상아탑', '라자람', '짓밟힌 정원', 1600, 1600, 1620);
-    
+
 
 INSERT INTO RAID_LIST (CODE, BOSS_NAME, BOSS_ROLE, LOCATION, LEVEL_SINGLE, LEVEL_NORMAL, LEVEL_HARD) VALUES
     -- 군단장 레이드 (Commander Legion Raid)
@@ -194,3 +209,31 @@ INSERT INTO NOTICE (TITLE, CONTENT, IMAGE, CREATED_AT) VALUES
     ('멘토/멘티 기능 추가', '이제 사이트 내에서 멘토/멘티를 직접 구하실 수 있습니다.', NULL, '2025-01-16 08:45:00'),
     ('학원 탭 신설', '학원 파티 구인/구직을 위한 학원 탭이 개설되었습니다.', NULL, '2025-02-25 16:25:00'),
     ('계정 인증 절차 추가', '닉네임 도용으로 인한 악용 가능성이 있다고 판단되어 본인 캐릭터 인증을 개선하였습니다.', NULL, '2025-03-20 12:00:00');
+
+INSERT INTO RECOMMEND_COLLECTIBLE (RECOMMEND_COLLECTIBLE_NAME, RECOMMEND_COLLECTIBLE_URL) VALUES
+    ('내실 익스프레스 (스포)','www.naver.com'),
+    ('지혜의 섬 보조 사서 (스포)','www.naver.com'),
+    ('거심 12개 (스포)','www.naver.com'),
+    ('파푸니카 80% (스포)','www.naver.com'),
+    ('이그네아의 징표 8개 (스포)','www.naver.com'),
+    ('타워 오브 데스티니 15층 (스포)','www.naver.com'),
+    ('타워 오브 데스티니 50층 (스포)','www.naver.com'),
+    ('세베크 아툰 (상깨물)','www.naver.com'),
+    ('평판: 끝나지 않은 싸움 (깨물)','www.naver.com'),
+    ('쿠르잔 북부 70% (깨물)','www.naver.com'),
+    ('크림스네일의 해도 2개 (깨물)','www.naver.com'),
+    ('이그네아의 징표 9개 (비프로스트)','www.naver.com'),
+    ('모험물 34개 (영웅 풍요 룬)','www.naver.com'),
+    ('이그네아의 징표 15개 (전설 정화 룬)','www.naver.com'),
+    ('전설 단죄 구매 (영지)','www.naver.com'),
+    ('전설 심판 구매 (영지)','www.naver.com'),
+    ('미술품 36개 (웨이 카드)','www.naver.com'),
+    ('거인의 심장 13개 (영웅 집중)','www.naver.com'),
+    ('혼돈의 사선 (전설 집중)','www.naver.com'),
+    ('항해 모험물 42개 (전설 집중)','www.naver.com'),
+    ('미술품 44개 (전설 심판)','www.naver.com'),
+    ('오르페우스의 별 7개 (전설 수호)','www.naver.com'),
+    ('미술품 58개 (전설 철벽)','www.naver.com'),
+    ('기억의 오르골 10개 (전설 카드팩 2개)','www.naver.com'),
+    ('기억의 오르골 14개 (도약의 전설 카드 선택팩)','www.naver.com'),
+    ('아스트레이 7렙 (쾌속항해)','www.naver.com');

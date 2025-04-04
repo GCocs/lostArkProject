@@ -46,6 +46,18 @@
         WHERE cp.nickname = #{nickname}
     </select>
 
+    <!--추천 내실-->
+    <select id="getRecommendCollectible" parameterType="recommend_collectible">
+        SELECT * FROM RECOMMEND_COLLECTIBLE
+        WHERE RECOMMEND_COLLECTIBLE_ID NOT IN (
+        SELECT RECOMMEND_COLLECTIBLE_ID FROM CLEAR_COLLECTIBLE WHERE MEMBER_ID = #{memberId}
+        )
+        ORDER BY RECOMMEND_COLLECTIBLE_ID ASC
+        LIMIT 4;
+    </select>
 
-
+    <!--내실 완료-->
+    <insert id="insertClearCollectible">
+        INSERT INTO CLEAR_COLLECTIBLE (MEMBER_ID, RECOMMEND_COLLECTIBLE_ID) VALUES (#{memberId}, #{clearCollectibleId});
+    </insert>
 </mapper>

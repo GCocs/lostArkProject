@@ -2,7 +2,9 @@ package com.teamProject.lostArkProject.main.controller;
 
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.common.dto.PaginatedRequestDTO;
 import com.teamProject.lostArkProject.member.domain.Member;
@@ -14,6 +16,9 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 
@@ -50,7 +55,17 @@ public class MainController {
         }
         List<CollectiblePointSummaryDTO> collectibleItemList = collectibleService.getCollectiblePointSummary(member.getMemberId());
         model.addAttribute("collectibleItemList", collectibleItemList);
+        List<RecommendCollectible> recommendCollectibleList = collectibleService.getRecommendCollectible(member.getMemberId());
+        model.addAttribute("recommendCollectibleList", recommendCollectibleList);
         return "collectible/collectible"; // 결과 뷰로 이동
     }
 
+    @PostMapping("/collectible/clear")
+    public String clearCollectible(
+            @RequestParam("collectibleId") int collectibleId,
+            @SessionAttribute("member") Member member) {
+
+        collectibleService.clearCollectible(member.getMemberId(), collectibleId);
+        return "redirect:/collectible";
+    }
 }
