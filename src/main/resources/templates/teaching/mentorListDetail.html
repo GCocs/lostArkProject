@@ -28,13 +28,24 @@
 
                         <dt class="col-sm-4">한마디</dt>
                         <dd class="col-sm-8" th:text="${mentor.mentorWantToSay}"></dd>
+
+                    <form th:action="@{/teaching/applyMentee}" method="post">
+                        <!-- 멘토 ID -->
+                        <input type="hidden" name="mentorMemberId" th:value="${mentor.mentorMemberId}"/>
+
+                        <!-- 멘티 ID (로그인된 사용자) -->
+                        <input type="hidden" name="menteeMemberId" th:value="${session.member.memberId}"/>
+
+                        <!-- 신청 버튼 -->
+                        <input class="btn btn-outline-primary w-100 m-2" type="submit" value="신청하기"/>
+                    </form>
                     </dl>
-                    <input class="btn btn-outline-primary w-100 m-2" type="button" value="신청하기">
                 </div>
             </div>
         </div>
     </div>
     <!-- Description List End -->
+
 
 
 

@@ -1,12 +1,12 @@
 /************************************ 
 *  Content
 *************************************/
-.remain-time .d-flex.align-items-center {
-  margin-top: 0.5rem !important;
-  margin-bottom: 0 !important;
+.content-countdown .d-flex.align-items-center {
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
 }
 
-.remain-time .spinner-border {
+.content-countdown .spinner-border {
   margin: 0 0.5rem !important;
   width: 1.25rem;
   height: 1.25rem;

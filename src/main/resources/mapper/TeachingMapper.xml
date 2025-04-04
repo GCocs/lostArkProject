@@ -76,21 +76,49 @@
         ON C.CHARACTER_NICKNAME = M.REPRESENTATIVE_CHARACTER_NICKNAME
     </select>
 
+    <select id="findDiscordIdByMentorId" parameterType="string" resultType="string">
+        SELECT mentor_discord_id
+        FROM MENTOR
+        WHERE mentor_member_id = #{mentorMemberId}
+    </select>
 
-    <!--
-    멘티 신청 페이지 > 멘토에게 전송되는 페이지
-    <insert id="newMenteeApply" parameterMap="MenteeApplyDTO">
-        INSERT INTO MENTEE_APPLY(
-        )VALUES(
+    <select id="getApplyStatusByMentee" resultType="map">
+        SELECT apply_status, mentor_member_id
+        FROM MENTEE_APPLY
+        WHERE mentee_member_id = #{menteeMemberId}
+    </select>
+
+    <!-- 1) 멘티가 멘토에게 신청 INSERT -->
+    <insert id="insertMenteeApply" parameterType="MenteeApplyDTO">
+        INSERT INTO MENTEE_APPLY (
+        mentor_member_id,
+        mentee_member_id,
+        apply_status
+        )
+        VALUES (
+        #{mentor_member_id},
+        #{mentee_member_id},
+        'REQUESTED'
         )
     </insert>
 
+    <!-- 2) 멘토가 멘티 신청을 수락(ACCEPTED)으로 UPDATE -->
+    <update id="acceptMenteeApply" parameterType="MenteeApplyDTO">
+        UPDATE MENTEE_APPLY
+        SET apply_status = 'ACCEPTED'
+        WHERE mentor_member_id = #{mentor_member_id}
+        AND mentee_member_id = #{mentee_member_id}
+        AND apply_status = 'REQUESTED'
+    </update>
 
+    <!-- 3) 멘토가 멘티 신청을 거절(REJECTED)으로 UPDATE -->
+    <update id="rejectMenteeApply" parameterType="MenteeApplyDTO">
+        UPDATE MENTEE_APPLY
+        SET apply_status = 'REJECTED'
+        WHERE mentor_member_id = #{mentor_member_id}
+        AND mentee_member_id = #{mentee_member_id}
+        AND apply_status = 'REQUESTED'
+    </update>
 
-    멘토리스트 상세조회
-    <select id="getMentorListDetail" parameterMap="hashMap" resultMap="mentorMap">
-
-    </select>
-    -->
 
 </mapper>

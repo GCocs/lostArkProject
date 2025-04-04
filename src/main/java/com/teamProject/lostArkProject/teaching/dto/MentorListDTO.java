@@ -12,6 +12,8 @@ public class MentorListDTO {
     private String characterNickname;
     private String itemLevel;
     private String serverName;
-    // Getter & Setter
+
+    // 디스코드 아이디 필드 추가
+    private String mentorDiscordId;
 }
 

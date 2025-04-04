@@ -81,24 +81,14 @@
                         <h6 class="mb-0">공지사항</h6>
                         <a href="">전체</a>
                     </div>
-                    <div class="align-items-center border-bottom py-3 notice-preview" onclick="window.location.href='/'">
-                        <div class="d-flex justify-content-between mx-3">
-                            <span>공지사항 전파합니다.</span>
-                            <span style="font-size: 14px; color: #CCC;">24.09.13</span>
+                    <th:block th:each="notice : ${noticeList}">
+                        <div class="align-items-center border-bottom py-3 notice-preview" onclick="window.location.href='/'">
+                            <div class="d-flex justify-content-between mx-3">
+                                <span th:text="${notice.title}"></span>
+                                <span th:text="${#temporals.format(notice.createdAt, 'YY.MM.dd')}" style="font-size: 14px;"></span>
+                            </div>
                         </div>
-                    </div>
-                    <div class="align-items-center border-bottom py-3 notice-preview" onclick="window.location.href='/'">
-                        <div class="d-flex justify-content-between mx-3">
-                            <span>회원가입 시 보호자 무료 1회 이벤트!</span>
-                            <span style="font-size: 14px; color: #CCC;">24.09.06</span>
-                        </div>
-                    </div>
-                    <div class="align-items-center border-bottom py-3 notice-preview" onclick="window.location.href='/'">
-                        <div class="d-flex justify-content-between mx-3">
-                            <span>타 유저 사칭 유저 단속 결과</span>
-                            <span style="font-size: 14px; color: #CCC;">24.08.31</span>
-                        </div>
-                    </div>
+                    </th:block>
                 </div>
             </div>
 

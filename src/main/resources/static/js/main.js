@@ -8,7 +8,7 @@
 
     // 내실 API 요청
     $.ajax({
-        url: 'collectibles',
+        url: '/collectibles',
         type: 'GET',
         success: function(data) {
             collectibleChart(data);

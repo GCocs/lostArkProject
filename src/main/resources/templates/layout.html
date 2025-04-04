@@ -15,6 +15,7 @@
     <!-- Icon Font Stylesheet -->
     <link th:href="@{https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css}" rel="stylesheet">
     <link th:href="@{https://cdn.jsdelivr.net/npm/bootstrap-icons@1.4.1/font/bootstrap-icons.css}" rel="stylesheet">
+    <link type="text/css" th:href="@{https://cdn.jsdelivr.net/npm/toastify-js/src/toastify.min.css}" rel="stylesheet">
 
     <!-- Customized Bootstrap Stylesheet -->
     <link th:href="@{/css/bootstrap.min.css}" rel="stylesheet">
@@ -87,24 +88,76 @@
             <div class="navbar-nav align-items-center ms-auto">
                 <div th:if="${session.member}" class="navbar-nav">
                     <!-- 로그인된 상태 -->
-                    <div class="nav-item dropdown">
-                        <a th:href="@{/teaching/message}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                            <i class="fa fa-envelope me-lg-2"></i>
-                            <span class="d-none d-lg-inline-flex">Messages</span>
-                        </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-bottom m-0" style="border: 1px solid #333;">
-                            <a th:href="@{/teaching/message}" class="dropdown-item">Jhon sent you a message</a>
-                            <hr class="dropdown-divider">
-                            <a th:href="@{/teaching/message/list}" class="dropdown-item text-center">See all messages</a>
+                    <!-- 메시지 드롭다운 -->
+                    <div th:if="${session.member}" class="navbar-nav">
+                        <div class="nav-item dropdown">
+                            <a th:href="@{/teaching/message}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                                <i class="fa fa-envelope me-lg-2"></i>
+                                <span class="d-none d-lg-inline-flex">Messages</span>
+                            </a>
+
+                            <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-bottom m-0"
+                                 id="messageDropdownMenu" style="border: 1px solid #333;">
+                                <!-- 여기에 자바스크립트로 새 메시지가 추가됨 -->
+                                <a th:href="@{/teaching/message/list}" class="dropdown-item text-center">See all messages</a>
+                            </div>
                         </div>
                     </div>
+
+                    <script th:inline="javascript">
+                        const menteeMemberId = /*[[${menteeMemberId}]]*/ 'fallback';
+                        // 서버에서 모델에 menteeMemberId 넘긴다고 가정
+
+                        const messageDropdown = document.getElementById("messageDropdownMenu");
+                        const shownStatuses = new Set(); // 중복 방지용 캐시
+
+                        function pollApplyStatus() {
+                          fetch('/teaching/mentee/apply-status-detail/' + menteeMemberId)
+                            .then(res => res.json())
+                            .then(data => {
+                              data.forEach(status => {
+                                const key = status.mentor_member_id + '-' + status.apply_status;
+                                if (shownStatuses.has(key)) return;
+                                shownStatuses.add(key);
+
+                                let messageText = "";
+                                let linkUrl = "/teaching/message"; // 알림 클릭 시 이동할 URL
+
+                                if (status.apply_status === 'ACCEPTED') {
+                                  messageText = `멘토가 수락했습니다! 디스코드: ${status.discord_id}`;
+                                } else if (status.apply_status === 'REJECTED') {
+                                  messageText = `멘토가 신청을 거절했습니다.`;
+                                } else {
+                                  return; // 처리할 상태가 아니면 무시
+                                }
+
+                                // 새 메시지 항목 생성
+                                const newMessage = document.createElement("a");
+                                newMessage.href = linkUrl;
+                                newMessage.className = "dropdown-item";
+                                newMessage.textContent = messageText;
+
+                                const divider = document.createElement("hr");
+                                divider.className = "dropdown-divider";
+
+                                // "See all messages" 항목 바로 위에 추가
+                                const seeAll = messageDropdown.lastElementChild;
+                                messageDropdown.insertBefore(divider, seeAll);
+                                messageDropdown.insertBefore(newMessage, divider);
+                              });
+                            });
+                        }
+
+                        // 10초마다 상태 확인
+                        setInterval(pollApplyStatus, 10000);
+                    </script>
 
                     <div class="nav-item dropdown">
                         <a th:href="@{/member/myPage}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                             <img class="rounded-circle me-lg-2" th:src="@{/img/user.jpg}" alt="" style="width: 40px; height: 40px;">
                             <span class="d-none d-lg-inline-flex" th:text="${session.member.representativeCharacterNickname}">John Doe</span>
                         </a>
-                        <div class="dropdown-menu dropdown-menu-end bg-secondary border-0 rounded-0 rounded-bottom m-0">
+                        <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-top rounded-bottom m-0" style="border: 1px solid #333;">
                             <a th:href="@{/member/myPage}" class="dropdown-item">프로필</a>
                             <a th:href="@{/member/signout}" class="dropdown-item">로그아웃</a>
                         </div>
@@ -154,6 +207,7 @@
 <script th:src="@{/lib/tempusdominus/js/moment.min.js}"></script>
 <script th:src="@{/lib/tempusdominus/js/moment-timezone.min.js}"></script>
 <script th:src="@{/lib/tempusdominus/js/tempusdominus-bootstrap-4.min.js}"></script>
+<script type="text/javascript" th:src="@{https://cdn.jsdelivr.net/npm/toastify-js}"></script>
 
 <!-- Template Javascript -->
 <script th:src="@{/js/main.js}"></script>

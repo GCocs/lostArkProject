@@ -2,12 +2,11 @@ package com.teamProject.lostArkProject.alarm.controller;
 
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
+import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
 import com.teamProject.lostArkProject.member.config.SessionUtils;
-import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
@@ -17,6 +16,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
+@Validated
 @Slf4j
 public class AlarmController {
     private final AlarmService alarmService;
@@ -26,6 +26,10 @@ public class AlarmController {
     public ResponseEntity<List<Alarm>> getAllAlarm(HttpSession session) {
         String memberId = SessionUtils.getMemberId(session);
 
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
         List<Alarm> alarms = alarmService.getAllAlarm(memberId);
         log.info("알람 데이터: {}", alarms);
         return ResponseEntity.ok(alarms);
@@ -34,13 +38,18 @@ public class AlarmController {
     // 특정 사용자의 알림을 설정하는 메서드
     @PostMapping("/api/alarm")
     public ResponseEntity<?> insertAlarm(HttpSession session,
-                                         @Validated @RequestBody Alarm alarm,
+                                         @RequestBody Alarm alarm,
                                          BindingResult bindingResult) {
         if (bindingResult.hasErrors()) {
             throw new IllegalArgumentException("유효하지 않은 입력입니다.");
         }
 
         String memberId = SessionUtils.getMemberId(session);
+
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
+
         alarm.setMemberId(memberId);
 
         alarmService.insertAlarm(alarm);
@@ -50,8 +59,12 @@ public class AlarmController {
     // 특정 알림을 해제하는 메서드
     @DeleteMapping("/api/alarm/{contentName}")
     public ResponseEntity<?> deleteAlarm(HttpSession session,
-                                         @Validated @PathVariable("contentName") String contentName) {
+                                         @PathVariable("contentName") String contentName) {
         String memberId = SessionUtils.getMemberId(session);
+
+        if (memberId == null || memberId.isEmpty()) {
+            throw new UnauthorizedException("로그인이 필요합니다.");
+        }
 
         alarmService.deleteAlarm(memberId, contentName);
         return ResponseEntity.ok("알림 해제에 성공했습니다.");

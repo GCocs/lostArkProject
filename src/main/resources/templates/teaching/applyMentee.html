@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>LostArkProject</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <!-- 화면: 멘티가 멘토 디스코드 아이디를 수신하는 페이지 -->
+  <div class="container-fluid pt-4 px-4">
+    <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+      <div class="col-md-6 text-center">
+
+        <h4>멘토 신청이 완료되었습니다. </h4>
+        <h6><a th:href="@{/teaching/mentorList}">리스트로 돌아가기</a></h6>
+      </div>
+    </div>
+  </div>
+
+
+</div>
+</body>
+</html>
