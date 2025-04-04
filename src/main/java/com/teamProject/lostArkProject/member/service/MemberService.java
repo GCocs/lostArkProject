@@ -1,10 +1,19 @@
 package com.teamProject.lostArkProject.member.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.member.dao.MemberDAO;
 import com.teamProject.lostArkProject.member.domain.Member;
+import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
+import reactor.core.publisher.Mono;
+import org.springframework.http.HttpStatus;
+
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -26,6 +35,7 @@ public class MemberService {
     //로그인 비밀번호 확인
     public boolean checkSignin(String memberId, String insertPW) {
         String DB_PW = memberDAO.getMemberPW(memberId);
+        if(DB_PW == null) return false;
         return DB_PW.equals(insertPW);
     }
 
@@ -41,5 +51,81 @@ public class MemberService {
     }
     public void changePassword(String memberId, String memberPW) {
         memberDAO.updateMemberPW(memberId, memberPW);
+    }
+
+    public Mono<String> getRosterLevel(String characterName) {
+        return webClient.get()
+                .uri("/armories/characters/{name}", characterName)
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(apiResponse -> {
+                    try {
+                        System.out.println("API 응답 원문: " + apiResponse);
+                        JsonNode root = objectMapper.readTree(apiResponse);
+                        JsonNode profile = root.path("ArmoryProfile");
+
+                        if (profile.isMissingNode()) {
+                            return Mono.error(new RuntimeException("ArmoryProfile 항목이 없습니다"));
+                        }
+
+                        String rosterLevel = profile.path("ExpeditionLevel").asText();
+                        if (rosterLevel == null || rosterLevel.isBlank()) {
+                            return Mono.error(new RuntimeException("ExpeditionLevel이 비어 있습니다"));
+                        }
+
+                        return Mono.just(rosterLevel);
+                    } catch (Exception e) {
+                        return Mono.error(new RuntimeException("API 응답 파싱 실패", e));
+                    }
+                });
+    }
+
+    public List<MemberCharacter> getMemberCharacterList(List<CharacterInfo> characterInfoList, String rosterLevel, String memberId) {
+        return characterInfoList.stream()
+                .map(info -> {
+                    MemberCharacter member = new MemberCharacter();
+                    member.setCharacterNickname(info.getCharacterName());
+                    member.setServerName(info.getServerName());
+                    member.setCharacterClass(info.getCharacterClassName());
+                    member.setItemLevel(info.getItemAvgLevel());
+                    member.setRosterLevel(rosterLevel);
+                    member.setMemberId(memberId);
+
+                    return member;
+                })
+                .collect(Collectors.toList());
+    }
+
+    public void insertMemberCharacter(List<MemberCharacter> memberCharacterList) {
+        for (MemberCharacter memberCharacter : memberCharacterList) {
+            memberDAO.insertMemberCharacter(memberCharacter);
+        }
+    }
+
+    public Mono<List<CharacterInfo>> getCharacterInfo(String characterName) {
+        return webClient.get()
+                .uri("/characters/" + characterName + "/siblings")
+                .retrieve()
+                .bodyToMono(String.class)
+                .flatMap(apiResponse -> {
+                    try {
+                        List<CharacterInfo> characterInfos = objectMapper.readValue(apiResponse, new TypeReference<List<CharacterInfo>>() {});
+                        return Mono.just(characterInfos);
+                    } catch (Exception e) {
+                        return Mono.error(e);
+                    }
+                });
+    }
+
+    public boolean updateRCN(String memberId, String RCN) {
+        List<CharacterInfo> characterInfoList = getCharacterInfo(RCN).block();
+        if (characterInfoList == null || characterInfoList.isEmpty()) return false;
+        String rosterLevel = getRosterLevel(RCN).block();
+        List<MemberCharacter> memberCharacterList = getMemberCharacterList(characterInfoList, rosterLevel, memberId);
+
+        memberDAO.deleteMemberCharacter(memberId);
+        insertMemberCharacter(memberCharacterList);
+        memberDAO.updateRCN(memberId, RCN);
+        return true;
     }
 }

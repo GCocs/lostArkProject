@@ -140,11 +140,13 @@
             success: function(response) {
                 if(response) {
                     alert("로그인 되었습니다.");
-                    window.location.href = "/"
+                    window.location.href = "/";
                 } else {
                     alert("이메일 혹은 비밀번호가 틀렸습니다.");
-                    window.location.href = "/member/signin"
                 }
+            },
+            error : function() {
+                alert("이메일 혹은 비밀번호가 틀렸습니다.");
             }
         });
     }
@@ -335,6 +337,57 @@
                     window.location.href = "/member/signup";
                 }
             }
+        });
+    };
+
+    window.changeProfile = function() {
+        var passwdTest = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
+        const memberId = $('#changeMemberId').val();
+        const PW = $('#changePassword').val();
+        const PWCheck = $('#changePasswordCheck').val();
+        const RCN = $('#changeRepresentativeCharacterNickname').val();changeMemberId
+
+        const ajaxList = [];
+
+        if (PW && PWCheck && PW === PWCheck) {
+            if(!passwdTest.test(PW)) {
+                alert("비밀번호는 영문+숫자로 구성하여야 합니다.");
+                return;
+            }
+
+            const changePassword = $.ajax({
+                url: '/member/changePassword-process',
+                type: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify({ email: memberId, PW: PW}),
+                success: function(response) {
+                    if(response) {
+                        alert("비밀번호가 변경되었습니다.");
+                    }
+                }
+            });
+
+            ajaxList.push(changePassword);
+        } else if (PW || PWCheck) {
+            alert("확인된 비밀번호가 일치하지 않습니다.");
+        }
+
+        const changeRCN = $.ajax({
+            url: '/member/changeRCN',
+            type: 'POST',
+            contentType: 'application/json',
+            data: JSON.stringify({ email: memberId, RCN: RCN}),
+            success: function(response) {
+                if(response) {
+                    alert("대표 캐릭터가 변경되었습니다.");
+                }
+            }
+        });
+
+        ajaxList.push(changeRCN);
+
+        $.when.apply($, ajaxList).always(function() {
+            window.location.href = "/member/myPage";
         });
     };
 

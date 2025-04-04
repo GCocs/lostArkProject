@@ -9,6 +9,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.Map;
+
 @Controller
 @RequestMapping("/member")
 public class MemberController {
@@ -57,9 +59,13 @@ public class MemberController {
     }
 
     // 정보 변경
-    @GetMapping("/changeInfo")
-    public String changeInfo(){
-
-        return "member/changeInfo";
+    @GetMapping("/myPage")
+    public String myPage(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+        if(member == null) {
+            return "index";
+        }
+        return "member/myPage";
     }
 }

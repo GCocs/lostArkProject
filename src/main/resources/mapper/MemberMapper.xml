@@ -10,6 +10,26 @@
         VALUES (#{memberId}, #{memberPasswd}, #{representativeCharacterNickname})
     </insert>
 
+    <!--멤버캐릭터 삽입 -->
+    <insert id="insertMemberCharacter" parameterType="member">
+        INSERT INTO MEMBER_CHARACTER (MEMBER_ID, CHARACTER_NICKNAME, SERVER_NAME, CHARACTER_CLASS,
+        ITEM_LEVEL, ROSTER_LEVEL)
+        VALUES (#{memberId}, #{characterNickname}, #{serverName}, #{characterClass},
+        #{itemLevel}, #{rosterLevel})
+    </insert>
+
+    <delete id="deleteMemberCharacter">
+        DELETE FROM MEMBER_CHARACTER
+        WHERE MEMBER_ID = #{memberId}
+    </delete>
+
+    <!--대표캐릭터 수정 -->
+    <update id="updateRCN">
+        UPDATE MEMBER
+        SET REPRESENTATIVE_CHARACTER_NICKNAME = #{RCN}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
     <!--로그인 -->
     <select id="getMemberPW" parameterType="memberPasswd">
         SELECT MEMBER_PASSWD FROM MEMBER

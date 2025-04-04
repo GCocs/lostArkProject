@@ -3,6 +3,7 @@ package com.teamProject.lostArkProject.member.controller;
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.member.domain.Member;
+import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,7 +40,7 @@ public class MemberRestController {
     @PostMapping("/check-representativeCharacter")
     public boolean checkRepresentativeCharacter(@RequestBody Map<String, String> request) {
         String representativeCharacter = request.get("representativeCharacter");
-        System.out.println(collectibleService.getCharacterInfo(representativeCharacter));
+        System.out.println(memberService.getCharacterInfo(representativeCharacter));
         return false;
     }
 
@@ -47,14 +48,16 @@ public class MemberRestController {
     @PostMapping("/signup-process")
     public boolean signupProcess(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
         HttpSession session = request.getSession();
-        List<CharacterInfo> characterInfoList = collectibleService.getCharacterInfo(requestMap.get("representativeCharacter"))
+        List<CharacterInfo> characterInfoList = memberService.getCharacterInfo(requestMap.get("representativeCharacter"))
                 .block();
-
+        String rosterLevel = memberService.getRosterLevel(requestMap.get("representativeCharacter")).block();
+        System.out.println(rosterLevel);
         if (characterInfoList == null || characterInfoList.isEmpty()) {
             System.out.println("회원가입 실패: 대표 캐릭터가 유효하지 않습니다.");
             return false; // 검증 실패
         }
 
+        List<MemberCharacter> memberCharacterList = memberService.getMemberCharacterList(characterInfoList, rosterLevel, requestMap.get("email"));
 
         Member member = new Member();
         member.setMemberId(requestMap.get("email"));
@@ -66,6 +69,7 @@ public class MemberRestController {
         sessionMember.setRepresentativeCharacterNickname(requestMap.get("representativeCharacter"));
 
         memberService.signupMember(member);
+        memberService.insertMemberCharacter(memberCharacterList);
         session.setAttribute("member", sessionMember);
         collectibleService.saveCollectiblePoint(requestMap.get("representativeCharacter"), requestMap.get("email"));
         return true;
@@ -119,5 +123,22 @@ public class MemberRestController {
         } else {
             return "false";
         }
+    }
+
+    @PostMapping("changeRCN")
+    public boolean changeRCN(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+
+        if(requestMap.get("RCN") == null || member.getRepresentativeCharacterNickname().equals(requestMap.get("RCN"))) return false;
+        if(memberService.updateRCN(requestMap.get("email"), requestMap.get("RCN"))) {
+            Member sessionMember = new Member();
+            sessionMember.setMemberId(requestMap.get("email"));
+            sessionMember.setRepresentativeCharacterNickname(requestMap.get("RCN"));
+
+            session.setAttribute("member", sessionMember);
+            return true;
+        }
+        return false;
     }
 }
