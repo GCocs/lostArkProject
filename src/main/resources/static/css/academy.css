@@ -1,0 +1,43 @@
+/**
+ *  AcademyList.html
+ */
+.title {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 200px;
+}
+
+/**
+ *  AcademyList.html
+ */
+.tag {
+  background-color: #ccc;
+  color: #333;
+  border-radius: 2rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+}
+
+.title-detail {
+  margin-left: 10px;
+  font-size: 20px;
+}
+
+/**
+ *  AcademyWrite.html
+ */
+.tab-content > .tab-pane > div {
+  margin-bottom: 5px;
+}
+
+.tab-content > .tab-pane > div:last-child {
+  margin-bottom: 0;
+}
+
+/**
+ *  AcademyEdit.html
+ */
+.raid-edit {
+  opacity: 0.4;
+}

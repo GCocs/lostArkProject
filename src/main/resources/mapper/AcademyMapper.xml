@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamProject.lostArkProject.academy.dao.AcademyDAO">
+    <insert id="createAcademyPost">
+        INSERT INTO academy_board(writer, title, content, raid, image)
+        VALUES (#{writer},
+                #{title},
+                #{content},
+                #{raid},
+                #{image})
+    </insert>
+
+    <select id="getAcademyList">
+        SELECT *
+        FROM academy_board
+        ORDER BY created_at DESC
+        LIMIT #{size} OFFSET #{offset}
+    </select>
+
+    <select id="getAcademy">
+        SELECT *
+        FROM academy_board
+        WHERE academy_board_number = #{academyBoardNumber}
+    </select>
+
+    <update id="editAcademyPost" parameterType="com.teamProject.lostArkProject.academy.domain.AcademyBoard">
+        UPDATE academy_board
+        SET title=#{title}, content=#{content}
+        WHERE writer = #{writer}
+        AND academy_board_number = #{academyBoardNumber}
+    </update>
+
+    <delete id="deleteAcademyPost" parameterType="int">
+        DELETE FROM academy_board
+        WHERE academy_board_number = #{academyBoardNumber}
+    </delete>
+
+    <select id="getTotalCount" resultType="int">
+        SELECT COUNT(academy_board_number)
+        FROM academy_board
+    </select>
+</mapper>
