@@ -83,11 +83,7 @@ public class TeachingController {
         }
         return list;
     }
-//
-//    @GetMapping("/teaching/applyMentee")
-//    public String applyMentee (){
-//        return "teaching/applyMentee";
-//    }
+
 
 
     @PostMapping("/teaching/applyMentee")
