@@ -55,7 +55,7 @@
               </a>
               <a class="p-1"
                  th:classappend="${response.pagination.currentPage <= 1} ? 'disabled' : ''"
-                 th:href="@{/academy(page=${response.pagination.startPage - 1})}"
+                 th:href="@{/academy(page=${response.pagination.currentPage - 1})}"
                  style="margin-right: 40px;">
                 <i class="fa-solid fa-angle-left"></i>
               </a>
