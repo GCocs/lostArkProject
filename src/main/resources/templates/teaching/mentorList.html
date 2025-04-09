@@ -21,23 +21,26 @@
                                 <th scope="col">캐릭터 레벨</th>
                                 <th scope="col">서버</th>
                                 <th scope="col">주로 하는 컨텐츠</th>
+                                <th scope="col">신청</th> <!-- 신청 버튼 열 추가 -->
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="mentor,iterStat : ${mentors}">
+                            <tr th:each="mentor, iterStat : ${mentors}">
                                 <td th:text="${iterStat.index + 1}"></td>
-                                <td>
-                                    <a th:href="@{/teaching/mentorListDetail/{mentorMemberId}(mentorMemberId=${mentor.mentorMemberId})}"
-                                       th:text="${mentor.characterNickname}"></a>
-                                </td>
+                                <td th:text="${mentor.characterNickname}"></td>
                                 <td th:text="${mentor.itemLevel}"></td>
                                 <td th:text="${mentor.serverName}"></td>
                                 <td th:text="${mentor.mentorContentIds}"></td>
+                                <td>
+                                    <form th:action="@{/teaching/mentorListDetail}" method="post">
+                                        <input type="hidden" name="mentorMemberId" th:value="${mentor.mentorMemberId}" />
+                                        <button type="submit" class="btn btn-outline-primary btn-sm">신청하기</button>
+                                    </form>
+                                </td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
-
                 </div>
             </div>
         </div>

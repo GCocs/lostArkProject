@@ -1,6 +1,7 @@
 package com.teamProject.lostArkProject.teaching.controller;
 
 
+import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.teaching.dto.MenteeApplyDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorListDTO;
@@ -38,7 +39,7 @@ public class TeachingController {
     }
 
 
-    @PostMapping("/teaching/newMentor")
+/*    @PostMapping("/teaching/newMentor")
     public String newMentor(@ModelAttribute MentorDTO mentorDTO, @RequestParam("mentorContentId[]") String[] contentIds) {
         // 배열로 받은 mentorContentId를 하나의 문자열로 변환
         String joinedContentIds = String.join(", ", contentIds);
@@ -47,7 +48,29 @@ public class TeachingController {
         // 서비스 레이어를 통해 데이터베이스에 저장
         teachingService.newMentor(mentorDTO);
         return "redirect:/teaching/mentorList";
+    }*/
+
+    @PostMapping("/teaching/newMentor")
+    public String newMentor(@ModelAttribute MentorDTO mentorDTO,
+                            @RequestParam("mentorContentId[]") String[] contentIds,
+                            HttpSession session) {
+
+        Member memberObj = (Member) session.getAttribute("member");
+        if (memberObj == null) {
+            return "redirect:/member/signin";
+        }
+
+        // ✅ Member 클래스에 정의된 memberId 사용
+        String memberId = memberObj.getMemberId();
+        mentorDTO.setMentorMemberId(memberId);
+
+        String joinedContentIds = String.join(", ", contentIds);
+        mentorDTO.setMentorContentId(joinedContentIds);
+
+        teachingService.newMentor(mentorDTO);
+        return "redirect:/teaching/mentorList";
     }
+
 
     @GetMapping("/teaching/mentorList")
     public String mentorList(HttpSession session, Model model) {
@@ -61,13 +84,22 @@ public class TeachingController {
         return "teaching/mentorList";
     }
 
-    @GetMapping("/teaching/mentorListDetail/{mentorMemberId}")
-    public String mentorListDetail(@PathVariable("mentorMemberId") String mentorMemberId, Model model) {
+//    @GetMapping("/teaching/mentorListDetail/{mentorMemberId}")
+//    public String mentorListDetail(@PathVariable("mentorMemberId") String mentorMemberId, Model model) {
+//        List<MentorListDTO> mentors = teachingService.getMentorDetail(mentorMemberId);
+//        model.addAttribute("mentors", mentors);
+//        //아이디로 상세정보가져오기
+//        return "teaching/mentorListDetail";
+//    }
+
+    @PostMapping("/teaching/mentorListDetail")
+    public String mentorListDetail(@RequestParam("mentorMemberId") String mentorMemberId, Model model) {
         List<MentorListDTO> mentors = teachingService.getMentorDetail(mentorMemberId);
         model.addAttribute("mentors", mentors);
-        //아이디로 상세정보가져오기
         return "teaching/mentorListDetail";
     }
+
+
 
     // 멘티 신청 상태 + ACCEPTED 시 디스코드 ID 포함
     @GetMapping("/teaching/mentee/apply-status-detail/{menteeMemberId}")
