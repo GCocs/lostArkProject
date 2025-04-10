@@ -120,5 +120,13 @@
         AND apply_status = 'REQUESTED'
     </update>
 
+    <!-- 중복확인-->
+    <select id="isDuplicateMenteeApply" parameterType="MenteeApplyDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentor_member_id}
+        AND mentee_member_id = #{mentee_member_id}
+    </select>
+
 
 </mapper>

@@ -18,6 +18,8 @@ public interface TeachingService {
     String getMentorDiscordId(String mentorMemberId);
     List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId);
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTOdto);
+    boolean isDuplicateMenteeApply(String mentorId, String menteeId);
+
 
 
 }

@@ -134,6 +134,14 @@ public class TeachingServiceImpl implements TeachingService {
     public void insertMenteeApply(MenteeApplyDTO menteeApplyDTO) {
         teachingDAO.insertMenteeApply(menteeApplyDTO);
     }
+    @Override
+    public boolean isDuplicateMenteeApply(String mentorId, String menteeId) {
+        MenteeApplyDTO dto = new MenteeApplyDTO();
+        dto.setMentor_member_id(mentorId);
+        dto.setMentee_member_id(menteeId);
+        int count = teachingDAO.isDuplicateMenteeApply(dto);
+        return count > 0;
+    }
 
 
 

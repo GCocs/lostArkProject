@@ -26,4 +26,6 @@ public interface TeachingDAO {
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTO);
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);
     void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
+    int isDuplicateMenteeApply(MenteeApplyDTO dto);
+
 }
