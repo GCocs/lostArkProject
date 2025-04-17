@@ -9,4 +9,5 @@ import java.util.List;
 @Mapper
 public interface NoticeDAO {
     List<Notice> getNoticeList(PaginatedRequestDTO req);
+    int getTotalCount();
 }

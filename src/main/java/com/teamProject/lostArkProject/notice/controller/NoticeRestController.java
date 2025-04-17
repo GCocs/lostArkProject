@@ -2,7 +2,6 @@ package com.teamProject.lostArkProject.notice.controller;
 
 import com.teamProject.lostArkProject.common.dto.PaginatedRequestDTO;
 import com.teamProject.lostArkProject.common.dto.PaginatedResponseDTO;
-import com.teamProject.lostArkProject.common.dto.Pagination;
 import com.teamProject.lostArkProject.notice.domain.Notice;
 import com.teamProject.lostArkProject.notice.service.NoticeService;
 import lombok.RequiredArgsConstructor;
@@ -13,8 +12,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.List;
-
 @RestController
 @RequiredArgsConstructor
 @Slf4j
@@ -24,9 +21,8 @@ public class NoticeRestController {
 
     @GetMapping("/notices")
     public ResponseEntity<PaginatedResponseDTO<Notice>> getNoticeList(@ModelAttribute PaginatedRequestDTO requestDTO) {
-        System.out.println(requestDTO);
-        List<Notice> noticeList = noticeService.getNoticeList(requestDTO);
-        Pagination pagination = new Pagination();
-        return ResponseEntity.ok(new PaginatedResponseDTO<>(noticeList, pagination));
+        PaginatedResponseDTO<Notice> res = noticeService.getNoticeList(requestDTO);
+
+        return ResponseEntity.ok(res);
     }
 }
