@@ -29,4 +29,9 @@ public class NoticeService {
 
         return new PaginatedResponseDTO<>(noticeDTOList, pagination);
     }
+
+    public NoticeDTO getNoticeDetail(int noticeNumber) {
+        Notice notice = noticeDAO.getNoticeDetail(noticeNumber);
+        return new NoticeDTO(notice);
+    }
 }

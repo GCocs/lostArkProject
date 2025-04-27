@@ -22,4 +22,11 @@ public class NoticeRestController {
 
         return ResponseEntity.ok(res);
     }
+
+    @GetMapping("/notices/{noticeNumber}")
+    public ResponseEntity<NoticeDTO> getNoticeDetail(@PathVariable int noticeNumber) {
+        NoticeDTO res = noticeService.getNoticeDetail(noticeNumber);
+
+        return ResponseEntity.ok(res);
+    }
 }

@@ -89,7 +89,7 @@
                         <a id="notice-list" href="#" data-bs-toggle="modal" data-bs-target="#noticeModal">전체</a>
                     </div>
                     <th:block th:each="notice : ${noticeList}">
-                        <div class="align-items-center border-bottom py-3 notice-preview">
+                        <div class="align-items-center border-bottom py-3 notice-preview" th:data-number="${notice.noticeNumber}" data-bs-toggle="modal" data-bs-target="#noticeModal">
                             <div class="d-flex justify-content-between mx-3">
                                 <span th:text="${notice.title}"></span>
                                 <span th:text="${#temporals.format(notice.createdAt, 'YY.MM.dd')}" style="font-size: 14px;"></span>
