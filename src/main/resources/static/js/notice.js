@@ -6,10 +6,11 @@ $(() => {
         fetchNoticeList(1);
     });
 
-    $(document).on('click', '.link-page', (e) => {
+    $(document).on('click', '.link-page', function(e) {
         e.preventDefault();
+        if ($(this).hasClass('disabled')) return;
 
-        const page = $(this).data(page);
+        const page = $(this).data('page');
         fetchNoticeList(page);
     })
 });
@@ -30,9 +31,6 @@ function fetchNoticeList(page) {
 function renderNoticeList(res) {
     const noticeList = res.data;
     const pagination = res.pagination;
-
-    console.log(noticeList);
-    console.log(pagination);
 
     let noticeDom = '<table class="table">';
     noticeDom += `
@@ -57,21 +55,21 @@ function renderNoticeList(res) {
 
     noticeDom += `
         <div class="d-flex justify-content-center">
-            <a class="p-1 link-page" href="#" data-page="1"><i class="fa-solid fa-angles-left"></i></a>
-            <a class="p-1 link-page" href="#" data-page="${pagination.currentPage - 1}" style="margin-right: 40px;"><i class="fa-solid fa-angle-left"></i></a>
+            <a class="p-1 link-page ${pagination.currentPage <= 1 ? 'disabled' : ''}" href="#" data-page="1"><i class="fa-solid fa-angles-left"></i></a>
+            <a class="p-1 link-page ${pagination.currentPage <= 1 ? 'disabled' : ''}" href="#" data-page="${pagination.currentPage - 1}" style="margin-right: 40px;"><i class="fa-solid fa-angle-left"></i></a>
     `;
 
     for (let i = pagination.startPage; i <= pagination.endPage; i++) {
         if (i == pagination.currentPage) {
             noticeDom += `<span class="p-1">${i}</span>`;
         } else {
-            noticeDom += `<a class="p-1 link-page" href="#">${i}</a>`
+            noticeDom += `<a class="p-1 link-page" href="#" data-page=${i}>${i}</a>`
         }
     }
 
     noticeDom += `
-            <a class="p-1 link-page" href="#" data-page="${pagination.currentPage + 1}" style="margin-left: 40px;"><i class="fa-solid fa-angle-right"></i></a>
-            <a class="p-1 link-page" href="#" data-page="${pagination.totalPages}"><i class="fa-solid fa-angles-right"></i></a>
+            <a class="p-1 link-page ${pagination.currentPage >= pagination.totalPages ? 'disabled' : ''}" href="#" data-page="${pagination.currentPage + 1}" style="margin-left: 40px;"><i class="fa-solid fa-angle-right"></i></a>
+            <a class="p-1 link-page ${pagination.currentPage >= pagination.totalPages ? 'disabled' : ''}" href="#" data-page="${pagination.totalPages}"><i class="fa-solid fa-angles-right"></i></a>
         </div>
     `;
 

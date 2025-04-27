@@ -5,7 +5,14 @@
     <meta charset="utf-8">
     <title>기본 홈</title>
     <link rel="stylesheet" href="/css/home.css" />
-
+    <style>
+      .disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+    </style>
+    
     <script th:inline="javascript">
         let loggedInMember = /*[[${loggedInMember}]]*/ {};
     </script>
