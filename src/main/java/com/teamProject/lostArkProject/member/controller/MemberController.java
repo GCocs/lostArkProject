@@ -68,7 +68,7 @@ public class MemberController {
         return "member/myPage";
     }
 
-    // 캐릭터 인증
+    // 캐릭터 인증 페이지
     @GetMapping("/certification")
     public String certification(HttpServletRequest request){
         HttpSession session = request.getSession();

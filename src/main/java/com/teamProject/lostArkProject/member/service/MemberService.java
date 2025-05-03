@@ -7,10 +7,10 @@ import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.member.dao.MemberDAO;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
+import com.teamProject.lostArkProject.member.dto.api.CharacterImageApiDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-import org.springframework.http.HttpStatus;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -127,5 +127,12 @@ public class MemberService {
         insertMemberCharacter(memberCharacterList);
         memberDAO.updateRCN(memberId, RCN);
         return true;
+    }
+
+    public Mono<CharacterImageApiDTO> getCharacterImage(String nickname) {
+        return webClient.get()
+                .uri("/armories/characters/{name}/profiles", nickname)
+                .retrieve()
+                .bodyToMono(CharacterImageApiDTO.class);
     }
 }
