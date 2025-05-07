@@ -15,6 +15,7 @@
 <div layout:fragment="content">
     <!-- 메인 페이지 코드 시작 -->
     <div class="container-fluid pt-4 px-4">
+        <input type="hidden" id="menteeMemberId" th:value="${session.member?.memberId}"/>
         <div class="row">
             <div class="col-sm-12 col-xl-8">
                 <!-- 캘린더 -->

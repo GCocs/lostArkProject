@@ -19,9 +19,9 @@ public interface TeachingDAO {
     public List<Map<String,Object>> getMentorContent();
     public List<Map<String,Object>> getMemberCharacter();
 //    public Map<String,Object> getMentorListDetail(long mentorId);
-    String findDiscordIdByMentorId(@Param("mentorMemberId") String mentorMemberId);
-    // 멘티의 신청 상태 + 멘토 ID 조회
-    List<Map<String, Object>> getApplyStatusByMentee(@Param("menteeMemberId") String menteeMemberId);
+    String findDiscordIdByMentorId(String mentorMemberId);
+    // 멘토의 모든 신청 상태 조회 (REQUESTED, ACCEPTED, REJECTED)
+    List<Map<String, Object>> getApplyStatusByMentee(String mentorMemberId);
     //sse
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTO);
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);

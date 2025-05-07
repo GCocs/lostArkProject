@@ -83,9 +83,14 @@
     </select>
 
     <select id="getApplyStatusByMentee" resultType="map">
-        SELECT apply_status, mentor_member_id
-        FROM MENTEE_APPLY
-        WHERE mentee_member_id = #{menteeMemberId}
+        SELECT 
+            MA.apply_status,
+            MA.mentee_member_id,
+            M.mentor_discord_id
+        FROM MENTEE_APPLY MA
+        LEFT JOIN MENTOR M ON MA.mentor_member_id = M.mentor_member_id
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status IN ('REQUESTED', 'ACCEPTED', 'REJECTED')
     </select>
 
     <!-- 1) 멘티가 멘토에게 신청 INSERT -->
