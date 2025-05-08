@@ -19,7 +19,5 @@ public interface TeachingService {
     List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId);
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTOdto);
     boolean isDuplicateMenteeApply(String mentorId, String menteeId);
-
-
-
+    List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
 }

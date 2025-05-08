@@ -143,6 +143,12 @@ public class TeachingServiceImpl implements TeachingService {
         return count > 0;
     }
 
-
+    @Override
+    public List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId) {
+        System.out.println("Checking requests for mentor: " + mentorMemberId);
+        List<Map<String, Object>> result = teachingDAO.getRequestedAppliesByMentor(mentorMemberId);
+        System.out.println("Found requests: " + result);
+        return result;
+    }
 
 }

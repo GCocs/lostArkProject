@@ -1,69 +1,96 @@
-// 멘토 관련 JavaScript 코드
+// 멘토/멘티 관련 JavaScript 코드
 document.addEventListener('DOMContentLoaded', function() {
-    const menteeMemberId = document.getElementById('menteeMemberId')?.value;
-    if (!menteeMemberId) return;
-
     const messageDropdown = document.getElementById("messageDropdownMenu");
-    if (!messageDropdown) return; // 메시지 드롭다운이 없는 경우 함수 종료
+    if (!messageDropdown) {
+        console.log("Message dropdown not found");
+        return;
+    }
 
-    const shownStatuses = new Set(); // 중복 방지용 캐시
+    const shownRequests = new Set(); // 중복 방지용 캐시
 
     // 기존 메시지 초기화 함수
     function clearMessages() {
-        // "See all messages" 링크를 제외한 모든 항목 제거
-        while (messageDropdown.firstChild) {
-            if (messageDropdown.firstChild.classList.contains('dropdown-item') && 
-                messageDropdown.firstChild.textContent === 'See all messages') {
-                break;
+        try {
+            // "See all messages" 링크를 제외한 모든 항목 제거
+            const seeAllLink = messageDropdown.querySelector('.dropdown-item.text-center');
+            while (messageDropdown.firstChild) {
+                messageDropdown.removeChild(messageDropdown.firstChild);
             }
-            messageDropdown.removeChild(messageDropdown.firstChild);
+            if (seeAllLink) {
+                messageDropdown.appendChild(seeAllLink);
+            }
+        } catch (error) {
+            console.error("Error clearing messages:", error);
         }
     }
 
     function updateMessages(data) {
-        clearMessages(); // 기존 메시지 초기화
-        shownStatuses.clear(); // 상태 캐시 초기화
+        try {
+            clearMessages(); // 기존 메시지 초기화
+            shownRequests.clear(); // 상태 캐시 초기화
 
-        data.forEach(status => {
-            const key = status.mentor_member_id + '-' + status.apply_status;
-            if (shownStatuses.has(key)) return;
-            shownStatuses.add(key);
-
-            let messageText = "";
-            let linkUrl = "/teaching/message"; // 알림 클릭 시 이동할 URL
-
-            if (status.apply_status === 'ACCEPTED') {
-                messageText = `멘토가 수락했습니다! 디스코드: ${status.discord_id}`;
-            } else if (status.apply_status === 'REJECTED') {
-                messageText = `멘토가 신청을 거절했습니다.`;
-            } else if (status.apply_status === 'REQUESTED') {
-                messageText = `멘토에게 신청했습니다.`;
-            } else {
-                return; // 처리할 상태가 아니면 무시
+            if (!data || data.length === 0) {
+                console.log("No requests found");
+                return;
             }
 
-            // 새 메시지 항목 생성
-            const newMessage = document.createElement("a");
-            newMessage.href = linkUrl;
-            newMessage.className = "dropdown-item";
-            newMessage.textContent = messageText;
+            console.log("Processing requests:", data);
 
-            const divider = document.createElement("hr");
-            divider.className = "dropdown-divider";
+            data.forEach(request => {
+                if (!request || !request.mentee_member_id) {
+                    console.log("Invalid request data:", request);
+                    return;
+                }
 
-            // "See all messages" 항목 바로 위에 추가
-            const seeAll = messageDropdown.lastElementChild;
-            if (seeAll) {
-                messageDropdown.insertBefore(divider, seeAll);
-                messageDropdown.insertBefore(newMessage, divider);
-            }
-        });
+                const key = request.mentee_member_id;
+                if (shownRequests.has(key)) {
+                    console.log("Skipping duplicate request:", key);
+                    return;
+                }
+                shownRequests.add(key);
+
+                // 새 메시지 항목 생성
+                const newMessage = document.createElement("a");
+                newMessage.href = "/teaching/message";
+                newMessage.className = "dropdown-item";
+                newMessage.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="flex-grow-1">
+                            <span class="fw-bold">${request.mentee_nickname || '알 수 없음'}</span>
+                            <div class="small text-gray-500">
+                                서버: ${request.mentee_server_name || '알 수 없음'}<br>
+                                아이템레벨: ${request.mentee_item_level || '알 수 없음'}
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                const divider = document.createElement("hr");
+                divider.className = "dropdown-divider";
+
+                // "See all messages" 항목 바로 위에 추가
+                const seeAll = messageDropdown.lastElementChild;
+                if (seeAll) {
+                    messageDropdown.insertBefore(divider, seeAll);
+                    messageDropdown.insertBefore(newMessage, divider);
+                }
+            });
+        } catch (error) {
+            console.error("Error updating messages:", error);
+        }
     }
 
-    function pollApplyStatus() {
-        fetch('/teaching/mentee/apply-status-detail/' + menteeMemberId)
-            .then(res => res.json())
+    function checkMentorRequests() {
+        console.log("Checking mentor requests...");
+        fetch('/teaching/mentor/requested-applies')
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error(`HTTP error! status: ${response.status}`);
+                }
+                return response.json();
+            })
             .then(data => {
+                console.log("Received data:", data);
                 updateMessages(data);
             })
             .catch(error => {
@@ -72,8 +99,8 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // 초기 로딩 시 메시지 표시
-    pollApplyStatus();
+    checkMentorRequests();
 
-    // 10초마다 상태 확인
-    setInterval(pollApplyStatus, 10000);
+    // 30초마다 상태 확인
+    setInterval(checkMentorRequests, 30000);
 }); 

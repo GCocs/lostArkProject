@@ -12,21 +12,19 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.mvc.method.annotation.SseEmitter;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.io.IOException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-
 @Controller
+@RequestMapping("/teaching")
 public class TeachingController {
 
     @Autowired
     private TeachingService teachingService;
 
-    @GetMapping("/teaching/newMentor")
+    @GetMapping("/newMentor")
     public String newMentor(HttpSession session) {
         // 세션에서 "member" 객체 확인
         Object member = session.getAttribute("member");
@@ -41,7 +39,7 @@ public class TeachingController {
 
 
 
-    @PostMapping("/teaching/newMentor")
+    @PostMapping("/newMentor")
     public String newMentor(@ModelAttribute MentorDTO mentorDTO,
                             @RequestParam("mentorContentId[]") String[] contentIds,
                             HttpSession session) {
@@ -63,7 +61,7 @@ public class TeachingController {
     }
 
 
-    @GetMapping("/teaching/mentorList")
+    @GetMapping("/mentorList")
     public String mentorList(HttpSession session, Model model) {
         Object memberObj = session.getAttribute("member");
         if (memberObj == null) {
@@ -95,7 +93,7 @@ public class TeachingController {
 //        return "teaching/mentorListDetail";
 //    }
 
-    @PostMapping("/teaching/mentorListDetail")
+    @PostMapping("/mentorListDetail")
     public String mentorListDetail(@RequestParam("mentorMemberId") String mentorMemberId, Model model) {
         List<MentorListDTO> mentors = teachingService.getMentorDetail(mentorMemberId);
         model.addAttribute("mentors", mentors);
@@ -105,7 +103,7 @@ public class TeachingController {
 
 
     // 멘티 신청 상태 + ACCEPTED 시 디스코드 ID 포함
-    @GetMapping("/teaching/mentee/apply-status-detail/{menteeMemberId}")
+    @GetMapping("/mentee/apply-status-detail/{menteeMemberId}")
     @ResponseBody
     public List<Map<String, Object>> getApplyStatusWithDiscord(@PathVariable String menteeMemberId) {
         List<Map<String, Object>> list = teachingService.getApplyStatusByMentee(menteeMemberId);
@@ -121,7 +119,7 @@ public class TeachingController {
 
 
 
-    @PostMapping("/teaching/applyMentee")
+    @PostMapping("/applyMentee")
     public String applyMentee(@RequestParam("mentorMemberId") String mentorId,
                               @RequestParam("menteeMemberId") String menteeId,
                               RedirectAttributes redirectAttributes) {
@@ -147,6 +145,13 @@ public class TeachingController {
         return member != null ? member.getMemberId() : null;
     }
 
-
-
+    @GetMapping("/mentor/requested-applies")
+    @ResponseBody
+    public List<Map<String, Object>> getRequestedApplies(HttpSession session) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return Collections.emptyList();
+        }
+        return teachingService.getRequestedAppliesByMentor(member.getMemberId());
+    }
 }

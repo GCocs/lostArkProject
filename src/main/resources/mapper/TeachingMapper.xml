@@ -133,5 +133,19 @@
         AND mentee_member_id = #{mentee_member_id}
     </select>
 
+    <select id="getRequestedAppliesByMentor" parameterType="string" resultType="map">
+        SELECT 
+            MA.mentee_member_id,
+            MA.apply_status,
+            MC.CHARACTER_NICKNAME as mentee_nickname,
+            MC.ITEM_LEVEL as mentee_item_level,
+            MC.SERVER_NAME as mentee_server_name,
+            MA.mentor_member_id
+        FROM MENTEE_APPLY MA
+        JOIN MEMBER_CHARACTER MC ON MA.mentee_member_id = MC.MEMBER_ID
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status = 'REQUESTED'
+        ORDER BY MA.mentee_member_id DESC
+    </select>
 
 </mapper>

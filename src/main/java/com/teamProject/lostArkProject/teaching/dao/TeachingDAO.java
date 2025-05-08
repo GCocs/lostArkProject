@@ -27,5 +27,5 @@ public interface TeachingDAO {
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);
     void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
     int isDuplicateMenteeApply(MenteeApplyDTO dto);
-
+    List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
 }
