@@ -1,6 +1,8 @@
 // 멘토/멘티 관련 JavaScript 코드
 document.addEventListener('DOMContentLoaded', function() {
     const messageDropdown = document.getElementById("messageDropdownMenu");
+    const messageBadge = document.getElementById('messageBadge');
+
     if (!messageDropdown) {
         console.log("Message dropdown not found");
         return;
@@ -28,6 +30,20 @@ document.addEventListener('DOMContentLoaded', function() {
         try {
             clearMessages(); // 기존 메시지 초기화
             shownRequests.clear(); // 상태 캐시 초기화
+
+            // 알림 배지 업데이트
+            if (messageBadge) {
+                if (data && data.length > 0) {
+                    messageBadge.textContent = data.length;
+                    messageBadge.style.display = 'inline-block';
+                    console.log("Updating badge with count:", data.length);
+                } else {
+                    messageBadge.style.display = 'none';
+                    console.log("Hiding badge - no messages");
+                }
+            } else {
+                console.log("Message badge element not found");
+            }
 
             if (!data || data.length === 0) {
                 console.log("No requests found");

@@ -120,11 +120,7 @@ public class TeachingServiceImpl implements TeachingService {
     public String getMentorDiscordId(String mentorMemberId) {
         return teachingDAO.findDiscordIdByMentorId(mentorMemberId);
     }
-    @Override
-    public void acceptMentee(String menteeMemberId, String mentorId){
 
-
-    }
 
     @Override
     public List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId) {

@@ -43,9 +43,9 @@
         MENTEE_MEMBER_ID,
         MENTEE_CONTENT_ID)
         VALUES(
-        #{mentee_want_to_say},
-        #{mentee_member_id},
-        #{mentee_content_id}
+        #{menteeWantToSay},
+        #{menteeMemberId},
+        #{menteeContentId}
         )
     </insert>
 
@@ -101,36 +101,20 @@
         apply_status
         )
         VALUES (
-        #{mentor_member_id},
-        #{mentee_member_id},
+        #{mentorMemberId},
+        #{menteeMemberId},
         'REQUESTED'
         )
     </insert>
 
-    <!-- 2) 멘토가 멘티 신청을 수락(ACCEPTED)으로 UPDATE -->
-    <update id="acceptMenteeApply" parameterType="MenteeApplyDTO">
-        UPDATE MENTEE_APPLY
-        SET apply_status = 'ACCEPTED'
-        WHERE mentor_member_id = #{mentor_member_id}
-        AND mentee_member_id = #{mentee_member_id}
-        AND apply_status = 'REQUESTED'
-    </update>
 
-    <!-- 3) 멘토가 멘티 신청을 거절(REJECTED)으로 UPDATE -->
-    <update id="rejectMenteeApply" parameterType="MenteeApplyDTO">
-        UPDATE MENTEE_APPLY
-        SET apply_status = 'REJECTED'
-        WHERE mentor_member_id = #{mentor_member_id}
-        AND mentee_member_id = #{mentee_member_id}
-        AND apply_status = 'REQUESTED'
-    </update>
 
     <!-- 중복확인-->
     <select id="isDuplicateMenteeApply" parameterType="MenteeApplyDTO" resultType="int">
         SELECT COUNT(*)
         FROM MENTEE_APPLY
-        WHERE mentor_member_id = #{mentor_member_id}
-        AND mentee_member_id = #{mentee_member_id}
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
     </select>
 
     <select id="getRequestedAppliesByMentor" parameterType="string" resultType="map">

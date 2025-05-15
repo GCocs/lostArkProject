@@ -91,9 +91,10 @@
                     <!-- 메시지 드롭다운 -->
                     <div th:if="${session.member}" class="navbar-nav">
                         <div class="nav-item dropdown">
-                            <a th:href="@{/teaching/message}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <a th:href="@{/teaching/message/newMessageDetail}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <i class="fa fa-envelope me-lg-2"></i>
                                 <span class="d-none d-lg-inline-flex">Messages</span>
+                                <span class="badge bg-danger rounded-pill" id="messageBadge" style="display: none; position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">0</span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-bottom m-0"
