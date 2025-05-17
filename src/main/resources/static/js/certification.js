@@ -1,3 +1,7 @@
+import { valid } from './validation.js';
+
+let imageApiTimer = null;
+
 $(() => {
     // 이벤트 바인딩
     $('#certification-button').click(fetchCharacterImage);
@@ -22,16 +26,28 @@ $(() => {
 
 // 캐릭터 이미지 불러오기
 function fetchCharacterImage() {
-    $('.image-container').empty();
-
-    const nickname = $('#nickname').val();
-    if(!nickname) {
-        renderCharacterImage(null);
+    // 1. 과도한 api 요청 방지를 위한 스로틀링
+    if(imageApiTimer) {
+        alert('잠시 후 다시 시도해주세요.');
         return;
     }
-
+    
+    imageApiTimer = setTimeout(() => {
+        console.log('인증요청 가능');
+        imageApiTimer = null;
+    }, 5000);
+    
+    // 2. 캐릭터 닉네임 검증
+    const $nickname = $('#nickname');
+    if(!valid('nickname', $nickname.val())) {
+        renderCharacterImage(null);
+        $nickname.focus();
+        return;
+    }
+    
+    // 3. api 요청
     $.ajax({
-        url: `/member/${nickname}/profiles`,
+        url: `/member/${$nickname.val()}/profiles`,
         method: 'GET',
         success: function(data) {
             renderCharacterImage(data.CharacterImage);
@@ -43,6 +59,8 @@ function fetchCharacterImage() {
 }
 
 function renderCharacterImage(image) {
+    $('.image-container').empty();
+
     if(image) {
         const imgDom = `<img class="w-100" src="${image}" style="max-width:500px;" />`;
         $('.image-container').html(imgDom);

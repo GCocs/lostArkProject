@@ -139,7 +139,7 @@ public class MemberRestController {
         return false;
     }
 
-    // 캐릭터 검색
+    // 캐릭터 이미지 api 요청
     @GetMapping("/{nickname}/profiles")
     public Mono<CharacterImageApiDTO> getCharacterImage(@PathVariable("nickname") String nickname) {
         return memberService.getCharacterImage(nickname);
