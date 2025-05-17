@@ -3,7 +3,7 @@ package com.teamProject.lostArkProject.alarm.controller;
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
 import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
-import com.teamProject.lostArkProject.member.config.SessionUtils;
+import com.teamProject.lostArkProject.common.utils.SessionUtils;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
