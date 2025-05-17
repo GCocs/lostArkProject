@@ -4,7 +4,7 @@ import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
-import com.teamProject.lostArkProject.member.dto.api.CharacterImageApiDTO;
+import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
@@ -140,8 +140,8 @@ public class MemberRestController {
     }
 
     // 캐릭터 이미지 api 요청
-    @GetMapping("/{nickname}/profiles")
-    public Mono<CharacterImageApiDTO> getCharacterImage(@PathVariable("nickname") String nickname) {
+    @GetMapping("/{nickname}/certification")
+    public Mono<CharacterCertificationDTO> getCharacterImage(@PathVariable("nickname") String nickname) {
         return memberService.getCharacterImage(nickname);
     }
 }

@@ -4,15 +4,19 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
+import com.teamProject.lostArkProject.common.utils.CommonUtils;
 import com.teamProject.lostArkProject.member.dao.MemberDAO;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
+import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.dto.api.CharacterImageApiDTO;
+import com.teamProject.lostArkProject.member.dto.api.EquipmentApiDTO;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -129,10 +133,25 @@ public class MemberService {
         return true;
     }
 
-    public Mono<CharacterImageApiDTO> getCharacterImage(String nickname) {
-        return webClient.get()
+    public Mono<CharacterCertificationDTO> getCharacterImage(String nickname) {
+        Mono<CharacterImageApiDTO> characterImageMono = webClient.get()
                 .uri("/armories/characters/{name}/profiles", nickname)
                 .retrieve()
                 .bodyToMono(CharacterImageApiDTO.class);
+        Mono<List<EquipmentApiDTO>> equipmentMono = webClient.get()
+                .uri("/armories/characters/{name}/equipment", nickname)
+                .retrieve()
+                .bodyToFlux(EquipmentApiDTO.class)
+                .collectList();
+
+        return Mono.zip(characterImageMono, equipmentMono)
+                .map(tuple -> {
+                    CharacterImageApiDTO characterImageApiDTO = tuple.getT1();
+                    List<EquipmentApiDTO> equipmentApiDTO = tuple.getT2();
+
+                    Map<String, EquipmentApiDTO> equipmentMap = CommonUtils.listToNumberedKeyMap(equipmentApiDTO, e -> e.getType());
+
+                    return new CharacterCertificationDTO(characterImageApiDTO, equipmentMap);
+                });
     }
 }
