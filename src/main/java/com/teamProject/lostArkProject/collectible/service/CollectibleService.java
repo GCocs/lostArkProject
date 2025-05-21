@@ -6,10 +6,12 @@ import com.teamProject.lostArkProject.collectible.dao.CollectibleDAO;
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.domain.CollectiblePoint;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
 import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -84,5 +86,25 @@ public class CollectibleService {
     public void updateCollectible(String memberId, String currentRCN) {
         collectibleDAO.deleteCollectible(memberId);
         saveCollectiblePoint(currentRCN, memberId);
+    }
+    public List<RecommendCollectibleFullDTO> getRecommendFullCollectible(String memberId) {
+        return collectibleDAO.getRecommendFullCollectible(memberId);
+    }
+
+    public boolean updateCleared(int recommendCollectibleID, boolean cleared, String memberId) {
+        try {
+            System.out.println("2");
+            if (cleared) {
+                collectibleDAO.insertClearCollectible(memberId, recommendCollectibleID);
+            } else {
+                collectibleDAO.deleteClearCollectible(memberId, recommendCollectibleID);
+            }
+            return true;
+        } catch (DataAccessException ex) {
+            // 로그 남기고 실패 리턴
+            log.error("내실 해결 상태 업데이트 실패: memberId={}, recommendCollectibleID={}, cleared={}",
+                    memberId, recommendCollectibleID, cleared, ex);
+            return false;
+        }
     }
 }

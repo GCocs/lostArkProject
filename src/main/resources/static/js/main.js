@@ -3,8 +3,41 @@
     /* -------------------------------------------------------------
                         * 프로젝트 함수
     --------------------------------------------------------------*/
-    let isEmailAvailable = false;
-    let isAuthentication = false;
+
+    window.toggleCleared = function(checkbox) {
+
+            const id      = $(checkbox).data('id');       // data-id 속성 읽기
+            const cleared = checkbox.checked;
+
+            $.ajax({
+              url: '/collectible/clear-status',
+              method: 'POST',
+              contentType: 'application/json; charset=UTF-8',
+              data: JSON.stringify({
+                recommendCollectibleID: id,
+                cleared: cleared
+              }),
+              success: function() {
+                // 성공 시 따로 할 일 없으면 그냥 리턴
+              },
+              error: function() {
+                // 실패하면 원래 상태로 되돌리고 알림
+                checkbox.checked = !cleared;
+                alert('상태 업데이트에 실패했습니다.');
+              }
+            });
+          }
+
+    $(function(){
+        // 페이지 로딩 완료 후에 실행
+        var modalEl = document.getElementById('collectibleModal');
+        if (modalEl) {
+          modalEl.addEventListener('hidden.bs.modal', function () {
+            // 모달이 완전히 닫히면 리다이렉트
+            window.location.href = '/collectible';
+          });
+        }
+      });
 
     // 내실 API 요청
     $.ajax({
@@ -22,11 +55,11 @@
         // collectibleItemList에서 Labels와 데이터 추출 (Type과 비율 계산)
         window.collectibleLabels = collectibleItemList.map(item => item.collectibleTypeName);
         window.collectibleData = collectibleItemList.map(item => (item.totalCollectedTypePoint / item.totalCollectibleTypePoint) * 100);
-    
+
         // 콘솔에 전역 변수 출력
         console.log("Labels:", window.collectibleLabels);
         console.log("Data:", window.collectibleData);
-    
+
         var ctx1 = $("#collectable-percent").get(0).getContext("2d");
         var myChart1 = new Chart(ctx1, {
             type: "bar",
@@ -48,9 +81,8 @@
                     }
                 }
             }
-        }); 
+        });
     }
-
     /* -------------------------------------------------------------
                     * Themewagon Template functions
     --------------------------------------------------------------*/

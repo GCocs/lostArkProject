@@ -3,6 +3,7 @@ package com.teamProject.lostArkProject.main.controller;
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
 import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
@@ -57,6 +58,8 @@ public class MainController {
         model.addAttribute("collectibleItemList", collectibleItemList);
         List<RecommendCollectible> recommendCollectibleList = collectibleService.getRecommendCollectible(member.getMemberId());
         model.addAttribute("recommendCollectibleList", recommendCollectibleList);
+        List<RecommendCollectibleFullDTO> recommendCollectibleFullList = collectibleService.getRecommendFullCollectible(member.getMemberId());
+        model.addAttribute("recommendCollectibleFullList", recommendCollectibleFullList);
         return "collectible/collectible"; // 결과 뷰로 이동
     }
 

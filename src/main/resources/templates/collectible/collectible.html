@@ -63,7 +63,57 @@
                     <div class="bg-secondary text-center rounded p-4" style="width: 100%; height: auto;">
                         <div class="d-flex align-items-center justify-content-between mb-4">
                             <h6 class="mb-0">추천 내실</h6>
-                            <a href="">Show All</a>
+                            <a href="#" role="button" class="text-primary" data-bs-toggle="modal"
+                               data-bs-target="#collectibleModal">Show All</a>
+                            <div class="modal fade" id="collectibleModal" tabindex="-1"
+                                 aria-labelledby="exampleModalLabel" aria-hidden="true">
+                                <div class="modal-dialog">
+                                    <div class="modal-content">
+                                        <div class="modal-header">
+                                            <h5 class="modal-title" id="exampleModalLabel">추천 수집형포인트</h5>
+                                            <button type="button" class="btn-close" data-bs-dismiss="modal"
+                                                    aria-label="닫기"></button>
+                                        </div>
+                                        <div class="modal-body">
+                                            <div class="table-responsive">
+                                                <table class="table text-start align-middle table-bordered table-hover mb-0">
+                                                    <thead>
+                                                    <tr class="text-white">
+                                                        <th scope="col">추천 순위</th>
+                                                        <th scope="col">수집형포인트 이름</th>
+                                                        <th scope="col">사이트</th>
+                                                        <th scope="col">완료</th>
+                                                    </tr>
+                                                    </thead>
+                                                    <tbody th:each="recommendItem : ${recommendCollectibleFullList}">
+                                                    <tr>
+                                                        <td th:text="${recommendItem.recommendCollectibleID}"></td>
+                                                        <td th:text="${recommendItem.recommendCollectibleName}"></td>
+                                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}">URL</a></td>
+                                                        <td>
+                                                            <input
+                                                                    type="checkbox"
+                                                                    th:attr="data-id=${recommendItem.recommendCollectibleID}"
+                                                                    th:checked="${recommendItem.isCleared}"
+                                                                    onchange="toggleCleared(this)"
+                                                            />
+<!--                                                            <form th:action="@{/collectible/clear}" method="post">-->
+<!--                                                                <button class="btn btn-sm btn-primary" type="submit" name="collectibleId"-->
+<!--                                                                        th:value="${recommendItem.recommendCollectibleID}">완료</button>-->
+<!--                                                            </form>-->
+                                                        </td>
+                                                    </tr>
+                                                    </tbody>
+                                                </table>
+                                            </div>
+                                        </div>
+                                        <div class="modal-footer">
+                                            <button type="button" class="btn btn-primary"
+                                                    data-bs-dismiss="modal">닫기</button>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
                         </div>
                         <div>
                             <div class="table-responsive">

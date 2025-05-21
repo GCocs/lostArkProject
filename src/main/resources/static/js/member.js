@@ -1,3 +1,6 @@
+let isEmailAvailable = false;
+let isAuthentication = false;
+
 //회원가입
 window.checkSignup = function() {
     //유효성 검사
