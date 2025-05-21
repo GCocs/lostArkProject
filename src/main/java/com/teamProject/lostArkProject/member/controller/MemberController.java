@@ -7,9 +7,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.*;
-
-import java.util.Map;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
 @RequestMapping("/member")
@@ -67,5 +66,16 @@ public class MemberController {
             return "index";
         }
         return "member/myPage";
+    }
+
+    // 캐릭터 인증 페이지
+    @GetMapping("/certification")
+    public String certification(HttpServletRequest request){
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+        if(member == null) {
+            return "index";
+        }
+        return "member/certification";
     }
 }

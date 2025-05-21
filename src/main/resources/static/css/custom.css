@@ -119,3 +119,14 @@ a:hover {
   transform: translateY(-41%);
   margin-left: -22px;
 }
+
+/************************************ 
+*  Tag Style
+*************************************/
+.tag {
+  background-color: #ccc;
+  color: #333;
+  border-radius: 2rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+}
