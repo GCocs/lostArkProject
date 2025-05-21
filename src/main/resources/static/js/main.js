@@ -340,6 +340,7 @@
         });
     };
 
+    //멤버 수정
     window.changeProfile = function() {
         var passwdTest = /^(?=.*[a-zA-Z])(?=.*[0-9])/;
         const memberId = $('#changeMemberId').val();
@@ -371,7 +372,6 @@
         } else if (PW || PWCheck) {
             alert("확인된 비밀번호가 일치하지 않습니다.");
         }
-
         const changeRCN = $.ajax({
             url: '/member/changeRCN',
             type: 'POST',

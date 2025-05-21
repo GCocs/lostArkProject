@@ -56,8 +56,14 @@
         LIMIT 4;
     </select>
 
-    <!--내실 완료-->
+    <!--추천 내실 완료 체크-->
     <insert id="insertClearCollectible">
         INSERT INTO CLEAR_COLLECTIBLE (MEMBER_ID, RECOMMEND_COLLECTIBLE_ID) VALUES (#{memberId}, #{clearCollectibleId});
     </insert>
+
+    <!--내실 삭제-->
+    <delete id="deleteCollectible" parameterType="String">
+        DELETE FROM COLLECTIBLE_POINT
+        WHERE MEMBER_ID = #{memberId};
+    </delete>
 </mapper>

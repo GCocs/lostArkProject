@@ -80,4 +80,9 @@ public class CollectibleService {
     public void clearCollectible(String memberId, int clearCollectibleId) {
         collectibleDAO.insertClearCollectible(memberId, clearCollectibleId);
     }
+
+    public void updateCollectible(String memberId, String currentRCN) {
+        collectibleDAO.deleteCollectible(memberId);
+        saveCollectiblePoint(currentRCN, memberId);
+    }
 }
