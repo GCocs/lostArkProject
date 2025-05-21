@@ -91,9 +91,10 @@
                     <!-- 메시지 드롭다운 -->
                     <div th:if="${session.member}" class="navbar-nav">
                         <div class="nav-item dropdown">
-                            <a th:href="@{/teaching/message}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
+                            <a th:href="@{/teaching/message/newMessageDetail}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                                 <i class="fa fa-envelope me-lg-2"></i>
                                 <span class="d-none d-lg-inline-flex">Messages</span>
+                                <span class="badge bg-danger rounded-pill" id="messageBadge" style="display: none; position: absolute; top: 0; right: 0; transform: translate(50%, -50%);">0</span>
                             </a>
 
                             <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-bottom m-0"
@@ -105,51 +106,69 @@
                     </div>
 
                     <script th:inline="javascript">
-                        const menteeMemberId = /*[[${menteeMemberId}]]*/ 'fallback';
-                        // 서버에서 모델에 menteeMemberId 넘긴다고 가정
-
+                        const memberId = /*[[${session.member?.memberId}]]*/ 'fallback';
+                        console.log("Current memberId:", memberId);
                         const messageDropdown = document.getElementById("messageDropdownMenu");
-                        const shownStatuses = new Set(); // 중복 방지용 캐시
+                        const shownRequests = new Set(); // 중복 방지용 캐시
 
-                        function pollApplyStatus() {
-                          fetch('/teaching/mentee/apply-status-detail/' + menteeMemberId)
-                            .then(res => res.json())
-                            .then(data => {
-                              data.forEach(status => {
-                                const key = status.mentor_member_id + '-' + status.apply_status;
-                                if (shownStatuses.has(key)) return;
-                                shownStatuses.add(key);
+                        function checkMentorRequests() {
+                            console.log("Checking mentor requests...");
+                            fetch('/teaching/mentor/requested-applies')
+                                .then(response => {
+                                    console.log("Response status:", response.status);
+                                    return response.json();
+                                })
+                                .then(data => {
+                                    console.log("Received data:", data);
+                                    // 기존 메시지 제거 (See all messages 제외)
+                                    while (messageDropdown.firstChild) {
+                                        messageDropdown.removeChild(messageDropdown.firstChild);
+                                    }
 
-                                let messageText = "";
-                                let linkUrl = "/teaching/message"; // 알림 클릭 시 이동할 URL
+                                    if (data && data.length > 0) {
+                                        console.log("Processing", data.length, "requests");
+                                        data.forEach(request => {
+                                            const key = request.mentee_member_id;
+                                            if (shownRequests.has(key)) {
+                                                console.log("Skipping duplicate request for:", key);
+                                                return;
+                                            }
+                                            shownRequests.add(key);
+                                            console.log("Adding new request for:", key);
 
-                                if (status.apply_status === 'ACCEPTED') {
-                                  messageText = `멘토가 수락했습니다! 디스코드: ${status.discord_id}`;
-                                } else if (status.apply_status === 'REJECTED') {
-                                  messageText = `멘토가 신청을 거절했습니다.`;
-                                } else {
-                                  return; // 처리할 상태가 아니면 무시
-                                }
-
-                                // 새 메시지 항목 생성  
+                                // 새 메시지 항목 생성
                                 const newMessage = document.createElement("a");
                                 newMessage.href = linkUrl;
                                 newMessage.className = "dropdown-item";
                                 newMessage.textContent = messageText;
 
-                                const divider = document.createElement("hr");
-                                divider.className = "dropdown-divider";
+                                            const divider = document.createElement("hr");
+                                            divider.className = "dropdown-divider";
 
-                                // "See all messages" 항목 바로 위에 추가
-                                const seeAll = messageDropdown.lastElementChild;
-                                messageDropdown.insertBefore(divider, seeAll);
-                                messageDropdown.insertBefore(newMessage, divider);
-                              });
-                            });
+                                            messageDropdown.appendChild(newMessage);
+                                            messageDropdown.appendChild(divider);
+                                        });
+                                    } else {
+                                        console.log("No requests found");
+                                    }
+
+                                    // See all messages 링크 추가
+                                    const seeAll = document.createElement("a");
+                                    seeAll.href = "/teaching/message/list";
+                                    seeAll.className = "dropdown-item text-center";
+                                    seeAll.textContent = "See all messages";
+                                    messageDropdown.appendChild(seeAll);
+                                })
+                                .catch(error => {
+                                    console.error('Error fetching requests:', error);
+                                });
                         }
 
-                        // 10초마다 상태 확인
-                        setInterval(pollApplyStatus, 10000);
+                        // 페이지 로드 시 체크
+                        document.addEventListener('DOMContentLoaded', checkMentorRequests);
+
+                        // 30초마다 체크
+                        setInterval(checkMentorRequests, 30000);
                     </script>
 
                     <div class="nav-item dropdown">

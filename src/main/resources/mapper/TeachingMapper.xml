@@ -43,9 +43,9 @@
         MENTEE_MEMBER_ID,
         MENTEE_CONTENT_ID)
         VALUES(
-        #{mentee_want_to_say},
-        #{mentee_member_id},
-        #{mentee_content_id}
+        #{menteeWantToSay},
+        #{menteeMemberId},
+        #{menteeContentId}
         )
     </insert>
 
@@ -83,9 +83,14 @@
     </select>
 
     <select id="getApplyStatusByMentee" resultType="map">
-        SELECT apply_status, mentor_member_id
-        FROM MENTEE_APPLY
-        WHERE mentee_member_id = #{menteeMemberId}
+        SELECT 
+            MA.apply_status,
+            MA.mentee_member_id,
+            M.mentor_discord_id
+        FROM MENTEE_APPLY MA
+        LEFT JOIN MENTOR M ON MA.mentor_member_id = M.mentor_member_id
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status IN ('REQUESTED', 'ACCEPTED', 'REJECTED')
     </select>
 
     <!-- 1) 멘티가 멘토에게 신청 INSERT -->
@@ -96,29 +101,35 @@
         apply_status
         )
         VALUES (
-        #{mentor_member_id},
-        #{mentee_member_id},
+        #{mentorMemberId},
+        #{menteeMemberId},
         'REQUESTED'
         )
     </insert>
 
-    <!-- 2) 멘토가 멘티 신청을 수락(ACCEPTED)으로 UPDATE -->
-    <update id="acceptMenteeApply" parameterType="MenteeApplyDTO">
-        UPDATE MENTEE_APPLY
-        SET apply_status = 'ACCEPTED'
-        WHERE mentor_member_id = #{mentor_member_id}
-        AND mentee_member_id = #{mentee_member_id}
-        AND apply_status = 'REQUESTED'
-    </update>
 
-    <!-- 3) 멘토가 멘티 신청을 거절(REJECTED)으로 UPDATE -->
-    <update id="rejectMenteeApply" parameterType="MenteeApplyDTO">
-        UPDATE MENTEE_APPLY
-        SET apply_status = 'REJECTED'
-        WHERE mentor_member_id = #{mentor_member_id}
-        AND mentee_member_id = #{mentee_member_id}
-        AND apply_status = 'REQUESTED'
-    </update>
 
+    <!-- 중복확인-->
+    <select id="isDuplicateMenteeApply" parameterType="MenteeApplyDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+    </select>
+
+    <select id="getRequestedAppliesByMentor" parameterType="string" resultType="map">
+        SELECT 
+            MA.mentee_member_id,
+            MA.apply_status,
+            MC.CHARACTER_NICKNAME as mentee_nickname,
+            MC.ITEM_LEVEL as mentee_item_level,
+            MC.SERVER_NAME as mentee_server_name,
+            MA.mentor_member_id
+        FROM MENTEE_APPLY MA
+        JOIN MEMBER_CHARACTER MC ON MA.mentee_member_id = MC.MEMBER_ID
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status = 'REQUESTED'
+        ORDER BY MA.mentee_member_id DESC
+    </select>
 
 </mapper>

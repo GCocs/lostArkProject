@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE
+        mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamProject.lostArkProject.teaching.dao.MessageDAO">
+    <!-- 2) 멘토가 멘티 신청을 수락(ACCEPTED)으로 UPDATE -->
+    <update id="acceptMenteeApply" parameterType="MenteeApplyDTO">
+        UPDATE MENTEE_APPLY
+        SET apply_status = 'ACCEPTED'
+        WHERE mentor_member_id = #{mentorMemberId}
+          AND mentee_member_id = #{menteeMemberId}
+          AND apply_status = 'REQUESTED'
+    </update>
+
+    <!-- 3) 멘토가 멘티 신청을 거절(REJECTED)으로 UPDATE -->
+    <update id="rejectMenteeApply" parameterType="MenteeApplyDTO">
+        UPDATE MENTEE_APPLY
+        SET apply_status = 'REJECTED'
+        WHERE mentor_member_id = #{mentorMemberId}
+          AND mentee_member_id = #{menteeMemberId}
+          AND apply_status = 'REQUESTED'
+    </update>
+
+    <select id="getMenteeApplyDetail" parameterType="String" resultType="MenteeApplyDTO">
+        SELECT 
+            mentee_member_id as menteeMemberId,
+            apply_status as applyStatus,
+            created_at as createdAt
+        FROM MENTEE_APPLY
+        WHERE mentee_member_id = #{menteeMemberId}
+    </select>
+
+</mapper>
