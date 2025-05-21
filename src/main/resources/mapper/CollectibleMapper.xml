@@ -46,7 +46,7 @@
         WHERE cp.nickname = #{nickname}
     </select>
 
-    <!--추천 내실-->
+    <!--추천 내실 4개-->
     <select id="getRecommendCollectible" parameterType="recommend_collectible">
         SELECT * FROM RECOMMEND_COLLECTIBLE
         WHERE RECOMMEND_COLLECTIBLE_ID NOT IN (
@@ -56,8 +56,27 @@
         LIMIT 4;
     </select>
 
-    <!--내실 완료-->
+    <!--추천 내실 전체-->
+    <select id="getRecommendFullCollectible" parameterType="recommend_full_collectible">
+        SELECT r.recommend_collectible_id, r.recommend_collectible_name, r.recommend_collectible_url,
+        CASE WHEN c.member_id IS NOT NULL THEN 1 ELSE 0 END AS is_cleared FROM RECOMMEND_COLLECTIBLE r
+        LEFT JOIN CLEAR_COLLECTIBLE c ON r.recommend_collectible_id = c.recommend_collectible_id AND c.member_id = #{memberId}
+        ORDER BY r.recommend_collectible_id
+    </select>
+
+    <!--추천 내실 완료 체크-->
     <insert id="insertClearCollectible">
         INSERT INTO CLEAR_COLLECTIBLE (MEMBER_ID, RECOMMEND_COLLECTIBLE_ID) VALUES (#{memberId}, #{clearCollectibleId});
     </insert>
+
+    <delete id="deleteClearCollectible">
+        DELETE FROM CLEAR_COLLECTIBLE
+        WHERE MEMBER_ID = #{memberId} AND RECOMMEND_COLLECTIBLE_ID = #{recommendCollectibleID}
+    </delete>
+
+    <!--내실 삭제-->
+    <delete id="deleteCollectible" parameterType="String">
+        DELETE FROM COLLECTIBLE_POINT
+        WHERE MEMBER_ID = #{memberId};
+    </delete>
 </mapper>

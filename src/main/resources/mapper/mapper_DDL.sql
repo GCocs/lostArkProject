@@ -1,13 +1,14 @@
 CREATE DATABASE LOSTARKPROJECT;
 USE LOSTARKPROJECT;
 
+
+
 -- 멤버 테이블
 CREATE TABLE MEMBER (
     MEMBER_ID VARCHAR(50) PRIMARY KEY,
     MEMBER_PASSWD VARCHAR(255) NOT NULL,
     REGISTRATION_DATE DATETIME NOT NULL DEFAULT NOW(),
-    REPRESENTATIVE_CHARACTER_NICKNAME VARCHAR(50) NOT NULL,
-    VERIFIED_NICKNAME VARCHAR(50) NULL UNIQUE
+    REPRESENTATIVE_CHARACTER_NICKNAME VARCHAR(50) NOT NULL
 );
 
 -- 캐릭터 테이블
@@ -88,18 +89,16 @@ CREATE TABLE MENTOR_CONTENT (
     FOREIGN KEY (MENTOR_MEMBER_ID) REFERENCES MENTOR(MENTOR_MEMBER_ID) ON DELETE CASCADE
 );
 
+
 -- 멘티
 CREATE TABLE MENTEE_APPLY (
-    apply_id BIGINT AUTO_INCREMENT PRIMARY KEY,
     MENTOR_MEMBER_ID VARCHAR(50),
     MENTEE_MEMBER_ID VARCHAR(50),
-    apply_status      VARCHAR(20) NOT NULL DEFAULT 'REQUESTED',
-    created_at        DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    updated_at        DATETIME    NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    MENTEE_WANT_TO_SAY VARCHAR(255),
+    PRIMARY KEY (MENTOR_MEMBER_ID, MENTEE_MEMBER_ID),
     FOREIGN KEY (MENTOR_MEMBER_ID) REFERENCES MENTOR(MENTOR_MEMBER_ID) ON DELETE CASCADE,
     FOREIGN KEY (MENTEE_MEMBER_ID) REFERENCES MEMBER(MEMBER_ID) ON DELETE CASCADE
 );
-
 
 -- 멘티 신청 컨텐츠(멘토에게 전송되는 페이지)
 CREATE TABLE MENTEE (
@@ -107,49 +106,6 @@ CREATE TABLE MENTEE (
     MENTEE_CONTENT_ID VARCHAR(100),
     PRIMARY KEY (MENTEE_MEMBER_ID, MENTEE_CONTENT_ID),
     FOREIGN KEY (MENTEE_MEMBER_ID) REFERENCES MENTEE_APPLY(MENTEE_MEMBER_ID) ON DELETE CASCADE
-);
-
--- 학원 게시글
-CREATE TABLE ACADEMY_BOARD (
-    ACADEMY_BOARD_NUMBER INT AUTO_INCREMENT PRIMARY KEY,
-    WRITER VARCHAR(50) NOT NULL,
-    TITLE VARCHAR(100) NOT NULL,
-    CONTENT VARCHAR(500) NOT NULL,
-    RAID VARCHAR(50) NOT NULL,
-    IMAGE VARCHAR(100),
-    CREATED_AT DATETIME NOT NULL DEFAULT NOW(),
-    FOREIGN KEY (WRITER) REFERENCES MEMBER(VERIFIED_NICKNAME) ON UPDATE CASCADE
-);
-
--- 어비스 던전 목록
-CREATE TABLE ABYSS_DUNGEON_LIST (
-	`CODE` VARCHAR(20) PRIMARY KEY COMMENT "aby-6",
-	ABYSS_NAME VARCHAR(20) NOT NULL COMMENT "카양겔",
-    BOSS_NAME VARCHAR(20) COMMENT "라우리엘",
-    LOCATION VARCHAR(30) COMMENT "영원한 빛의 요람",
-    LEVEL_SINGLE INT COMMENT "1540",
-    LEVEL_NORMAL INT COMMENT "1540",
-    LEVEL_HARD INT COMMENT "1580"
-);
-
--- 레이드 목록
-CREATE TABLE RAID_LIST (
-	`CODE` VARCHAR(20) PRIMARY KEY COMMENT "com-1",
-	BOSS_NAME VARCHAR(20) NOT NULL COMMENT "발탄",
-    BOSS_ROLE VARCHAR(20) COMMENT "마수군단장",
-    LOCATION VARCHAR(30) COMMENT "부활한 마수의 심장",
-    LEVEL_SINGLE INT COMMENT "1415",
-    LEVEL_NORMAL INT COMMENT "1415",
-    LEVEL_HARD INT COMMENT "1445"
-);
-
--- 공지사항
-CREATE TABLE NOTICE (
-    NOTICE_NUMBER INT AUTO_INCREMENT PRIMARY KEY,
-    TITLE VARCHAR(50) NOT NULL,
-    CONTENT VARCHAR(1000) NOT NULL,
-    IMAGE VARCHAR(100),
-    CREATED_AT DATETIME NOT NULL DEFAULT NOW()
 );
 
 -- 어드민
@@ -210,30 +166,28 @@ INSERT INTO NOTICE (TITLE, CONTENT, IMAGE, CREATED_AT) VALUES
     ('학원 탭 신설', '학원 파티 구인/구직을 위한 학원 탭이 개설되었습니다.', NULL, '2025-02-25 16:25:00'),
     ('계정 인증 절차 추가', '닉네임 도용으로 인한 악용 가능성이 있다고 판단되어 본인 캐릭터 인증을 개선하였습니다.', NULL, '2025-03-20 12:00:00');
 
-INSERT INTO RECOMMEND_COLLECTIBLE (RECOMMEND_COLLECTIBLE_NAME, RECOMMEND_COLLECTIBLE_URL) VALUES
-    ('내실 익스프레스 (스포)','www.naver.com'),
-    ('지혜의 섬 보조 사서 (스포)','www.naver.com'),
-    ('거심 12개 (스포)','www.naver.com'),
-    ('파푸니카 80% (스포)','www.naver.com'),
-    ('이그네아의 징표 8개 (스포)','www.naver.com'),
-    ('타워 오브 데스티니 15층 (스포)','www.naver.com'),
-    ('타워 오브 데스티니 50층 (스포)','www.naver.com'),
-    ('세베크 아툰 (상깨물)','www.naver.com'),
-    ('평판: 끝나지 않은 싸움 (깨물)','www.naver.com'),
-    ('쿠르잔 북부 70% (깨물)','www.naver.com'),
-    ('크림스네일의 해도 2개 (깨물)','www.naver.com'),
-    ('이그네아의 징표 9개 (비프로스트)','www.naver.com'),
-    ('모험물 34개 (영웅 풍요 룬)','www.naver.com'),
-    ('이그네아의 징표 15개 (전설 정화 룬)','www.naver.com'),
-    ('전설 단죄 구매 (영지)','www.naver.com'),
-    ('전설 심판 구매 (영지)','www.naver.com'),
-    ('미술품 36개 (웨이 카드)','www.naver.com'),
-    ('거인의 심장 13개 (영웅 집중)','www.naver.com'),
-    ('혼돈의 사선 (전설 집중)','www.naver.com'),
-    ('항해 모험물 42개 (전설 집중)','www.naver.com'),
-    ('미술품 44개 (전설 심판)','www.naver.com'),
-    ('오르페우스의 별 7개 (전설 수호)','www.naver.com'),
-    ('미술품 58개 (전설 철벽)','www.naver.com'),
-    ('기억의 오르골 10개 (전설 카드팩 2개)','www.naver.com'),
-    ('기억의 오르골 14개 (도약의 전설 카드 선택팩)','www.naver.com'),
-    ('아스트레이 7렙 (쾌속항해)','www.naver.com');
+INSERT INTO RECOMMEND_COLLECTIBLE (RECOMMEND_COLLECTIBLE_NAME, RECOMMEND_COLLECTIBLE_URL) VALUES ('내실 익스프레스 (스포)','https://doyulv.tistory.com/46'),
+('지혜의 섬 보조 사서 (스포)','https://www.inven.co.kr/board/lostark/4821/95622'),
+('거심 12개 (스포)','https://www.inven.co.kr/board/lostark/4821/95622'),
+('파푸니카 80% (스포)','https://www.inven.co.kr/board/lostark/4821/95622'),
+('이그네아의 징표 8개 (스포)','https://www.inven.co.kr/board/lostark/4821/95622'),
+('타워 오브 데스티니 15층 (스포)','https://blog.naver.com/bledel90/222525736538'),
+('타워 오브 데스티니 50층 (스포)','https://blog.naver.com/bledel90/222525736538'),
+('세베크 아툰 (상깨물)','https://www.inven.co.kr/webzine/news/?news=297450&site=lostark'),
+('평판: 끝나지 않은 싸움 (깨물)','https://vortexgaming.io/postdetail/369504'),
+('쿠르잔 북부 70% (깨물)','https://gam3.tistory.com/58'),
+('크림스네일의 해도 2개 (깨물)','https://gopenguin.tistory.com/382'),
+('이그네아의 징표 9개 (비프로스트)','https://www.inven.co.kr/board/lostark/4821/95622'),
+('모험물 34개 (영웅 풍요 룬)','https://www.inven.co.kr/board/lostark/4821/100483'),
+('이그네아의 징표 15개 (전설 정화 룬)','https://arca.live/b/lostark/83541704'),
+('전설 단죄 구매 (영지)','https://www.inven.co.kr/board/lostark/4821/73762'),
+('전설 심판 구매 (영지)','https://www.inven.co.kr/board/lostark/4821/73762'),
+('미술품 36개 (웨이 카드)','https://canfactory.tistory.com/1241'),
+('거인의 심장 13개 (영웅 집중)','https://inty.kr/entry/lostark-hearts'),
+('항해 모험물 42개 (전설 집중)','https://oksk.tistory.com/24'),
+('미술품 44개 (전설 심판)','https://canfactory.tistory.com/1241'),
+('오르페우스의 별 7개 (전설 수호)','https://m.blog.naver.com/aaccq123/223169503483'),
+('미술품 58개 (전설 철벽)','https://canfactory.tistory.com/1241'),
+('기억의 오르골 10개 (전설 카드팩 2개)','https://www.inven.co.kr/board/lostark/4821/88649'),
+('기억의 오르골 14개 (도약의 전설 카드 선택팩)','https://www.inven.co.kr/board/lostark/4821/94727'),
+('아스트레이 7렙 (쾌속항해)','https://blog.naver.com/jej0572/222646100193');

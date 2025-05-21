@@ -129,6 +129,7 @@ public class MemberRestController {
 
         if(requestMap.get("RCN") == null || member.getRepresentativeCharacterNickname().equals(requestMap.get("RCN"))) return false;
         if(memberService.updateRCN(requestMap.get("email"), requestMap.get("RCN"))) {
+            collectibleService.updateCollectible(requestMap.get("email"), requestMap.get("RCN"));
             Member sessionMember = new Member();
             sessionMember.setMemberId(requestMap.get("email"));
             sessionMember.setRepresentativeCharacterNickname(requestMap.get("RCN"));
