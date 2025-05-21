@@ -136,21 +136,11 @@
                                             shownRequests.add(key);
                                             console.log("Adding new request for:", key);
 
-                                            // 새 메시지 항목 생성
-                                            const newMessage = document.createElement("a");
-                                            newMessage.href = "/teaching/message";
-                                            newMessage.className = "dropdown-item";
-                                            newMessage.innerHTML = `
-                                                <div class="d-flex align-items-center">
-                                                    <div class="flex-grow-1">
-                                                        <span class="fw-bold">${request.mentee_nickname}</span>
-                                                        <div class="small text-gray-500">
-                                                            서버: ${request.mentee_server_name}<br>
-                                                            아이템레벨: ${request.mentee_item_level}
-                                                        </div>
-                                                    </div>
-                                                </div>
-                                            `;
+                                // 새 메시지 항목 생성
+                                const newMessage = document.createElement("a");
+                                newMessage.href = linkUrl;
+                                newMessage.className = "dropdown-item";
+                                newMessage.textContent = messageText;
 
                                             const divider = document.createElement("hr");
                                             divider.className = "dropdown-divider";
@@ -188,6 +178,7 @@
                         </a>
                         <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-top rounded-bottom m-0" style="border: 1px solid #333;">
                             <a th:href="@{/member/myPage}" class="dropdown-item">프로필</a>
+                            <a th:href="@{/member/certification}" class="dropdown-item">캐릭터 인증</a>
                             <a th:href="@{/member/signout}" class="dropdown-item">로그아웃</a>
                         </div>
                     </div>
@@ -240,7 +231,6 @@
 
 <!-- Template Javascript -->
 <script th:src="@{/js/main.js}"></script>
-<script th:src="@{/js/mentor.js}"></script>
 </body>
 
 

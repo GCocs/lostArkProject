@@ -5,7 +5,7 @@ import com.teamProject.lostArkProject.academy.dto.AcademyRequestDTO;
 import com.teamProject.lostArkProject.academy.service.AcademyService;
 import com.teamProject.lostArkProject.common.dto.PaginatedResponseDTO;
 import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
-import com.teamProject.lostArkProject.member.config.SessionUtils;
+import com.teamProject.lostArkProject.common.utils.SessionUtils;
 import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;

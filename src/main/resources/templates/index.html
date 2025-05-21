@@ -5,7 +5,14 @@
     <meta charset="utf-8">
     <title>기본 홈</title>
     <link rel="stylesheet" href="/css/home.css" />
-
+    <style>
+      .disabled {
+        opacity: 0.3;
+        cursor: default;
+        pointer-events: none;
+      }
+    </style>
+    
     <script th:inline="javascript">
         let loggedInMember = /*[[${loggedInMember}]]*/ {};
     </script>
@@ -80,10 +87,10 @@
                 <div class="bg-secondary text-center rounded p-4 mt-4">
                     <div class="d-flex align-items-center justify-content-between mb-4">
                         <h6 class="mb-0">공지사항</h6>
-                        <a href="">전체</a>
+                        <a id="notice-list" href="#" data-bs-toggle="modal" data-bs-target="#noticeModal">전체</a>
                     </div>
                     <th:block th:each="notice : ${noticeList}">
-                        <div class="align-items-center border-bottom py-3 notice-preview" onclick="window.location.href='/'">
+                        <div class="align-items-center border-bottom py-3 notice-preview" th:data-number="${notice.noticeNumber}" data-bs-toggle="modal" data-bs-target="#noticeModal">
                             <div class="d-flex justify-content-between mx-3">
                                 <span th:text="${notice.title}"></span>
                                 <span th:text="${#temporals.format(notice.createdAt, 'YY.MM.dd')}" style="font-size: 14px;"></span>
@@ -178,8 +185,9 @@
         </div>
     </div>
     <!-- 메인 페이지 코드 끝 -->
-    
-    <div class="modal fade" id="staticBackdrop" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        
+    <!-- 알림 모달 -->
+    <div class="modal fade" id="contentModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
@@ -194,8 +202,25 @@
             </div>
         </div>
     </div>
-    
+
+    <!-- 공지 모달 -->
+    <div class="modal fade" id="noticeModal" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1">
+        <div class="modal-dialog" style="max-width: 800px;">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">공지사항</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body modal-container"></div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">닫기</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script type="module" src="/js/content.js"></script>
+    <script type="module" src="/js/notice.js"></script>
 </div>
 </body>
 

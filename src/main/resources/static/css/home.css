@@ -20,3 +20,13 @@
   transition-duration: 0.2ms;
   cursor: pointer;
 }
+
+.notice-modal .modal-dialog {
+  max-width: 100%;
+  width: 65%;
+  height: 75%;
+}
+
+.notice-modal .modal-content {
+  height: 100%;
+}
