@@ -43,7 +43,6 @@ public class CollectibleRestController {
     public ResponseEntity<Void> updateClearStatus(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
-        System.out.println("1");
 
         boolean ok = collectibleService.updateCleared(
                 Integer.parseInt(requestMap.get("recommendCollectibleID")),

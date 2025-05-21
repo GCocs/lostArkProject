@@ -93,7 +93,6 @@ public class CollectibleService {
 
     public boolean updateCleared(int recommendCollectibleID, boolean cleared, String memberId) {
         try {
-            System.out.println("2");
             if (cleared) {
                 collectibleDAO.insertClearCollectible(memberId, recommendCollectibleID);
             } else {
