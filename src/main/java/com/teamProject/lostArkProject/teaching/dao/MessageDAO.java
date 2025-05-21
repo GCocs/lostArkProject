@@ -5,9 +5,7 @@ import org.apache.ibatis.annotations.Mapper;
 
 @Mapper
 public interface MessageDAO {
-    MenteeApplyDTO getMenteeApplyDetail (int mentee_member_id);
+    MenteeApplyDTO getMenteeApplyDetail(String menteeMemberId);
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);
     void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
-
-
 }

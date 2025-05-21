@@ -131,9 +131,9 @@ public class TeachingController {
         }
 
         MenteeApplyDTO dto = new MenteeApplyDTO();
-        dto.setMentor_member_id(mentorId);
-        dto.setMentee_member_id(menteeId);
-        dto.setApply_status("REQUESTED");
+        dto.setMentorMemberId(mentorId);
+        dto.setMenteeMemberId(menteeId);
+        dto.setApplyStatus("REQUESTED");
 
         teachingService.insertMenteeApply(dto);
         return "redirect:/teaching/mentorList";

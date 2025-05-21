@@ -21,12 +21,13 @@
           AND apply_status = 'REQUESTED'
     </update>
 
-    <select id="getMenteeApplyDetail" parameterMap="String">
-        SELECT mentee_member_id,
-               apply_status,
-               created_at
+    <select id="getMenteeApplyDetail" parameterType="String" resultType="MenteeApplyDTO">
+        SELECT 
+            mentee_member_id as menteeMemberId,
+            apply_status as applyStatus,
+            created_at as createdAt
         FROM MENTEE_APPLY
-        WHERE mentee_member_id =#{menteeMeberId};
+        WHERE mentee_member_id = #{menteeMemberId}
     </select>
 
 </mapper>
