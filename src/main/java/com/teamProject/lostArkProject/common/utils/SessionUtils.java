@@ -1,6 +1,5 @@
-package com.teamProject.lostArkProject.member.config;
+package com.teamProject.lostArkProject.common.utils;
 
-import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
 import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 

@@ -355,19 +355,19 @@ const dataManager = (() => {
 $(() => {
     initFunction();
     $('.content-modal-link').on('click', handleModalOpen);
-    $('[data-bs-dismiss="modal"]').on('click', modalManager.closeModal);
+    $('#contentModal button[data-bs-dismiss="modal"]').on('click', modalManager.closeModal);
 });
 
 // 모달을 관리하는 객체
 const modalManager = {
     // 모달 열기
     openModal() {
-        $('#staticBackdrop').modal('show');
+        $('#contentModal').modal('show');
     },
 
     // 모달 닫기
     async closeModal() {
-        $('#staticBackdrop').modal('hide');
+        $('#contentModal').modal('hide');
         dataManager.clearAlarmSettingsCache();
         const contents = await dataManager.fetchContent();
         const alarms = await dataManager.fetchAlarmSettings();
@@ -623,7 +623,7 @@ function setCountdownTimer(contents) {
         updateContentCountdown();
         updateAlarmCountdown();
 
-        if ($('#staticBackdrop').hasClass('show')) {
+        if ($('#contentModal').hasClass('show')) {
             updateModalCountdown();
         }
     }, 1000);

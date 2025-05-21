@@ -4,18 +4,15 @@ import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
+import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import org.springframework.http.HttpCookie;
-import org.springframework.http.ResponseEntity;
-import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -141,5 +138,11 @@ public class MemberRestController {
             return true;
         }
         return false;
+    }
+
+    // 캐릭터 이미지 api 요청
+    @GetMapping("/{nickname}/certification")
+    public Mono<CharacterCertificationDTO> getCharacterImage(@PathVariable("nickname") String nickname) {
+        return memberService.getCharacterImage(nickname);
     }
 }

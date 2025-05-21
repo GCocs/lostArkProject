@@ -120,11 +120,7 @@ public class TeachingServiceImpl implements TeachingService {
     public String getMentorDiscordId(String mentorMemberId) {
         return teachingDAO.findDiscordIdByMentorId(mentorMemberId);
     }
-    @Override
-    public void acceptMentee(String menteeMemberId, String mentorId){
 
-
-    }
 
     @Override
     public List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId) {
@@ -134,7 +130,21 @@ public class TeachingServiceImpl implements TeachingService {
     public void insertMenteeApply(MenteeApplyDTO menteeApplyDTO) {
         teachingDAO.insertMenteeApply(menteeApplyDTO);
     }
+    @Override
+    public boolean isDuplicateMenteeApply(String mentorId, String menteeId) {
+        MenteeApplyDTO dto = new MenteeApplyDTO();
+        dto.setMentorMemberId(mentorId);
+        dto.setMenteeMemberId(menteeId);
+        int count = teachingDAO.isDuplicateMenteeApply(dto);
+        return count > 0;
+    }
 
-
+    @Override
+    public List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId) {
+        System.out.println("Checking requests for mentor: " + mentorMemberId);
+        List<Map<String, Object>> result = teachingDAO.getRequestedAppliesByMentor(mentorMemberId);
+        System.out.println("Found requests: " + result);
+        return result;
+    }
 
 }

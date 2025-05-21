@@ -14,10 +14,9 @@ public interface TeachingService {
     public void newMentee(MenteeDTO menteeDTO);
     public List<MentorListDTO> getMentorList();
     public List<MentorListDTO> getMentorDetail(String mentorMemberId);
-    public void acceptMentee(String menteeMemberId, String mentorDiscordId);
     String getMentorDiscordId(String mentorMemberId);
     List<Map<String, Object>> getApplyStatusByMentee(String menteeMemberId);
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTOdto);
-
-
+    boolean isDuplicateMenteeApply(String mentorId, String menteeId);
+    List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
 }

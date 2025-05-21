@@ -3,7 +3,7 @@ package com.teamProject.lostArkProject.alarm.controller;
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
 import com.teamProject.lostArkProject.common.exception.UnauthorizedException;
-import com.teamProject.lostArkProject.member.config.SessionUtils;
+import com.teamProject.lostArkProject.common.utils.SessionUtils;
 import jakarta.servlet.http.HttpSession;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -26,13 +26,13 @@ public class AlarmController {
     public ResponseEntity<List<Alarm>> getAllAlarm(HttpSession session) {
         String memberId = SessionUtils.getMemberId(session);
 
-        if (memberId == null || memberId.isEmpty()) {
-            throw new UnauthorizedException("로그인이 필요합니다.");
+        if (memberId != null && !memberId.isEmpty()) {
+            List<Alarm> alarms = alarmService.getAllAlarm(memberId);
+            log.info("알람 데이터: {}", alarms);
+            return ResponseEntity.ok(alarms);
         }
 
-        List<Alarm> alarms = alarmService.getAllAlarm(memberId);
-        log.info("알람 데이터: {}", alarms);
-        return ResponseEntity.ok(alarms);
+        return ResponseEntity.notFound().build();
     }
 
     // 특정 사용자의 알림을 설정하는 메서드
