@@ -10,6 +10,8 @@ import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import lombok.extern.slf4j.Slf4j;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
@@ -18,6 +20,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping ("/member")
+@Slf4j
 public class MemberRestController {
     private final MemberService memberService;
     private final CollectibleService collectibleService;
@@ -140,9 +143,39 @@ public class MemberRestController {
         return false;
     }
 
-    // 캐릭터 이미지 api 요청
+    // 캐릭터 인증 요청
     @GetMapping("/{nickname}/certification")
-    public Mono<CharacterCertificationDTO> getCharacterImage(@PathVariable("nickname") String nickname) {
-        return memberService.getCharacterImage(nickname);
+    public Mono<CharacterCertificationDTO> getCharacterImage(@PathVariable("nickname") String nickname, HttpSession session) {
+        // 예외 처리
+        if (session.getAttribute("requiredEquipmentList") != null) {
+            throw new RuntimeException("이미 인증을 요청하셨습니다.");
+        }
+
+        // api 데이터 받아옴
+        Mono<CharacterCertificationDTO> certificationDTOMono = memberService.requestCertification(nickname);
+
+        // 인증해야 하는 장비를 세션에 저장 후 반환 (구독)
+        return certificationDTOMono.doOnNext(certificationDTO ->
+                {
+                    List<String> requiredEquipmentList = certificationDTO.getEquipment().values().stream()
+                            .filter(equipmentDTO -> equipmentDTO.isUnequippedRequired())
+                            .map(equipmentDTO -> equipmentDTO.getType())
+                            .toList();
+                    session.setAttribute("requiredEquipmentList", requiredEquipmentList);
+                    log.info("세션에 저장된 장비: {}", session.getAttribute("requiredEquipmentList"));
+                }
+        );
+    }
+
+    // 캐릭터 인증 상태 초기화
+    @DeleteMapping("/certification/reset")
+    public ResponseEntity<String> resetCertificationState(HttpSession session) {
+        // 예외 처리
+        if (session.getAttribute("requiredEquipmentList") == null) {
+            return ResponseEntity.ok("현재 진행 중인 캐릭터 인증이 없습니다.");
+        }
+
+        session.setAttribute("requiredEquipmentList", null);
+        return ResponseEntity.ok("인증 초기화가 완료되었습니다.");
     }
 }

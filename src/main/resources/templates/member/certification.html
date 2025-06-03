@@ -22,7 +22,10 @@
                     <div class="form-floating mb-4">
                         <input type="text" class="form-control border-secondary mb-3" id="nickname" placeholder="닉네임" name="nickname">
                         <label for="nickname">닉네임 입력</label>
-                        <button class="btn btn-primary" id="certification-button">인증하기</button>
+                        <div class="d-flex gap-3">
+                            <button class="btn btn-primary" id="certification-button">인증 요청</button>
+                            <button class="btn btn-light" id="reset-certification-button">인증 초기화</button>
+                        </div>
                     </div>
 
                     <div class="message-wrapper">
@@ -31,13 +34,13 @@
                         <p>만약 5분이 지난 이후에도 캐릭터 인증이 완료되지 않을 경우 재인증 요청을 해주세요.</p>
                     </div>
                 </div>
-                <div class="rounded p-4 certification-container" style="background-color: #15181D;">
-                    <button class="btn btn-primary mb-4" id="certification-button">인증하기</button>
-
+                <div class="rounded p-4 certification-container d-none" style="background-color: #15181D;">
                     <div class="message-wrapper">
                         <p>인증 장비는 <strong class="text-white certification-equipment"></strong> 입니다.</p>
                         <p>장착 해제 후 인증하기 버튼을 눌러주세요.</p>
                     </div>
+
+                    <button class="btn btn-danger" id="certification-button">인증하기</button>
                 </div>
             </div>
         </div>
