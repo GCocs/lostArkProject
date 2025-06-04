@@ -89,7 +89,8 @@
                                                     <tr>
                                                         <td th:text="${recommendItem.recommendCollectibleID}"></td>
                                                         <td th:text="${recommendItem.recommendCollectibleName}"></td>
-                                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}">URL</a></td>
+                                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}"
+                                                               th:classappend="${recommendItem.recommendCollectibleURL == null} ? ' disabled' : ''">URL</a></td>
                                                         <td>
                                                             <input
                                                                     type="checkbox"
@@ -128,7 +129,7 @@
                                     <tbody th:each="recommendItem : ${recommendCollectibleList}">
                                     <tr>
                                         <td th:text="${recommendItem.recommendCollectibleName}"></td>
-                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}">URL</a></td>
+                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}" th:classappend="${recommendItem.recommendCollectibleURL == null} ? ' disabled' : ''">URL</a></td>
                                         <td>
                                             <form th:action="@{/collectible/clear}" method="post">
                                                 <button class="btn btn-sm btn-primary" type="submit" name="collectibleId"
