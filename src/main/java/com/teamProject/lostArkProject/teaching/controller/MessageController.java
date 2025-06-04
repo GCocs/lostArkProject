@@ -16,4 +16,11 @@ public class MessageController {
         
         return "message/newMessageDetail";
     }
+
+
+    @GetMapping("/list")
+    public String getMessagelist() {
+        return "message/list";
+    }
+
 }

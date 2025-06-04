@@ -49,7 +49,7 @@ public class TeachingController {
             return "redirect:/member/signin";
         }
 
-        // ✅ Member 클래스에 정의된 memberId 사용
+        // Member 클래스에 정의된 memberId 사용
         String memberId = memberObj.getMemberId();
         mentorDTO.setMentorMemberId(memberId);
 
@@ -139,11 +139,11 @@ public class TeachingController {
         return "redirect:/teaching/mentorList";
     }
 
-    @ModelAttribute("menteeMemberId")
-    public String getLoggedInMenteeId(HttpSession session) {
-        Member member = (Member) session.getAttribute("member");
-        return member != null ? member.getMemberId() : null;
-    }
+    // @ModelAttribute("menteeMemberId")
+    // public String getLoggedInMenteeId(HttpSession session) {
+    //     Member member = (Member) session.getAttribute("member");
+    //     return member != null ? member.getMemberId() : null;
+    // }
 
     @GetMapping("/mentor/requested-applies")
     @ResponseBody

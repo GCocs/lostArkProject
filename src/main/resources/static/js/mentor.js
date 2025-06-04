@@ -67,15 +67,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // 새 메시지 항목 생성
                 const newMessage = document.createElement("a");
-                newMessage.href = "/teaching/message";
+                newMessage.href = `/teaching/mentor/request/${request.mentee_member_id}`;
                 newMessage.className = "dropdown-item";
                 newMessage.innerHTML = `
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <span class="fw-bold">${request.mentee_nickname || '알 수 없음'}</span>
                             <div class="small text-gray-500">
-                                서버: ${request.mentee_server_name || '알 수 없음'}<br>
-                                아이템레벨: ${request.mentee_item_level || '알 수 없음'}
+                                멘토링을 요청했습니다.
                             </div>
                         </div>
                     </div>
