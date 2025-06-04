@@ -70,6 +70,15 @@ window.checkSignup = function() {
 }
 
 //로그인
+var signinForm = document.getElementById("signinForm");
+
+    signinForm.addEventListener("keydown", function(e) {
+        if (e.key === "Enter") {
+        e.preventDefault();
+        checkSignin();
+    }
+});
+
 window.checkSignin = function() {
     var form = document.signinForm;
     if(form.signinId.value=="") {

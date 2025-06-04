@@ -12,7 +12,7 @@
         <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
             <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
                 <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
-                    <form name="signinForm" th:action="@{/member/signin/process}" method="post">
+                    <form name="signinForm" id="signinForm" th:action="@{/member/signin/process}" method="post">
                     <div class="d-flex align-items-center justify-content-between mb-3">
                         <a href="/" class="">
                             <img src="/img/loedu_white.png" style="width: 200px;" />
@@ -35,7 +35,7 @@
                         </div>
                         <a href="/member/findPassword">비밀번호 찾기</a>
                     </div>
-                    <button type="button" class="btn btn-primary py-3 w-100 mb-4" onclick="checkSignin()">로그인</button>
+                    <button type="button" id="signinButton" class="btn btn-primary py-3 w-100 mb-4" onclick="checkSignin()">로그인</button>
                     <p class="text-center mb-0">계정이 없으신가요? <a href="/member/signup">회원가입</a></p>
                     </form>
                 </div>
