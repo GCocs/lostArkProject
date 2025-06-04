@@ -14,19 +14,33 @@
       <div class="col-md-6 text-center">
         <h2 class="mb-4">멘티 신청</h2>
         <p><span>멘티 신청을 받겠습니까? (수락하시면 멘티에게 디스코드 아이디가 전송됩니다)</span></p>
+        <!--        <p>신청 ID: <span th:text="${apply.applyId}"></span></p>-->
+        <!--        <p>멘토 ID: <span th:text="${apply.mentorMemberId}"></span></p>-->
+                <p>멘티 ID: <span th:text="${apply.menteeMemberId}"></span></p>
+                <p>상태: <span th:text="${apply.applyStatus}"></span></p>
+                <p>신청일: <span th:text="${apply.createdAt}"></span></p>
+                <p>수정일: <span th:text="${apply.updatedAt}"></span></p>
+        
+                <h4>멘티 컨텐츠 정보</h4>
+                <ul>
+                  <li th:each="mentee : ${menteeList}">
+                    컨텐츠 ID: <span th:text="${mentee.menteeContentId}"></span>
+                  </li>
+                </ul>
 
         <!-- 수락 폼 -->
         <form th:action="@{/teaching/acceptMentee}" method="post">
           <!-- 멘토의 ID도 함께 넘겨야 한다면 hidden 필드를 추가 가능 -->
           <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
 
-          <!-- 멘티 ID는 컨트롤러에서 model.addAttribute("menteeMemeberId", ...)로 넘겨온다고 가정 -->
-          <input type="hidden" name="menteeMemberId" th:value="${menteeMemeberId}"/>
+          <!-- 멘티 ID는 컨트롤러에서 model.addAttribute("menteeMemberId", ...)로 넘겨온다고 가정 -->
+          <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
 
           <input type="submit" value="수락하기"/>
           <input type="button" value="거절하기"
                  th:onclick="|location.href='@{/member/myPage}'|"/>
         </form>
+
       </div>
     </div>
   </div>

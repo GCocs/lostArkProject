@@ -67,7 +67,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
                 // 새 메시지 항목 생성
                 const newMessage = document.createElement("a");
-                newMessage.href = `/teaching/mentor/request/${request.mentee_member_id}`;
+                newMessage.href = `/message/newMessageDetail?menteeMemberId=${request.mentee_member_id}`;
                 newMessage.className = "dropdown-item";
                 newMessage.innerHTML = `
                     <div class="d-flex align-items-center">

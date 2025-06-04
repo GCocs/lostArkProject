@@ -30,4 +30,13 @@
         WHERE mentee_member_id = #{menteeMemberId}
     </select>
 
+    <select id="getMenteeDetail" parameterType="String" resultType="com.teamProject.lostArkProject.teaching.dto.MenteeDTO">
+        SELECT mentee_member_id, mentee_content_id
+        FROM MENTEE
+        WHERE mentee_member_id = #{menteeMemberId}
+    </select>
+
+
+    
+
 </mapper>
