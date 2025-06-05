@@ -155,11 +155,12 @@ public class MemberRestController {
         Mono<CharacterCertificationDTO> certificationDTOMono = memberService.requestCertification(nickname);
 
         // 인증해야 하는 장비를 세션에 저장 후 반환 (구독)
-        return certificationDTOMono.doOnNext(certificationDTO ->
-                {
-                    List<String> requiredEquipmentList = certificationDTO.getEquipment().values().stream()
-                            .filter(equipmentDTO -> equipmentDTO.isUnequippedRequired())
-                            .map(equipmentDTO -> equipmentDTO.getType())
+        return certificationDTOMono.doOnNext(certificationDTO -> {
+                    List<String> requiredEquipmentList = certificationDTO.getEquipment()
+                            .entrySet()
+                            .stream()
+                            .filter(entry -> entry.getValue().isUnequippedRequired())
+                            .map(entry -> entry.getKey())
                             .toList();
                     session.setAttribute("requiredEquipmentList", requiredEquipmentList);
                     log.info("세션에 저장된 장비: {}", session.getAttribute("requiredEquipmentList"));

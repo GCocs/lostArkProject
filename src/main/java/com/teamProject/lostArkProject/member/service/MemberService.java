@@ -154,6 +154,7 @@ public class MemberService {
                     AtomicInteger count = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
 
                     return equipmentApiDTOList.stream()
+                            .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()))  // 부적 제외
                             .map(equipmentApiDTO -> {
                                 EquipmentDTO equipmentDTO = new EquipmentDTO();
                                 equipmentDTO.setType(equipmentApiDTO.getType());
@@ -162,7 +163,6 @@ public class MemberService {
                                 equipmentDTO.setGrade(equipmentApiDTO.getGrade());
                                 if (count.getAndIncrement() <= 2) {
                                     equipmentDTO.setUnequippedRequired(true);
-
                                 } else {
                                     equipmentDTO.setUnequippedRequired(false);
                                 }
@@ -172,15 +172,18 @@ public class MemberService {
                 }
         );
 
-        // 3. 캐릭터 이미지 리스트, 해제 장비 설정된 장비 리스트를 묶어서 반환
-        return Mono.zip(characterImageMono, equipmentMono)
+        // 3. 해제할 장비만 필터링한 후, type (무기, 상의, ...)을 key로 하는 Map으로 변환
+        Mono<Map<String, EquipmentDTO>> equipmentMap = equipmentMono.map(equipmentDTOList ->
+                CommonUtils.listToNumberedKeyMap(equipmentDTOList, e -> e.getType())
+        );
+
+        // 4. 캐릭터 이미지 리스트, 해제 장비 설정된 장비 맵을 묶어서 반환
+        return Mono.zip(characterImageMono, equipmentMap)
                 .map(tuple -> {
-                    CharacterImageApiDTO characterImageApiDTO = tuple.getT1();
-                    List<EquipmentDTO> equipmentDTO = tuple.getT2();
+                    CharacterImageApiDTO t1 = tuple.getT1();       // 이미지
+                    Map<String, EquipmentDTO> t2 = tuple.getT2();  // 해제할 장비
 
-                    Map<String, EquipmentDTO> equipmentMap = CommonUtils.listToNumberedKeyMap(equipmentDTO, e -> e.getType());
-
-                    return new CharacterCertificationDTO(characterImageApiDTO, equipmentMap);
+                    return new CharacterCertificationDTO(t1, t2);
                 });
     }
 }

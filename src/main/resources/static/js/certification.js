@@ -22,7 +22,7 @@ function renderDefaultImage() {
     $('.image-container').empty();
 
     const imgDom = `
-        <img class="w-100 mb-4" src="/img/default_loacon${Math.ceil(Math.random() * 3)}.png" />
+        <img class="w-100 mb-4" src="/img/default_loacon${Math.ceil(Math.random() * 3)}.png" style="max-width:550px; max-height:550px;" />
         <p>닉네임 입력 후에 인증 요청해주세요.</p>
     `;
     $('.image-container').html(imgDom);
@@ -97,9 +97,9 @@ function renderCharacterImage(data) {
         $('.image-container').html(imgDom);
 
         // 해제해야 할 장비 표시
-        const unequippedStr = Object.values(equipment)
-            .filter(item => item.unequippedRequired === true)
-            .map(item => item.type)
+        const unequippedStr = Object.entries(equipment)
+            .filter(([key, value]) => value.unequippedRequired === true)
+            .map(([key, value]) => key)
             .join('/');
         $('.certification-equipment').text(unequippedStr);
 
@@ -108,7 +108,7 @@ function renderCharacterImage(data) {
     } else {
         // 캐릭터 이미지 대신 에러 이미지 표시
         const imgDom = `
-            <img class="w-100 mb-4" src="/img/sad_loacon${Math.ceil(Math.random() * 4)}.png" />
+            <img class="w-100 mb-4" src="/img/sad_loacon${Math.ceil(Math.random() * 4)}.png" style="max-width:550px; max-height:550px;" />
             <p>해당 캐릭터의 이미지를 불러오지 못했습니다..</p>
         `;
         $('.image-container').html(imgDom);
