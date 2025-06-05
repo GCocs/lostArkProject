@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>LostArkProject</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+    <!-- Blank Start -->
+    <div class="container-fluid pt-4 px-4" style="height: 100vh; display: flex; flex-direction: column; justify-content: center; align-items: center;">
+        <h1 style="text-align: center;">내 멘토 신청</h1>
+        <div class="col-md-8 text-center" style="width: 100%; max-width: 800px;">
+            <form action="/teaching/mentorUpdate" method="post">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <!--resize : both는 상하좌우로 늘일수 있고 vertical은 위아래로만 늘릴 수 있다 -->
+                    <div class="form-floating mb-3" style="width: 100%;">
+                        <!-- <input class="form-control" id="mentor_member_id" name="mentorMemberId" style="height: 50px; resize: both;">
+                         <label for="mentor_member_id">멘토 아이디</label>-->
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+</div>
+<!-- Blank End -->
+
+</body>
+</html>

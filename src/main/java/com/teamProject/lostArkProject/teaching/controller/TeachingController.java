@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 @Controller
 @RequestMapping("/teaching")
 public class TeachingController {
@@ -36,6 +37,11 @@ public class TeachingController {
         if (member == null) {
             // 세션에 "member" 객체가 없으면 접근 불가
             return "redirect:/member/signin"; // 로그인 페이지로 리다이렉트
+        }
+        // 이미 멘토 이력이 있으면 수정 폼으로 리다이렉트
+        String memberId = ((Member) member).getMemberId();
+        if (teachingService.isMentorExists(memberId)) {
+            return "redirect:/teaching/mentorUpdate";
         }
         // "member" 객체가 존재하면 페이지 반환
         return "teaching/newMentor";
@@ -64,6 +70,22 @@ public class TeachingController {
         return "redirect:/teaching/mentorList";
     }
 
+    
+
+    @GetMapping("/mentorUpdate")
+    public String mentorUpdate(HttpSession session, Model model) {
+        Object member = session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        String memberId = ((Member) member).getMemberId();
+        Map<String, Object> mentorInfo = teachingService.getMentorInfoById(memberId);
+        List<String> mentorContentIds = teachingService.getMentorContentIdsById(memberId);
+        model.addAttribute("mentorInfo", mentorInfo);
+        model.addAttribute("mentorContentIds", mentorContentIds);
+        return "teaching/mentorUpdate";
+    }   
+
 
     @GetMapping("/mentorList")
     public String mentorList(HttpSession session, Model model) {
@@ -83,6 +105,12 @@ public class TeachingController {
         List<MentorListDTO> filteredMentors = allMentors.stream()
                 .filter(mentor -> !loginMemberId.equals(mentor.getMentorMemberId()))
                 .toList();
+
+        // 로그인한 멘티 ID
+        String menteeId = ((Member) session.getAttribute("member")).getMemberId();
+        // 이미 신청한 멘토 ID 목록 조회 (service/dao에서 구현 필요)
+        Set<String> appliedMentorIds = teachingService.getAppliedMentorIdsByMentee(menteeId);
+        model.addAttribute("appliedMentorIds", appliedMentorIds);
 
         model.addAttribute("mentors", filteredMentors);
         return "teaching/mentorList";

@@ -132,4 +132,21 @@
         ORDER BY MA.mentee_member_id DESC
     </select>
 
+    <select id="getAppliedMentorIdsByMentee" parameterType="string" resultType="string">
+        SELECT mentor_member_id 
+        FROM MENTEE_APPLY 
+        WHERE mentee_member_id = #{menteeId}
+    </select>
+
+    <select id="getMentorInfoById" parameterType="string" resultType="map">
+        SELECT * FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+    <select id="getMentorContentIdsById" parameterType="string" resultType="string">
+        SELECT mentor_content_id FROM MENTOR_CONTENT WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+
+    <select id="isMentorExists" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+
 </mapper>

@@ -8,6 +8,7 @@ import org.apache.ibatis.annotations.Param;
 
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 
 @Mapper
@@ -26,4 +27,8 @@ public interface TeachingDAO {
     void insertMenteeApply(MenteeApplyDTO menteeApplyDTO);
     int isDuplicateMenteeApply(MenteeApplyDTO dto);
     List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
+    Set<String> getAppliedMentorIdsByMentee(String menteeId);
+    Map<String, Object> getMentorInfoById(String mentorMemberId);
+    List<String> getMentorContentIdsById(String mentorMemberId);
+    int isMentorExists(String mentorMemberId);
 }
