@@ -75,28 +75,112 @@ function renderCharacterImage(data) {
         // 캐릭터 이미지 표시
         const imgDom = `
             <div class="position-relative image-wrapper">
-                <img class="position-absolute" src="${equipment['무기'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(1 / 8 * 100%); border-radius:3px; opacity:${equipment['무기'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['무기'].grade)}" />
-                <img class="position-absolute" src="${equipment['투구'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(2 / 8 * 100%); border-radius:3px; opacity:${equipment['투구'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['투구'].grade)}" />
-                <img class="position-absolute" src="${equipment['상의'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(3 / 8 * 100%); border-radius:3px; opacity:${equipment['상의'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['상의'].grade)}" />
-                <img class="position-absolute" src="${equipment['하의'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(4 / 8 * 100%); border-radius:3px; opacity:${equipment['하의'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['하의'].grade)}" />
-                <img class="position-absolute" src="${equipment['장갑'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(5 / 8 * 100%); border-radius:3px; opacity:${equipment['장갑'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['장갑'].grade)}" />
-                <img class="position-absolute" src="${equipment['어깨'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(6 / 8 * 100%); border-radius:3px; opacity:${equipment['어깨'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['어깨'].grade)}" />
-                <img class="position-absolute" src="${equipment['나침반'].icon}" style="width:36px; left:calc(50% - 30%); transform:translate(-50%, -50%); top:calc(7 / 8 * 100%); border-radius:3px; opacity:${equipment['나침반'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['나침반'].grade)}" />
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(1 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['무기'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['무기'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['무기'].grade)}" />
+                    ${equipment['무기'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(2 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['투구'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['투구'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['투구'].grade)}" />
+                    ${equipment['투구'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(3 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['상의'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['상의'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['상의'].grade)}" />
+                    ${equipment['상의'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(4 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['하의'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['하의'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['하의'].grade)}" />
+                    ${equipment['하의'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(5 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['장갑'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['장갑'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['장갑'].grade)}" />
+                    ${equipment['장갑'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(6 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['어깨'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['어깨'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['어깨'].grade)}" />
+                    ${equipment['어깨'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% - 30%); top:calc(7 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['나침반'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['나침반'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['나침반'].grade)}" />
+                    ${equipment['나침반'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
                 
                 <img class="w-100" src="${characterImage}" />
                 
-                <img class="position-absolute" src="${equipment['목걸이'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(1 / 8 * 100%); border-radius:3px; opacity:${equipment['목걸이'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['목걸이'].grade)}" />
-                <img class="position-absolute" src="${equipment['귀걸이1'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(2 / 8 * 100%); border-radius:3px; opacity:${equipment['귀걸이1'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['귀걸이1'].grade)}" />
-                <img class="position-absolute" src="${equipment['귀걸이2'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(3 / 8 * 100%); border-radius:3px; opacity:${equipment['귀걸이2'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['귀걸이2'].grade)}" />
-                <img class="position-absolute" src="${equipment['반지1'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(4 / 8 * 100%); border-radius:3px; opacity:${equipment['반지1'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['반지1'].grade)}" />
-                <img class="position-absolute" src="${equipment['반지2'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(5 / 8 * 100%); border-radius:3px; opacity:${equipment['반지2'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['반지2'].grade)}" />
-                <img class="position-absolute" src="${equipment['팔찌'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(6 / 8 * 100%); border-radius:3px; opacity:${equipment['팔찌'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['팔찌'].grade)}" />
-                <img class="position-absolute" src="${equipment['어빌리티 스톤'].icon}" style="width:36px; left:calc(50% + 30%); transform:translate(-50%, -50%); top:calc(7 / 8 * 100%); border-radius:3px; opacity:${equipment['어빌리티 스톤'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['어빌리티 스톤'].grade)}" />
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(1 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['목걸이'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['목걸이'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['목걸이'].grade)}" />
+                    ${equipment['목걸이'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(2 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['귀걸이1'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['귀걸이1'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['귀걸이1'].grade)}" />
+                    ${equipment['귀걸이1'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(3 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['귀걸이2'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['귀걸이2'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['귀걸이2'].grade)}" />
+                    ${equipment['귀걸이2'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(4 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['반지1'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['반지1'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['반지1'].grade)}" />
+                    ${equipment['반지1'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(5 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['반지2'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['반지2'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['반지2'].grade)}" />
+                    ${equipment['반지2'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(6 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['팔찌'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['팔찌'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['팔찌'].grade)}" />
+                    ${equipment['팔찌'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
+                <div class="position-absolute" style="width:36px; height:36px; left:calc(50% + 30%); top:calc(7 / 8 * 100%); transform:translate(-50%, -50%);">
+                    <img src="${equipment['어빌리티 스톤'].icon}" style="width:100%; height:100%; border-radius:3px; opacity:${equipment['어빌리티 스톤'].unequippedRequired == true ? '0.3' : '1' }; background-color:${selectBackground(equipment['어빌리티 스톤'].grade)}" />
+                    ${equipment['어빌리티 스톤'].unequippedRequired
+                        ? '<div class="position-absolute" style="left:15px; top:-20px; font-size:30px; font-weight:bold; background:linear-gradient(225deg, #ff3d3d, #ffc7b6); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">✔</div>'
+                        : ''
+                    }
+                </div>
             </div>
         `;
         $('.image-container').html(imgDom);
 
-        // 해제해야 할 장비 표시
+        // 해제해야 할 장비 텍스트를 삽입
         const unequippedStr = Object.entries(equipment)
             .filter(([key, value]) => value.unequippedRequired === true)
             .map(([key, value]) => key)
