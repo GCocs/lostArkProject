@@ -150,25 +150,41 @@ public class MemberService {
 
         // 2. 해제할 장비를 설정
         Mono<List<EquipmentDTO>> equipmentMono = equipmentApiMono.map(equipmentApiDTOList -> {
-                    Collections.shuffle(equipmentApiDTOList);  // 장비 순서를 무작위로 설정
-                    AtomicInteger count = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
+            // 불필요한 장비 필터링, 중복 장비에 순번 부여
+            AtomicInteger ringIdx = new AtomicInteger(1);   // 반지 순번 정수 객체 (동시성 이슈)
+            AtomicInteger earringIdx = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
+            List<EquipmentApiDTO> filteredlist = equipmentApiDTOList.stream()
+                    .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()))  // 부적 제외
+                    .map(equipmentApiDTO -> {
+                        if ("반지".equals(equipmentApiDTO.getType())) {
+                            equipmentApiDTO.setType("반지" + ringIdx.getAndIncrement());
+                        } else if ("귀걸이".equals(equipmentApiDTO.getType())) {
+                            equipmentApiDTO.setType("귀걸이" + earringIdx.getAndIncrement());
+                        }
+                        return equipmentApiDTO;
+                    })
+                    .collect(Collectors.toList());
 
-                    return equipmentApiDTOList.stream()
-                            .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()))  // 부적 제외
-                            .map(equipmentApiDTO -> {
-                                EquipmentDTO equipmentDTO = new EquipmentDTO();
-                                equipmentDTO.setType(equipmentApiDTO.getType());
-                                equipmentDTO.setName(equipmentApiDTO.getName());
-                                equipmentDTO.setIcon(equipmentApiDTO.getIcon());
-                                equipmentDTO.setGrade(equipmentApiDTO.getGrade());
-                                if (count.getAndIncrement() <= 2) {
-                                    equipmentDTO.setUnequippedRequired(true);
-                                } else {
-                                    equipmentDTO.setUnequippedRequired(false);
-                                }
-                                return equipmentDTO;
-                            })
-                            .toList();
+            // 장비 순서 무작위로 설정
+            Collections.shuffle(filteredlist);
+
+            // 해제할 장비 설정
+            AtomicInteger count = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
+            return filteredlist.stream()
+                    .map(equipmentApiDTO -> {  // 해제 여부 설정
+                        EquipmentDTO equipmentDTO = new EquipmentDTO();
+                        equipmentDTO.setType(equipmentApiDTO.getType());
+                        equipmentDTO.setName(equipmentApiDTO.getName());
+                        equipmentDTO.setIcon(equipmentApiDTO.getIcon());
+                        equipmentDTO.setGrade(equipmentApiDTO.getGrade());
+                        if (count.getAndIncrement() <= 2) {
+                            equipmentDTO.setUnequippedRequired(true);
+                        } else {
+                            equipmentDTO.setUnequippedRequired(false);
+                        }
+                        return equipmentDTO;
+                    })
+                    .toList();
                 }
         );
 
