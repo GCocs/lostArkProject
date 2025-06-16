@@ -209,6 +209,14 @@ async function requestCertification() {
 }
 
 // ======================================================== //
+//                       인증 요청                           //
+// ======================================================== //
+// 장비 해제 인증하기 함수
+function submitCertification() {
+
+}
+
+// ======================================================== //
 //                       인증 초기화                         //
 // ======================================================== //
 // 캐릭터 인증 상태 초기화 (세션 초기화)
@@ -260,6 +268,7 @@ $(() => {
 
     // 이벤트 바인딩
     $('#request-certification-button').click(requestCertification);
+    $('#submit-certification-button').click(submitCertification);
     $('#reset-certification-button').click(resetCertificationState);
     $('#nickname').keydown((e) => {
         if(e.key === 'Enter') {
