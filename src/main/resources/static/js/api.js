@@ -1,4 +1,4 @@
-const baseUrl = 'http://localhost/api';
+const baseUrl = 'http://localhost';
 
 /** 
  * 서버에 GET 요청을 보내는 함수입니다.

@@ -15,5 +15,5 @@ import java.util.Map;
 @AllArgsConstructor
 public class CharacterCertificationDTO {
     private CharacterImageApiDTO characterImage;
-    private Map<String, EquipmentApiDTO> equipment;
+    private Map<String, EquipmentDTO> equipment;
 }
