@@ -51,18 +51,12 @@
                 </div>
             </div>
             <div class="navbar-nav w-100">
-                <div class="nav-item dropdown">
-                    <a th:href="@{/collectible}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
-                        <div class="nav-image">
-                            <img src="/img/mokoko_seed.png" class="me-2" alt="mokoko" />내실
-                        </div>
-                    </a>
-                    <div class="dropdown-menu bg-transparent border-0">
-                        <a th:href="@{/collectible}" class="dropdown-item">내실 메인 화면</a>
-                        <a th:href="@{/collectible/recommendation}" class="dropdown-item">추천 내실</a>
-                        <a th:href="@{/collectible/otherCollectible}" class="dropdown-item">기타 내실</a>
+                <a th:href="@{/collectible}" class="nav-item nav-link">
+                    <div class="nav-image">
+                        <img src="/img/mokoko_seed.png" class="me-2" alt="mokoko" />
                     </div>
-                </div>
+                    &nbsp;내실
+                </a>
                 <div class="nav-item dropdown">
                     <a th:href="@{/teaching/main}" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">
                         <i class="fa-solid fa-user-group me-2"></i>멘토 & 멘티
