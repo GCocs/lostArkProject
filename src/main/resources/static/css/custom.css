@@ -84,6 +84,12 @@ a:hover {
   border-color: transparent;
 }
 
+.btn-primary.disabled {
+  color: #fff;
+  background-color: #424242;
+  border-color: transparent;
+}
+
 .btn-check:focus+.btn-primary, .btn-primary:focus {
   color: #191c24;
   background-color: #fff;
