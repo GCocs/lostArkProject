@@ -63,13 +63,4 @@ public class MainController {
         model.addAttribute("recommendCollectibleFullList", recommendCollectibleFullList);
         return "collectible/collectible"; // 결과 뷰로 이동
     }
-
-    @PostMapping("/collectible/clear")
-    public String clearCollectible(
-            @RequestParam("collectibleId") int collectibleId,
-            @SessionAttribute("member") Member member) {
-
-        collectibleService.clearCollectible(member.getMemberId(), collectibleId);
-        return "redirect:/collectible";
-    }
 }
