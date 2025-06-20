@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>멘토링 신청 거절</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <h2 class="mb-4">멘토링 신청이 거절되었습니다.</h2>
+                    <br>
+                        <p>멘토링 신청이 거절되었습니다. 다른 멘토에게 신청해보세요!</p>
+                        <a class="btn custom-list-btn" th:href="@{/teaching/mentorList}">멘토링 신청하러가기</a>
+                        <a class="btn custom-list-btn" th:href="@{/}">메인으로</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

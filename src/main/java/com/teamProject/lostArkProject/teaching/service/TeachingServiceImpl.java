@@ -147,4 +147,24 @@ public class TeachingServiceImpl implements TeachingService {
         return result;
     }
 
+    @Override
+    public Set<String> getAppliedMentorIdsByMentee(String menteeId) {
+        return teachingDAO.getAppliedMentorIdsByMentee(menteeId);
+    }
+
+    @Override
+    public Map<String, Object> getMentorInfoById(String mentorMemberId) {
+        return teachingDAO.getMentorInfoById(mentorMemberId);
+    }
+
+    @Override
+    public List<String> getMentorContentIdsById(String mentorMemberId) {
+        return teachingDAO.getMentorContentIdsById(mentorMemberId);
+    }
+
+    @Override
+    public boolean isMentorExists(String mentorMemberId) {
+        return teachingDAO.isMentorExists(mentorMemberId) > 0;
+    }
+
 }
