@@ -20,8 +20,10 @@
             <div class="col-sm-12 col-xl-4">
                 <div class="rounded p-4 mb-5 input-container" style="background-color: #15181D;">
                     <div class="form-floating mb-4">
-                        <input type="text" class="form-control border-secondary mb-3" id="nickname" placeholder="닉네임" name="nickname">
-                        <label for="nickname">닉네임 입력</label>
+                        <select id="certificationCharacter" class="form-control border-secondary mb-3">
+                            <option th:each="character : ${characterInfoList}"
+                                    th:value="${character.characterName}" th:text="${character.characterName}"></option>
+                        </select>
                         <div class="d-flex gap-3">
                             <button class="btn btn-primary" id="request-certification-button">인증 요청</button>
                             <button class="btn btn-light" id="reset-certification-button">인증 초기화</button>

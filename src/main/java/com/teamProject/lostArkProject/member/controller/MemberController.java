@@ -1,5 +1,6 @@
 package com.teamProject.lostArkProject.member.controller;
 
+import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import jakarta.servlet.http.Cookie;
@@ -9,6 +10,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+
+import java.util.List;
 
 @Controller
 @RequestMapping("/member")
@@ -70,12 +73,16 @@ public class MemberController {
 
     // 캐릭터 인증 페이지
     @GetMapping("/certification")
-    public String certification(HttpServletRequest request){
+    public String certification(HttpServletRequest request, Model model){
         HttpSession session = request.getSession();
         Member member = (Member) session.getAttribute("member");
         if(member == null) {
             return "index";
         }
+        List<CharacterInfo> characterInfoList = memberService.getCharacterInfo(member.getRepresentativeCharacterNickname())
+                .block();
+
+        model.addAttribute("characterInfoList", characterInfoList);
         return "member/certification";
     }
 }
