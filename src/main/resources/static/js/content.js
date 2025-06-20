@@ -113,7 +113,7 @@ const dataManager = (() => {
     /** 컨텐츠 데이터를 가져오는 함수 */
     async function fetchContentData() {
         try {
-            const response = await getRequest('/contents/start-time');
+            const response = await getRequest('/api/contents/start-time');
             console.log('원본 컨텐츠: ', response);
             return response;
         } catch (e) {
@@ -125,7 +125,7 @@ const dataManager = (() => {
     /** 로그인한 유저의 알림 설정 데이터를 가져오는 함수 */
     async function fetchAlarmSettingsData() {
         try {
-            const response = await getRequest(`/alarm`);
+            const response = await getRequest(`/api/alarm`);
             console.log('원본 알림 설정 데이터: ', response);
             return response;
         } catch (e) {
@@ -507,7 +507,7 @@ async function renderAlarm(alarms) {
  */
 async function updateAlarmSetting(contentNumber, contentName) {
     try {
-        const response = await postRequest(`/alarm`, {
+        const response = await postRequest(`/api/alarm`, {
             contentNumber: contentNumber,
             contentName: contentName,
         });
@@ -525,7 +525,7 @@ async function updateAlarmSetting(contentNumber, contentName) {
 async function deleteAlarmSetting(contentName) {
     try {
         const encodedContentName = encodeURIComponent(contentName);
-        const response = await deleteRequest(`/alarm/${encodedContentName}`);
+        const response = await deleteRequest(`/api/alarm/${encodedContentName}`);
         console.log(contentName);
         console.log(response);
     } catch (e) {
