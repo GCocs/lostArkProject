@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>신청멘티 리스트</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid vh-100 p-0 m-0">
+        <!-- Content Start -->
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <h2 class="mb-4">멘티 신청 리스트</h2>
+                    <div class="table-responsive w-100">
+                        <table class="table">
+                            <thead>
+                                <tr>
+                                    <th scope="col">#</th>
+                                    <th scope="col">멘티 ID</th>
+                                    <th scope="col">닉네임</th>
+                                    <th scope="col">레벨</th>
+                                    <th scope="col">서버</th>
+                                    <th scope="col">상세보기</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr th:each="item, iterStat : ${requestedList}">
+                                    <td th:text="${iterStat.index + 1}"></td>
+                                    <td th:text="${item.mentee_member_id}"></td>
+                                    <td th:text="${item.mentee_nickname}"></td>
+                                    <td th:text="${item.mentee_item_level}"></td>
+                                    <td th:text="${item.mentee_server_name}"></td>
+                                    <td>
+                                        <a th:href="@{/message/newMessageDetail(menteeMemberId=${item.mentee_member_id})}" class="btn btn-outline-primary m-2">상세보기</a>
+                                    </td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    
+                </div>
+            </div>
+        </div>
+        <!-- Table End -->
+    </div>
+    <!-- Content End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+</div>
+</body>
+</html>

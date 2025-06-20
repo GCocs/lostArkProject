@@ -6,6 +6,7 @@ import com.teamProject.lostArkProject.teaching.dto.MenteeApplyDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorDTO;
 import com.teamProject.lostArkProject.teaching.dto.MentorListDTO;
 //import com.teamProject.lostArkProject.teaching.service.NotificationService;
+import com.teamProject.lostArkProject.teaching.service.MessageService;
 import com.teamProject.lostArkProject.teaching.service.TeachingService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,12 +18,16 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 @Controller
 @RequestMapping("/teaching")
 public class TeachingController {
 
     @Autowired
     private TeachingService teachingService;
+
+    @Autowired
+    private MessageService messageService;
 
     @GetMapping("/newMentor")
     public String newMentor(HttpSession session) {
@@ -32,6 +37,11 @@ public class TeachingController {
         if (member == null) {
             // 세션에 "member" 객체가 없으면 접근 불가
             return "redirect:/member/signin"; // 로그인 페이지로 리다이렉트
+        }
+        // 이미 멘토 이력이 있으면 수정 폼으로 리다이렉트
+        String memberId = ((Member) member).getMemberId();
+        if (teachingService.isMentorExists(memberId)) {
+            return "redirect:/teaching/mentorUpdate";
         }
         // "member" 객체가 존재하면 페이지 반환
         return "teaching/newMentor";
@@ -49,7 +59,7 @@ public class TeachingController {
             return "redirect:/member/signin";
         }
 
-        // ✅ Member 클래스에 정의된 memberId 사용
+        // Member 클래스에 정의된 memberId 사용
         String memberId = memberObj.getMemberId();
         mentorDTO.setMentorMemberId(memberId);
 
@@ -59,6 +69,22 @@ public class TeachingController {
         teachingService.newMentor(mentorDTO);
         return "redirect:/teaching/mentorList";
     }
+
+    
+
+    @GetMapping("/mentorUpdate")
+    public String mentorUpdate(HttpSession session, Model model) {
+        Object member = session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        String memberId = ((Member) member).getMemberId();
+        Map<String, Object> mentorInfo = teachingService.getMentorInfoById(memberId);
+        List<String> mentorContentIds = teachingService.getMentorContentIdsById(memberId);
+        model.addAttribute("mentorInfo", mentorInfo);
+        model.addAttribute("mentorContentIds", mentorContentIds);
+        return "teaching/mentorUpdate";
+    }   
 
 
     @GetMapping("/mentorList")
@@ -80,41 +106,22 @@ public class TeachingController {
                 .filter(mentor -> !loginMemberId.equals(mentor.getMentorMemberId()))
                 .toList();
 
+        // 로그인한 멘티 ID
+        String menteeId = ((Member) session.getAttribute("member")).getMemberId();
+        // 이미 신청한 멘토 ID 목록 조회 (service/dao에서 구현 필요)
+        Set<String> appliedMentorIds = teachingService.getAppliedMentorIdsByMentee(menteeId);
+        model.addAttribute("appliedMentorIds", appliedMentorIds);
+
         model.addAttribute("mentors", filteredMentors);
         return "teaching/mentorList";
     }
 
-
-//    @GetMapping("/teaching/mentorListDetail/{mentorMemberId}")
-//    public String mentorListDetail(@PathVariable("mentorMemberId") String mentorMemberId, Model model) {
-//        List<MentorListDTO> mentors = teachingService.getMentorDetail(mentorMemberId);
-//        model.addAttribute("mentors", mentors);
-//        //아이디로 상세정보가져오기
-//        return "teaching/mentorListDetail";
-//    }
 
     @PostMapping("/mentorListDetail")
     public String mentorListDetail(@RequestParam("mentorMemberId") String mentorMemberId, Model model) {
         List<MentorListDTO> mentors = teachingService.getMentorDetail(mentorMemberId);
         model.addAttribute("mentors", mentors);
         return "teaching/mentorListDetail";
-    }
-
-
-
-    // 멘티 신청 상태 + ACCEPTED 시 디스코드 ID 포함
-    @GetMapping("/mentee/apply-status-detail/{menteeMemberId}")
-    @ResponseBody
-    public List<Map<String, Object>> getApplyStatusWithDiscord(@PathVariable String menteeMemberId) {
-        List<Map<String, Object>> list = teachingService.getApplyStatusByMentee(menteeMemberId);
-        for (Map<String, Object> entry : list) {
-            if ("ACCEPTED".equals(entry.get("apply_status"))) {
-                String mentorId = (String) entry.get("mentor_member_id");
-                String discordId = teachingService.getMentorDiscordId(mentorId);
-                entry.put("discord_id", discordId);
-            }
-        }
-        return list;
     }
 
 
@@ -139,12 +146,6 @@ public class TeachingController {
         return "redirect:/teaching/mentorList";
     }
 
-    @ModelAttribute("menteeMemberId")
-    public String getLoggedInMenteeId(HttpSession session) {
-        Member member = (Member) session.getAttribute("member");
-        return member != null ? member.getMemberId() : null;
-    }
-
     @GetMapping("/mentor/requested-applies")
     @ResponseBody
     public List<Map<String, Object>> getRequestedApplies(HttpSession session) {
@@ -154,4 +155,19 @@ public class TeachingController {
         }
         return teachingService.getRequestedAppliesByMentor(member.getMemberId());
     }
+
+    @PostMapping("/acceptMentee")
+    public String acceptMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+                              @RequestParam("menteeMemberId") String menteeMemberId) {
+        messageService.acceptMenteeApply(mentorMemberId, menteeMemberId);
+        return "redirect:/message/list";
+    }
+
+    @PostMapping("/rejectMentee")
+    public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+                              @RequestParam("menteeMemberId") String menteeMemberId) {
+        messageService.rejectMenteeApply(mentorMemberId, menteeMemberId);
+        return "redirect:/message/list";
+    }
+
 }
