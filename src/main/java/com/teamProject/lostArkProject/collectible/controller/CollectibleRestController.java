@@ -1,6 +1,8 @@
 package com.teamProject.lostArkProject.collectible.controller;
 
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
+import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.member.domain.Member;
@@ -56,9 +58,29 @@ public class CollectibleRestController {
         }
     }
 
+    @PostMapping("/collectible/getRecommendCollectibleList")
+    public List<RecommendCollectible> getRecommendCollectibleList(HttpSession session){
+        Member member = (Member) session.getAttribute("member");
+        return collectibleService.getRecommendCollectible(member.getMemberId());
+    }
+
+    @PostMapping("/collectible/getRecommendFullCollectibleList")
+    public List<RecommendCollectibleFullDTO> getRecommendFullCollectibleList(HttpSession session){
+        Member member = (Member) session.getAttribute("member");
+        return collectibleService.getRecommendFullCollectible(member.getMemberId());
+    }
+
+    @PostMapping("/collectible/clear")
+    public void clearCollectible(HttpSession session, @RequestBody Map<String, String> requestMap) {
+        Member member = (Member) session.getAttribute("member");
+        int collectibleId = Integer.parseInt(requestMap.get("collectibleId"));
+        collectibleService.clearCollectible(member.getMemberId(), collectibleId);
+    }
+
     public static class ClearStatusRequest {
         private int recommendCollectibleID;
         private boolean cleared;
         // getters/setters
     }
+
 }

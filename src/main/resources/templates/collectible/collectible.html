@@ -67,7 +67,7 @@
                                data-bs-target="#collectibleModal">Show All</a>
                             <div class="modal fade" id="collectibleModal" tabindex="-1"
                                  aria-labelledby="exampleModalLabel" aria-hidden="true">
-                                <div class="modal-dialog">
+                                <div class="modal-dialog modal-lg">
                                     <div class="modal-content">
                                         <div class="modal-header">
                                             <h5 class="modal-title" id="exampleModalLabel">추천 수집형포인트</h5>
@@ -85,11 +85,12 @@
                                                         <th scope="col">완료</th>
                                                     </tr>
                                                     </thead>
-                                                    <tbody th:each="recommendItem : ${recommendCollectibleFullList}">
-                                                    <tr>
+                                                    <tbody id="recommendFullTbody">
+                                                    <tr th:each="recommendItem : ${recommendCollectibleFullList}">
                                                         <td th:text="${recommendItem.recommendCollectibleID}"></td>
                                                         <td th:text="${recommendItem.recommendCollectibleName}"></td>
-                                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}">URL</a></td>
+                                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}"
+                                                               th:classappend="${recommendItem.recommendCollectibleURL == null} ? ' disabled' : ''">URL</a></td>
                                                         <td>
                                                             <input
                                                                     type="checkbox"
@@ -97,10 +98,6 @@
                                                                     th:checked="${recommendItem.isCleared}"
                                                                     onchange="toggleCleared(this)"
                                                             />
-<!--                                                            <form th:action="@{/collectible/clear}" method="post">-->
-<!--                                                                <button class="btn btn-sm btn-primary" type="submit" name="collectibleId"-->
-<!--                                                                        th:value="${recommendItem.recommendCollectibleID}">완료</button>-->
-<!--                                                            </form>-->
                                                         </td>
                                                     </tr>
                                                     </tbody>
@@ -125,15 +122,13 @@
                                         <th scope="col">완료</th>
                                     </tr>
                                     </thead>
-                                    <tbody th:each="recommendItem : ${recommendCollectibleList}">
-                                    <tr>
+                                    <tbody id="recommendTbody">
+                                    <tr th:each="recommendItem : ${recommendCollectibleList}">
                                         <td th:text="${recommendItem.recommendCollectibleName}"></td>
-                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}">URL</a></td>
+                                        <td><a class="btn btn-sm btn-primary" th:href="${recommendItem.recommendCollectibleURL}" th:classappend="${recommendItem.recommendCollectibleURL == null} ? ' disabled' : ''">URL</a></td>
                                         <td>
-                                            <form th:action="@{/collectible/clear}" method="post">
-                                                <button class="btn btn-sm btn-primary" type="submit" name="collectibleId"
-                                                        th:value="${recommendItem.recommendCollectibleID}">완료</button>
-                                            </form>
+                                            <button class="btn btn-sm btn-primary" type="button" name="collectibleId"
+                                                    th:data-id="${recommendItem.recommendCollectibleID}" onclick="collectibleClear(this)">완료</button>
                                         </td>
                                     </tr>
                                     </tbody>

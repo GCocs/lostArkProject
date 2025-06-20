@@ -69,6 +69,17 @@ window.checkSignup = function() {
     });
 }
 
+//로그인 엔터기능
+const signinForm = document.getElementById("signinForm");
+if (signinForm) {
+  signinForm.addEventListener("keydown", function(e) {
+    if (e.key === "Enter") {
+      e.preventDefault();
+      checkSignin();
+    }
+  });
+}
+
 //로그인
 window.checkSignin = function() {
     var form = document.signinForm;
@@ -220,6 +231,8 @@ window.checkAuthCodeChangePassword = function() {
     });
 };
 
+console.log('[sendEmail] 정의 직전:', typeof window.sendEmail);
+
 //회원가입 이메일 중복확인 및 인증번호 발송
 window.sendEmail = function() {
     const email = $('#signupId').val();
@@ -229,7 +242,6 @@ window.sendEmail = function() {
         return;
     } else if (!emailTest.test(email)) {
         alert("이메일 형식으로 입력해주세요.");
-        form.signinId.focus();
         return;
     }
 
@@ -264,6 +276,8 @@ window.sendEmail = function() {
     });
 }
 
+console.log('[sendEmail] 정의 직후:', typeof window.sendEmail);
+
 //인증번호 확인
 window.checkAuthCode = function() {
     const authCode = $('#checkAuth').val();
@@ -296,7 +310,7 @@ window.changeProfile = function() {
     const memberId = $('#changeMemberId').val();
     const PW = $('#changePassword').val();
     const PWCheck = $('#changePasswordCheck').val();
-    const RCN = $('#changeRepresentativeCharacterNickname').val();changeMemberId
+    const RCN = $('#changeRepresentativeCharacterNickname').val();
 
     const ajaxList = [];
 
