@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>멘토링 신청 수락</title>
+
+</head>
+<body>
+<div layout:fragment="content">
+
+    <div class="container-fluid pt-4 px-4">
+        <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+            <div class="col-md-10 col-lg-8 col-xl-6">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <h2 class="mb-4">멘토링이 수락되었습니다.</h2>
+                    <dl class="row mb-0">
+                        <dt class="col-sm-4">멘토 ID</dt>
+                        <dd class="col-sm-8" th:text="${apply.menteeMemberId}"></dd>
+
+                        <dt class="col-sm-4">신청일</dt>
+                        <dd class="col-sm-8" th:text="${#temporals.format(apply.createdAt, 'yyyy-MM-dd HH:mm')}"></dd>
+
+                        <dt class="col-sm-4">멘토 디스코드 아이디</dt>
+                        <dd class="col-sm-8" th:text="${menteeCharacter.characterNickname}"></dd>
+
+                    </dl>
+                    <br>
+                        <a class="btn custom-list-btn" th:href="@{/}">메인으로</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+</body>
+</html>

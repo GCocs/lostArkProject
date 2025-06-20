@@ -48,7 +48,34 @@
         LIMIT 1
     </select>
 
+    <!-- 멘토가 받은 모든 멘티 신청 이력(REQUESTED, ACCEPTED, REJECTED) 조회 -->
+    <select id="getAllMenteeAppliesByMentor" parameterType="string" resultType="map">
+        SELECT 
+            MA.mentee_member_id,
+            MA.apply_status,
+            MC.CHARACTER_NICKNAME as mentee_nickname,
+            MC.ITEM_LEVEL as mentee_item_level,
+            MC.SERVER_NAME as mentee_server_name,
+            MA.mentor_member_id
+        FROM MENTEE_APPLY MA
+        JOIN MEMBER_CHARACTER MC ON MA.mentee_member_id = MC.MEMBER_ID
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        ORDER BY MA.mentee_member_id DESC
+    </select>
 
-    
+    <!-- 멘티가 보낸 모든 멘토링 신청 이력(REQUESTED, ACCEPTED, REJECTED) 조회 -->
+    <select id="getAllMenteeAppliesByMentee" parameterType="string" resultType="map">
+        SELECT 
+            MA.mentor_member_id,
+            MA.apply_status,
+            MC.character_nickname as mentor_nickname,
+            MC.item_level as mentor_item_level,
+            MC.server_name as mentor_server_name,
+            MA.mentee_member_id
+        FROM MENTEE_APPLY MA
+        JOIN MEMBER_CHARACTER MC ON MA.mentor_member_id = MC.member_id
+        WHERE MA.mentee_member_id = #{menteeMemberId}
+        ORDER BY MA.mentor_member_id DESC
+    </select>
 
 </mapper>

@@ -14,4 +14,6 @@ public interface MessageDAO {
     void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
     List<MenteeDTO> getMenteeDetail(String menteeMemberId);
     Map<String, Object> getMenteeCharacterInfo(String menteeMemberId);
+    List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId);
+    List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId);
 }

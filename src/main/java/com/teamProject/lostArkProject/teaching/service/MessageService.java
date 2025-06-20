@@ -12,4 +12,6 @@ public interface MessageService {
     Map<String, Object> getMenteeCharacterInfo(String menteeMemberId);
     void acceptMenteeApply(String mentorMemberId, String menteeMemberId);
     void rejectMenteeApply(String mentorMemberId, String menteeMemberId);
+    List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId);
+    List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId);
 }

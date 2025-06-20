@@ -98,8 +98,9 @@
 
                         <div class="dropdown-menu dropdown-menu-end bg-secondary rounded-0 rounded-bottom m-0"
                              id="messageDropdownMenu" style="border: 1px solid #333;">
-                            <!-- 여기에 자바스크립트로 새 메시지가 추가됨 -->
-                            <a th:href="@{/message/list}" class="dropdown-item text-center">전체 메세지 목록</a>
+                            <!-- 여기에 자바스크립트로 새 메시지가 추가됨 (멘토링 신청 상태별로 표시됨) -->
+                            <a th:href="@{/message/list}" class="dropdown-item text-center">받은 멘토링 신청 전부보기</a>
+                            <a th:href="@{/message/myRequest}" class="dropdown-item text-center">내가 보낸 멘토링 신청 결과</a>
                         </div>
                     </div>
 
@@ -164,6 +165,7 @@
 <!-- Template Javascript -->
 <script th:src="@{/js/main.js}"></script>
 <script th:src="@{/js/mentor.js}"></script>
+<script th:src="@{/js/mentee.js}"></script>
 </body>
 
 

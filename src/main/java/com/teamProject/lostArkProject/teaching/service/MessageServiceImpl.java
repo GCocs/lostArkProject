@@ -50,4 +50,14 @@ public class MessageServiceImpl implements MessageService {
         messageDAO.rejectMenteeApply(dto);
     }
 
+    @Override
+    public List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId) {
+        return messageDAO.getAllMenteeAppliesByMentor(mentorMemberId);
+    }
+
+    @Override
+    public List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId) {
+        return messageDAO.getAllMenteeAppliesByMentee(menteeMemberId);
+    }
+
 }

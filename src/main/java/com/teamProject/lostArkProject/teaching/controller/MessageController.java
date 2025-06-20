@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
 import org.springframework.beans.factory.annotation.Autowired;
 import com.teamProject.lostArkProject.teaching.dto.MenteeApplyDTO;
-import com.teamProject.lostArkProject.teaching.dto.MenteeDTO;
 import com.teamProject.lostArkProject.teaching.service.MessageService;
 import java.util.List;
 import java.util.HashMap;
@@ -68,6 +67,36 @@ public class MessageController {
 
         model.addAttribute("requestedList", requestedList);
         return "message/messageList";
+    }
+
+    @GetMapping("/myRequest")
+    public String myRequest(HttpSession session, Model model) {
+        Member memberObj = (Member) session.getAttribute("member");
+        if (memberObj == null) {
+            return "redirect:/member/signin";
+        }
+        String mentorMemberId = memberObj.getMemberId();
+        return "mentorResultList";
+    }
+
+    @GetMapping("/all-applies")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public List<Map<String, Object>> getAllMenteeApplies(HttpSession session) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return java.util.Collections.emptyList();
+        }
+        return messageService.getAllMenteeAppliesByMentor(member.getMemberId());
+    }
+
+    @GetMapping("/my-applies")
+    @org.springframework.web.bind.annotation.ResponseBody
+    public List<Map<String, Object>> getAllMenteeAppliesByMentee(HttpSession session) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return java.util.Collections.emptyList();
+        }
+        return messageService.getAllMenteeAppliesByMentee(member.getMemberId());
     }
 
 }

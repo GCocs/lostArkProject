@@ -13,14 +13,28 @@ document.addEventListener('DOMContentLoaded', function() {
     // 기존 메시지 초기화 함수
     function clearMessages() {
         try {
-            // "See all messages" 링크를 제외한 모든 항목 제거
-            const seeAllLink = messageDropdown.querySelector('.dropdown-item.text-center');
+            // 모든 자식 제거
             while (messageDropdown.firstChild) {
                 messageDropdown.removeChild(messageDropdown.firstChild);
             }
-            if (seeAllLink) {
-                messageDropdown.appendChild(seeAllLink);
-            }
+            // 동적 메시지와 고정 메뉴 사이 구분선
+            const fixedDivider = document.createElement('hr');
+            fixedDivider.className = 'dropdown-divider fixed-divider';
+            // 고정 메뉴 두 개를 새로 생성해서 추가
+            const link1 = document.createElement('a');
+            link1.href = '/message/list';
+            link1.className = 'dropdown-item text-center';
+            link1.textContent = '받은 멘토링 신청 전부보기';
+
+            const link2 = document.createElement('a');
+            link2.href = '/message/myRequest';
+            link2.className = 'dropdown-item text-center';
+            link2.textContent = '내가 보낸 멘토링 신청 결과';
+
+            // 구분선 + 고정 메뉴 추가
+            messageDropdown.appendChild(fixedDivider);
+            messageDropdown.appendChild(link1);
+            messageDropdown.appendChild(link2);
         } catch (error) {
             console.error("Error clearing messages:", error);
         }
@@ -52,6 +66,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
             console.log("Processing requests:", data);
 
+            // 고정 메뉴(구분선) 앞에 동적 메시지 추가
+            const fixedDivider = messageDropdown.querySelector('.fixed-divider');
+
             data.forEach(request => {
                 if (!request || !request.mentee_member_id) {
                     console.log("Invalid request data:", request);
@@ -69,25 +86,35 @@ document.addEventListener('DOMContentLoaded', function() {
                 const newMessage = document.createElement("a");
                 newMessage.href = `/message/newMessageDetail?menteeMemberId=${request.mentee_member_id}`;
                 newMessage.className = "dropdown-item";
+
+                let statusMessage = '';
+                switch (request.apply_status) {
+                    case 'ACCEPTED':
+                        statusMessage = '멘토링이 수락되었습니다.';
+                        break;
+                    case 'REJECTED':
+                        statusMessage = '멘토링이 거절당했습니다.';
+                        break;
+                    default:
+                        statusMessage = '멘토링 요청이 도착했습니다.';
+                }
+
                 newMessage.innerHTML = `
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <span class="fw-bold">${request.mentee_nickname || '알 수 없음'}</span>
                             <div class="small text-gray-500">
-                                멘토링을 요청했습니다.
+                                ${statusMessage}
                             </div>
                         </div>
                     </div>
                 `;
 
-                const divider = document.createElement("hr");
-                divider.className = "dropdown-divider";
-
-                // "See all messages" 항목 바로 위에 추가
-                const seeAll = messageDropdown.lastElementChild;
-                if (seeAll) {
-                    messageDropdown.insertBefore(divider, seeAll);
-                    messageDropdown.insertBefore(newMessage, divider);
+                // 고정 구분선(fixed-divider) 앞에 동적 메시지 삽입
+                if (fixedDivider) {
+                    messageDropdown.insertBefore(newMessage, fixedDivider);
+                } else {
+                    messageDropdown.appendChild(newMessage);
                 }
             });
         } catch (error) {
@@ -97,7 +124,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function checkMentorRequests() {
         console.log("Checking mentor requests...");
-        fetch('/teaching/mentor/requested-applies')
+        fetch('/message/all-applies')
             .then(response => {
                 if (!response.ok) {
                     throw new Error(`HTTP error! status: ${response.status}`);
