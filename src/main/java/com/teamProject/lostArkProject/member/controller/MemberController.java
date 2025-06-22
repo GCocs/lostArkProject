@@ -57,7 +57,7 @@ public class MemberController {
     @GetMapping("/signout")
     public String signout(HttpSession session) {
         session.invalidate();
-        return "index";
+        return "redirect:/";
     }
 
     // 정보 변경
