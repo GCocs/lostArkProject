@@ -2,11 +2,10 @@ package com.teamProject.lostArkProject.collectible.controller;
 
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
-import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.member.domain.Member;
-import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;

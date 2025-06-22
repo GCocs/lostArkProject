@@ -3,20 +3,18 @@ package com.teamProject.lostArkProject.collectible.service;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.teamProject.lostArkProject.collectible.dao.CollectibleDAO;
-import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.domain.CollectiblePoint;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
-import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
-import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleFullDTO;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
-import java.util.*;
+import java.util.List;
 
 @Service
 @Slf4j
