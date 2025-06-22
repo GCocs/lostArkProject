@@ -133,6 +133,11 @@ async function requestCertification() {
 
     // 3. 캐릭터 이미지 요청
     const data = await fetchCharacterImage($nickname.val().trim());
+    if (!data.characterImage || !data.characterImage.CharacterImage || data.characterImage.CharacterImage.trim() === '') {
+        renderCharacterImage(null);
+        $nickname.focus();
+        return;
+    }
 
     // 4. 캐릭터 이미지를 페이지에 렌더링
     renderCharacterImage(data);
