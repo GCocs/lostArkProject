@@ -99,4 +99,13 @@ public class MessageController {
         return messageService.getAllMenteeAppliesByMentee(member.getMemberId());
     }
 
+    @GetMapping("/rejectReason")
+    public String rejectReason(HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        return "/message/rejectReason";
+    }
+
 }

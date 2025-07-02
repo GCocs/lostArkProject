@@ -88,22 +88,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 newMessage.className = "dropdown-item";
 
                 let statusMessage = '';
+                let statusColor = '';
                 switch (request.apply_status) {
                     case 'ACCEPTED':
                         statusMessage = '멘토링이 수락되었습니다.';
+                        statusColor = 'text-success';
                         break;
                     case 'REJECTED':
                         statusMessage = '멘토링이 거절당했습니다.';
+                        statusColor = 'text-danger';
                         break;
                     default:
                         statusMessage = '멘토링 요청이 도착했습니다.';
+                        statusColor = '';
                 }
 
                 newMessage.innerHTML = `
                     <div class="d-flex align-items-center">
                         <div class="flex-grow-1">
                             <span class="fw-bold">${request.mentee_nickname || '알 수 없음'}</span>
-                            <div class="small text-gray-500">
+                            <div class="small text-gray-500 ${statusColor}">
                                 ${statusMessage}
                             </div>
                         </div>

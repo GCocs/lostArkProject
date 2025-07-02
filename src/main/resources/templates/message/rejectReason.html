@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>멘토링 신청 거절 이유</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class="container-fluid pt-4 px-4">
+    <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+      <div class="col-md-10 col-lg-8 col-xl-6">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h2 class="mb-4">멘토링을 진짜로 거절하시겠습니까?</h2>
+          <form th:action="@{/teaching/rejectMentee}" method="post">
+            <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
+            <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
+
+            <p>거절 이유 선택</p>
+            <select class="form-select mb-3" name="rejectReason" required>
+              <option value="" disabled selected>거절 사유를 선택하세요</option>
+              <option value="시간이 없어서">시간이 없어서</option>
+              <option value="멘토링 신청 부분을 더이상 맡을 수 없어서">멘토링 신청 부분을 더이상 맡을 수 없어서</option>
+              <option value="지금 현재 멘티가 너무 많아서">지금 현재 멘티가 너무 많아서</option>
+            </select>
+
+            <p>이 멘티를 차단하시겠습니까? 차단하시면 멘티에게서 다시 멘토링 신청을 받지 않습니다. 차단하지 않으면 재신청이 들어올 수도 있습니다.</p>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="blockMentee" id="blockYes" value="Y">
+              <label class="form-check-label" for="blockYes">
+                차단하기
+              </label>
+            </div>
+            <div class="form-check">
+              <input class="form-check-input" type="radio" name="blockMentee" id="blockNo" value="N" checked>
+              <label class="form-check-label" for="blockNo">
+                차단하지 않기
+              </label>
+            </div>
+
+            <div class="mt-4 d-flex justify-content-between">
+              <button type="submit" class="btn btn-danger" th:href="@{/teaching/rejectMentee}">거절하기</button>
+              <a class="btn custom-list-btn" th:href="@{/message/list}">전체 메세지 보러가기</a>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>
