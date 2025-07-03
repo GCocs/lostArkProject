@@ -45,15 +45,15 @@ public class ContentService {
             contentDAO.deleteStartTime();
             contentDAO.deleteReward();
             contentDAO.deleteContent();
-            log.info("저장되어 있는 모든 Content 데이터 삭제");
+            log.info("기존 컨텐츠 데이터 삭제");
         })
         .then(fetchCalendarsFromApi()) // Mono<List<...>>
         .flatMapMany(Flux::fromIterable) // Mono<List<...>>를 Flux<...>로 변환
         .map(this::toDomain) // api 객체를 도메인 객체로 변환하는 메서드 호출
         .flatMap(this::insertContents) // 변환된 데이터를 db에 저장하는 메서드 호출
-        .then(Mono.just("Content 데이터가 성공적으로 저장되었습니다."))
+        .then(Mono.just("컨텐츠 데이터 저장 완료"))
         .doOnSuccess(log::info)
-        .doOnError(e -> log.error("Content 데이터 저장 중 에러가 발생했습니다. \n{}", e.getMessage()))
+        .doOnError(e -> log.error("컨텐츠 데이터 저장 중 에러 발생: \n{}", e.getMessage()))
         .doFinally(signalType -> running = false) // 플래그 변수 초기화
         .subscribe(); // 등록 (구독)
         /**

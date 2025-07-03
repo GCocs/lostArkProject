@@ -17,4 +17,8 @@ public interface CollectibleDAO {
     List<RecommendCollectibleFullDTO> getRecommendFullCollectible(String memberId);
     List<CollectiblePointSummaryDTO> getCollectiblePointSummary(String memberId);
     void deleteCollectible(String memberId);
+
+    // 추천내실
+    void insertRecommendCollectible(RecommendCollectible recommendCollectible);
+    void deleteRecommendCollectible();
 }
