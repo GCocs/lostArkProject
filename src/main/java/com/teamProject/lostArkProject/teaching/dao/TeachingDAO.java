@@ -31,4 +31,7 @@ public interface TeachingDAO {
     Map<String, Object> getMentorInfoById(String mentorMemberId);
     List<String> getMentorContentIdsById(String mentorMemberId);
     int isMentorExists(String mentorMemberId);
+    // 멘토 정보 수정
+    void updateMentor(MentorDTO mentorDTO);
+    void deleteMentorContent(String mentorMemberId);
 }

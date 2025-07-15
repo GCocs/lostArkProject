@@ -87,6 +87,41 @@ public class TeachingController {
     }   
 
 
+    @PostMapping("/mentorUpdate")
+    public String mentorUpdate(@ModelAttribute MentorDTO mentorDTO,
+                            @RequestParam(value = "mentorContentId[]", required = false) String[] contentIds,
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
+
+        Member memberObj = (Member) session.getAttribute("member");
+        if (memberObj == null) {
+            return "redirect:/member/signin";
+        }
+
+        String memberId = memberObj.getMemberId();
+        mentorDTO.setMentorMemberId(memberId);
+
+        // 콘텐츠 ID 처리 (아무것도 선택하지 않은 경우 대비)
+        if (contentIds != null && contentIds.length > 0) {
+            String joinedContentIds = String.join(", ", contentIds);
+            mentorDTO.setMentorContentId(joinedContentIds);
+        } else {
+            // 아무것도 선택하지 않은 경우 빈 문자열로 설정
+            mentorDTO.setMentorContentId("");
+        }
+
+        try {
+            teachingService.updateMentor(mentorDTO);
+            redirectAttributes.addFlashAttribute("successMessage", "멘토 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "멘토 정보 수정 중 오류가 발생했습니다.");
+            return "redirect:/teaching/mentorUpdate";
+        }
+
+        return "redirect:/teaching/mentorList";
+    }
+
+
     @GetMapping("/mentorList")
     public String mentorList(HttpSession session, Model model) {
         Object memberObj = session.getAttribute("member");

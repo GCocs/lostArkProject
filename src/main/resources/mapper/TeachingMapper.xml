@@ -149,4 +149,18 @@
         SELECT COUNT(*) FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
     </select>
 
+    <!--멘토 정보 수정-->
+    <update id="updateMentor" parameterType="MentorDTO">
+        UPDATE MENTOR
+        SET MENTOR_WANT_TO_SAY = #{mentorWantToSay},
+            MENTOR_DISCORD_ID = #{mentorDiscordId}
+        WHERE MENTOR_MEMBER_ID = #{mentorMemberId}
+    </update>
+
+    <!--멘토 콘텐츠 삭제-->
+    <delete id="deleteMentorContent" parameterType="string">
+        DELETE FROM MENTOR_CONTENT
+        WHERE MENTOR_MEMBER_ID = #{mentorMemberId}
+    </delete>
+
 </mapper>

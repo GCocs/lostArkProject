@@ -167,4 +167,20 @@ public class TeachingServiceImpl implements TeachingService {
         return teachingDAO.isMentorExists(mentorMemberId) > 0;
     }
 
+    @Override
+    public void updateMentor(MentorDTO mentorDTO) {
+        // 1. MENTOR 테이블 업데이트
+        teachingDAO.updateMentor(mentorDTO);
+
+        // 2. 기존 MENTOR_CONTENT 삭제
+        teachingDAO.deleteMentorContent(mentorDTO.getMentorMemberId());
+
+        // 3. 새로운 MENTOR_CONTENT 추가
+        if (mentorDTO.getMentorContentId() != null && !mentorDTO.getMentorContentId().isEmpty()) {
+            String[] contentIds = mentorDTO.getMentorContentId().split(", ");
+            for (String contentId : contentIds) {
+                teachingDAO.insertMentorContent(mentorDTO.getMentorMemberId(), contentId.trim());
+            }
+        }
+    }
 }

@@ -24,4 +24,5 @@ public interface TeachingService {
     Map<String, Object> getMentorInfoById(String mentorMemberId);
     List<String> getMentorContentIdsById(String mentorMemberId);
     boolean isMentorExists(String mentorMemberId);
+    void updateMentor(MentorDTO mentorDTO);
 }
