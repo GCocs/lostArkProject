@@ -14,4 +14,8 @@ public interface MessageService {
     void rejectMenteeApply(String mentorMemberId, String menteeMemberId);
     List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId);
     List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId);
+  
+
+
+  
 }

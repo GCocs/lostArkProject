@@ -136,7 +136,7 @@ public class TeachingController {
         // 전체 멘토 리스트 조회
         List<MentorListDTO> allMentors = teachingService.getMentorList();
 
-        // 🔥 로그인한 사용자 자신은 제외
+        // 로그인한 사용자 자신은 제외
         List<MentorListDTO> filteredMentors = allMentors.stream()
                 .filter(mentor -> !loginMemberId.equals(mentor.getMentorMemberId()))
                 .toList();
