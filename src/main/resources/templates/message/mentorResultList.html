@@ -2,7 +2,7 @@
 <html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
-    <title>멘토링 신청 결과</title>
+    <title>내 멘토링 신청 결과</title>
 </head>
 <body>
 <div layout:fragment="content">
@@ -11,30 +11,46 @@
         <div class="row">
             <div class="col-12">
                 <div class="bg-secondary rounded h-100 p-4">
-                    <h2 class="mb-4">멘토링 신청 결과</h2>
+                    <h2 class="mb-4">내 멘토링 신청 결과</h2>
                     <div class="table-responsive w-100">
                         <table class="table">
                             <thead>
                             <tr>
                                 <th scope="col">#</th>
                                 <th scope="col">멘토 ID</th>
-                                <th scope="col">결과</th>
+                                <th scope="col">멘토 닉네임</th>
+                                <th scope="col">아이템 레벨</th>
+                                <th scope="col">서버</th>
+                                <th scope="col">신청 상태</th>
                                 <th scope="col">상세보기</th>
                             </tr>
                             </thead>
                             <tbody>
-                            <tr th:each="item, iterStat : ${requestedList}">
+                            <tr th:each="apply, iterStat : ${myApplies}">
                                 <td th:text="${iterStat.index + 1}"></td>
-                                <td th:text="${item.mentor_member_id}"></td>
-                                <td th:text="${item.apply_status}"></td>
+                                <td th:text="${apply.mentor_member_id}"></td>
+                                <td th:text="${apply.mentor_nickname}"></td>
+                                <td th:text="${apply.mentor_item_level}"></td>
+                                <td th:text="${apply.mentor_server_name}"></td>
                                 <td>
-                                    <a th:href="@{/message/myResult(menteeMemberId=${item.mentee_member_id})}" class="btn btn-outline-primary m-2">상세보기</a>
+                                    <span th:if="${apply.apply_status == 'REQUESTED'}" class="badge bg-warning text-dark">대기중</span>
+                                    <span th:if="${apply.apply_status == 'ACCEPTED'}" class="badge bg-success">수락됨</span>
+                                    <span th:if="${apply.apply_status == 'REJECTED'}" class="badge bg-danger">거절됨</span>
                                 </td>
+                                <td>
+                                    <a th:href="@{/message/applyDetail(mentorMemberId=${apply.mentor_member_id})}" class="btn btn-outline-primary btn-sm">상세보기</a>
+                                </td>
+                            </tr>
+                            <tr th:if="${#lists.isEmpty(myApplies)}">
+                                <td colspan="7" class="text-center">아직 보낸 멘토링 신청이 없습니다.</td>
                             </tr>
                             </tbody>
                         </table>
                     </div>
-
+                    <div class="mt-3">
+                        <a th:href="@{/teaching/mentorList}" class="btn btn-primary">멘토 찾아보기</a>
+<!--                        <a th:href="@{/message/list}" class="btn btn-secondary">멘토 메시지함</a>-->
+                    </div>
                 </div>
             </div>
         </div>

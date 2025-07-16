@@ -71,7 +71,12 @@ public class MessageController {
         if (memberObj == null) {
             return "redirect:/member/signin";
         }
-        String mentorMemberId = memberObj.getMemberId();
+        String menteeMemberId = memberObj.getMemberId();
+        
+        // 현재 로그인된 사용자(멘티)가 보낸 모든 멘토링 신청 조회
+        List<Map<String, Object>> myApplies = messageService.getAllMenteeAppliesByMentee(menteeMemberId);
+        model.addAttribute("myApplies", myApplies);
+        
         return "message/mentorResultList";
     }
 
