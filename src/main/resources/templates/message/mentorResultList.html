@@ -3,6 +3,20 @@
 <head>
     <meta charset="utf-8">
     <title>내 멘토링 신청 결과</title>
+    <style>
+        .detail-btn {
+            background-color: #B18CD9 !important;
+            border-color: #B18CD9 !important;
+            color: white !important;
+            transition: all 0.3s ease;
+        }
+        
+        .detail-btn:hover {
+            background-color: white !important;
+            border-color: #B18CD9 !important;
+            color: #B18CD9 !important;
+        }
+    </style>
 </head>
 <body>
 <div layout:fragment="content">
@@ -17,7 +31,7 @@
                             <thead>
                             <tr>
                                 <th scope="col">#</th>
-                                <th scope="col">멘토 ID</th>
+                                <!-- <th scope="col">멘토 ID</th> -->
                                 <th scope="col">멘토 닉네임</th>
                                 <th scope="col">아이템 레벨</th>
                                 <th scope="col">서버</th>
@@ -28,7 +42,7 @@
                             <tbody>
                             <tr th:each="apply, iterStat : ${myApplies}">
                                 <td th:text="${iterStat.index + 1}"></td>
-                                <td th:text="${apply.mentor_member_id}"></td>
+                                <!-- <td th:text="${apply.mentor_member_id}"></td> -->
                                 <td th:text="${apply.mentor_nickname}"></td>
                                 <td th:text="${apply.mentor_item_level}"></td>
                                 <td th:text="${apply.mentor_server_name}"></td>
@@ -38,7 +52,15 @@
                                     <span th:if="${apply.apply_status == 'REJECTED'}" class="badge bg-danger">거절됨</span>
                                 </td>
                                 <td>
-                                    <a th:href="@{/message/applyDetail(mentorMemberId=${apply.mentor_member_id})}" class="btn btn-outline-primary btn-sm">상세보기</a>
+                                    <a th:if="${apply.apply_status == 'REQUESTED'}" 
+                                       th:href="@{/message/sentRequest(mentorMemberId=${apply.mentor_member_id})}" 
+                                       class="btn btn-sm detail-btn">상세보기</a>
+                                    <a th:if="${apply.apply_status == 'ACCEPTED'}" 
+                                       th:href="@{/message/acceptedRequest(mentorMemberId=${apply.mentor_member_id})}" 
+                                       class="btn btn-sm detail-btn">상세보기</a>
+                                    <a th:if="${apply.apply_status == 'REJECTED'}" 
+                                       th:href="@{/message/rejectedRequest(mentorMemberId=${apply.mentor_member_id})}" 
+                                       class="btn btn-sm detail-btn">상세보기</a>
                                 </td>
                             </tr>
                             <tr th:if="${#lists.isEmpty(myApplies)}">

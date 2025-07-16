@@ -32,6 +32,7 @@
         SELECT 
             mentee_member_id as menteeMemberId,
             apply_status as applyStatus,
+            rejected_reason as rejectedReason,
             created_at as createdAt
         FROM MENTEE_APPLY
         WHERE mentee_member_id = #{menteeMemberId}
