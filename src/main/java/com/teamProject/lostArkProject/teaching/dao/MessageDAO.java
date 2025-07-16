@@ -11,7 +11,8 @@ import java.util.Map;
 public interface MessageDAO {
     MenteeApplyDTO getMenteeApplyDetail(Map<String, Object> param);
     void acceptMenteeApply(MenteeApplyDTO menteeApplyDTO);
-    void rejectMenteeApply(MenteeApplyDTO menteeApplyDTO);
+    void rejectMenteeApplyWithReason(MenteeApplyDTO menteeApplyDTO);
+    void insertDisableMentee(Map<String, String> params);
     List<MenteeDTO> getMenteeDetail(String menteeMemberId);
     Map<String, Object> getMenteeCharacterInfo(String menteeMemberId);
     List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId);

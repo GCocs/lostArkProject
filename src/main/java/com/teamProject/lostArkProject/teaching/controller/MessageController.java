@@ -4,6 +4,7 @@ import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
@@ -28,22 +29,18 @@ public class MessageController {
 
     @GetMapping("/newMessageDetail")
     public String newMessageDetail(@RequestParam("menteeMemberId") String menteeMemberId, HttpSession session, Model model) {
-        // 세션에서 멘토 아이디 꺼내기 (세션에 저장된 객체 타입에 따라 캐스팅 필요)
 
         Member memberObj = (Member) session.getAttribute("member");
         if (memberObj == null) {
             return "redirect:/member/signin";
         }
 
-        // Member 클래스에 정의된 memberId 사용
         String mentorMemberId = memberObj.getMemberId();
 
-        // 파라미터 맵 생성
         Map<String, Object> param = new HashMap<>();
         param.put("menteeMemberId", menteeMemberId);
         param.put("mentorMemberId", mentorMemberId);
 
-        // 서비스 호출
         MenteeApplyDTO apply = messageService.getMenteeApplyDetail(param);
         Map<String, Object> menteeCharacter = messageService.getMenteeCharacterInfo(menteeMemberId);
 
@@ -62,7 +59,6 @@ public class MessageController {
         }
         String mentorMemberId = memberObj.getMemberId();
 
-        // TeachingService의 getRequestedAppliesByMentor 사용
         List<Map<String, Object>> requestedList = teachingService.getRequestedAppliesByMentor(mentorMemberId);
 
         model.addAttribute("requestedList", requestedList);
@@ -76,7 +72,7 @@ public class MessageController {
             return "redirect:/member/signin";
         }
         String mentorMemberId = memberObj.getMemberId();
-        return "mentorResultList";
+        return "message/mentorResultList";
     }
 
     @GetMapping("/all-applies")
@@ -100,12 +96,48 @@ public class MessageController {
     }
 
     @GetMapping("/rejectReason")
-    public String rejectReason(HttpSession session, Model model) {
+    public String rejectReason(@RequestParam("menteeMemberId") String menteeMemberId, HttpSession session, Model model) {
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
             return "redirect:/member/signin";
         }
+        model.addAttribute("menteeMemberId", menteeMemberId);
         return "/message/rejectReason";
+    }
+
+    @PostMapping("/rejectMentee")
+    public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+                              @RequestParam("menteeMemberId") String menteeMemberId,
+                              @RequestParam("rejectReason") String rejectReason,
+                              @RequestParam("blockMentee") String blockMentee,
+                              HttpSession session) {
+        
+        System.out.println("=== 거절 요청 받음 ===");
+        System.out.println("요청된 멘토 ID: " + mentorMemberId);
+        System.out.println("요청된 멘티 ID: " + menteeMemberId);
+        System.out.println("거절 사유: " + rejectReason);
+        System.out.println("차단 여부: " + blockMentee);
+        
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            System.out.println("세션에 사용자 정보가 없음, 로그인 페이지로 리다이렉트");
+            return "redirect:/member/signin";
+        }
+
+        System.out.println("현재 로그인된 사용자: " + member.getMemberId());
+        
+        boolean shouldBlock = "Y".equals(blockMentee);
+        System.out.println("차단 처리 여부: " + shouldBlock);
+        
+        try {
+            messageService.rejectMenteeApplyWithReason(mentorMemberId, menteeMemberId, rejectReason, shouldBlock);
+            System.out.println("거절 처리 성공, 메시지 목록으로 리다이렉트");
+        } catch (Exception e) {
+            System.out.println("거절 처리 중 오류 발생: " + e.getMessage());
+            e.printStackTrace();
+        }
+        
+        return "redirect:/message/list";
     }
 
 }

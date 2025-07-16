@@ -198,11 +198,11 @@ public class TeachingController {
         return "redirect:/message/list";
     }
 
-    @PostMapping("/rejectMentee")
-    public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
-                              @RequestParam("menteeMemberId") String menteeMemberId) {
-        messageService.rejectMenteeApply(mentorMemberId, menteeMemberId);
-        return "redirect:/message/list";
-    }
+    // @PostMapping("/rejectMentee")
+    // public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+    //                           @RequestParam("menteeMemberId") String menteeMemberId) {
+    //     messageService.rejectMenteeApply(mentorMemberId, menteeMemberId);
+    //     return "redirect:/message/list";
+    // }
 
 }

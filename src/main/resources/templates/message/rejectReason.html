@@ -13,7 +13,7 @@
       <div class="col-md-10 col-lg-8 col-xl-6">
         <div class="bg-secondary rounded h-100 p-4">
           <h2 class="mb-4">멘토링을 진짜로 거절하시겠습니까?</h2>
-          <form th:action="@{/teaching/rejectMentee}" method="post">
+          <form th:action="@{/message/rejectMentee}" method="post">
             <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
             <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
 
@@ -40,7 +40,7 @@
             </div>
 
             <div class="mt-4 d-flex justify-content-between">
-              <button type="submit" class="btn btn-danger" th:href="@{/teaching/rejectMentee}">거절하기</button>
+              <button type="submit" class="btn btn-danger">거절하기</button>
               <a class="btn custom-list-btn" th:href="@{/message/list}">전체 메세지 보러가기</a>
             </div>
           </form>
