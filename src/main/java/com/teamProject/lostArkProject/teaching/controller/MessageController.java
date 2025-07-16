@@ -108,34 +108,17 @@ public class MessageController {
     @PostMapping("/rejectMentee")
     public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
                               @RequestParam("menteeMemberId") String menteeMemberId,
-                              @RequestParam("rejectReason") String rejectReason,
+                              @RequestParam("finalRejectReason") String rejectReason,
                               @RequestParam("blockMentee") String blockMentee,
                               HttpSession session) {
         
-        System.out.println("=== 거절 요청 받음 ===");
-        System.out.println("요청된 멘토 ID: " + mentorMemberId);
-        System.out.println("요청된 멘티 ID: " + menteeMemberId);
-        System.out.println("거절 사유: " + rejectReason);
-        System.out.println("차단 여부: " + blockMentee);
-        
         Member member = (Member) session.getAttribute("member");
         if (member == null) {
-            System.out.println("세션에 사용자 정보가 없음, 로그인 페이지로 리다이렉트");
             return "redirect:/member/signin";
         }
-
-        System.out.println("현재 로그인된 사용자: " + member.getMemberId());
         
         boolean shouldBlock = "Y".equals(blockMentee);
-        System.out.println("차단 처리 여부: " + shouldBlock);
-        
-        try {
-            messageService.rejectMenteeApplyWithReason(mentorMemberId, menteeMemberId, rejectReason, shouldBlock);
-            System.out.println("거절 처리 성공, 메시지 목록으로 리다이렉트");
-        } catch (Exception e) {
-            System.out.println("거절 처리 중 오류 발생: " + e.getMessage());
-            e.printStackTrace();
-        }
+        messageService.rejectMenteeApplyWithReason(mentorMemberId, menteeMemberId, rejectReason, shouldBlock);
         
         return "redirect:/message/list";
     }

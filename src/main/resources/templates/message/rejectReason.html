@@ -13,17 +13,25 @@
       <div class="col-md-10 col-lg-8 col-xl-6">
         <div class="bg-secondary rounded h-100 p-4">
           <h2 class="mb-4">멘토링을 진짜로 거절하시겠습니까?</h2>
-          <form th:action="@{/message/rejectMentee}" method="post">
+          <form th:action="@{/message/rejectMentee}" method="post" id="rejectForm">
             <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
             <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
+            <input type="hidden" name="finalRejectReason" id="finalRejectReason"/>
 
             <p>거절 이유 선택</p>
-            <select class="form-select mb-3" name="rejectReason" required>
+            <select class="form-select mb-3" name="rejectReason" id="rejectReasonSelect" required onchange="toggleCustomReason()">
               <option value="" disabled selected>거절 사유를 선택하세요</option>
               <option value="시간이 없어서">시간이 없어서</option>
               <option value="멘토링 신청 부분을 더이상 맡을 수 없어서">멘토링 신청 부분을 더이상 맡을 수 없어서</option>
               <option value="지금 현재 멘티가 너무 많아서">지금 현재 멘티가 너무 많아서</option>
+              <option value="직접입력">직접입력</option>
             </select>
+
+            <!-- 직접입력 선택 시 나타나는 textarea -->
+            <div id="customReasonDiv" style="display: none;" class="mb-3">
+              <label for="customReason" class="form-label">거절 사유를 직접 입력해주세요</label>
+              <textarea class="form-control" id="customReason" name="customReason" rows="3" placeholder="거절 사유를 자세히 작성해주세요..."></textarea>
+            </div>
 
             <p>이 멘티를 차단하시겠습니까? 차단하시면 멘티에게서 다시 멘토링 신청을 받지 않습니다. 차단하지 않으면 재신청이 들어올 수도 있습니다.</p>
             <div class="form-check">
@@ -40,7 +48,7 @@
             </div>
 
             <div class="mt-4 d-flex justify-content-between">
-              <button type="submit" class="btn btn-danger">거절하기</button>
+              <button type="button" class="btn btn-danger" onclick="submitForm()">거절하기</button>
               <a class="btn custom-list-btn" th:href="@{/message/list}">전체 메세지 보러가기</a>
             </div>
           </form>
@@ -48,6 +56,52 @@
       </div>
     </div>
   </div>
+
+  <script>
+    function toggleCustomReason() {
+      const select = document.getElementById('rejectReasonSelect');
+      const customDiv = document.getElementById('customReasonDiv');
+      const customTextarea = document.getElementById('customReason');
+      
+      if (select.value === '직접입력') {
+        customDiv.style.display = 'block';
+        customTextarea.required = true;
+      } else {
+        customDiv.style.display = 'none';
+        customTextarea.required = false;
+        customTextarea.value = ''; // 숨길 때 내용 초기화
+      }
+    }
+
+    function submitForm() {
+      const select = document.getElementById('rejectReasonSelect');
+      const customTextarea = document.getElementById('customReason');
+      const finalReasonInput = document.getElementById('finalRejectReason');
+      
+      // 거절 사유 검증
+      if (!select.value) {
+        alert('거절 사유를 선택해주세요.');
+        return;
+      }
+      
+      let finalReason;
+      if (select.value === '직접입력') {
+        if (!customTextarea.value.trim()) {
+          alert('거절 사유를 직접 입력해주세요.');
+          return;
+        }
+        finalReason = customTextarea.value.trim();
+      } else {
+        finalReason = select.value;
+      }
+      
+      // 최종 거절 사유를 hidden input에 설정
+      finalReasonInput.value = finalReason;
+      
+      // 폼 제출
+      document.getElementById('rejectForm').submit();
+    }
+  </script>
 </div>
 </body>
 </html>
