@@ -28,6 +28,11 @@ public interface TeachingDAO {
     int isDuplicateMenteeApply(MenteeApplyDTO dto);
     List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
     Set<String> getAppliedMentorIdsByMentee(String menteeId);
+    List<Map<String, Object>> getAppliedMentorStatusByMentee(String menteeId);
+    boolean isBlockedMentee(@Param("mentorMemberId") String mentorMemberId, @Param("menteeMemberId") String menteeMemberId);
+    Map<String, Object> getMenteeApplyInfo(@Param("mentorMemberId") String mentorMemberId, @Param("menteeMemberId") String menteeMemberId);
+    List<Map<String, Object>> getExpiredRejectedApplies();
+    void deleteRejectedApply(@Param("mentorMemberId") String mentorMemberId, @Param("menteeMemberId") String menteeMemberId);
     Map<String, Object> getMentorInfoById(String mentorMemberId);
     List<String> getMentorContentIdsById(String mentorMemberId);
     int isMentorExists(String mentorMemberId);

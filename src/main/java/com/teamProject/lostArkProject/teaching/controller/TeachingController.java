@@ -15,10 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 @Controller
 @RequestMapping("/teaching")
 public class TeachingController {
@@ -129,6 +127,9 @@ public class TeachingController {
             return "redirect:/member/signin";
         }
 
+        // 3일 경과한 REJECTED 신청 자동 정리 (차단되지 않은 경우)
+        teachingService.cleanupExpiredRejectedApplies();
+
         // Member 클래스에 맞게 캐스팅
         Member member = (Member) memberObj;
         String loginMemberId = member.getMemberId(); // 현재 로그인한 사용자의 ID
@@ -145,7 +146,21 @@ public class TeachingController {
         String menteeId = ((Member) session.getAttribute("member")).getMemberId();
         // 이미 신청한 멘토 ID 목록 조회 (service/dao에서 구현 필요)
         Set<String> appliedMentorIds = teachingService.getAppliedMentorIdsByMentee(menteeId);
+        // 멘토별 신청 상태 조회
+        Map<String, String> mentorStatusMap = teachingService.getAppliedMentorStatusByMentee(menteeId);
+        
+        // 재신청 가능 여부 확인
+        Map<String, Boolean> canReapplyMap = new HashMap<>();
+        for (MentorListDTO mentor : filteredMentors) {
+            if ("REJECTED".equals(mentorStatusMap.get(mentor.getMentorMemberId()))) {
+                boolean canReapply = teachingService.canReapplyToMentor(mentor.getMentorMemberId(), menteeId);
+                canReapplyMap.put(mentor.getMentorMemberId(), canReapply);
+            }
+        }
+        
         model.addAttribute("appliedMentorIds", appliedMentorIds);
+        model.addAttribute("mentorStatusMap", mentorStatusMap);
+        model.addAttribute("canReapplyMap", canReapplyMap);
 
         model.addAttribute("mentors", filteredMentors);
         return "teaching/mentorList";

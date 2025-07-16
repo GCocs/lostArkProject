@@ -138,6 +138,42 @@
         WHERE mentee_member_id = #{menteeId}
     </select>
 
+    <select id="getAppliedMentorStatusByMentee" parameterType="string" resultType="map">
+        SELECT mentor_member_id, apply_status
+        FROM MENTEE_APPLY 
+        WHERE mentee_member_id = #{menteeId}
+    </select>
+
+    <select id="isBlockedMentee" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM DISABLE_MENTEE
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+    </select>
+
+    <select id="getMenteeApplyInfo" parameterType="map" resultType="map">
+        SELECT apply_status, updated_at
+        FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+        ORDER BY updated_at DESC
+        LIMIT 1
+    </select>
+
+    <select id="getExpiredRejectedApplies" resultType="map">
+        SELECT mentor_member_id, mentee_member_id, updated_at
+        FROM MENTEE_APPLY 
+        WHERE apply_status = 'REJECTED'
+        AND updated_at &lt;= DATE_SUB(NOW(), INTERVAL 3 DAY)
+    </select>
+
+    <delete id="deleteRejectedApply" parameterType="map">
+        DELETE FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+        AND apply_status = 'REJECTED'
+    </delete>
+
     <select id="getMentorInfoById" parameterType="string" resultType="map">
         SELECT * FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
     </select>
