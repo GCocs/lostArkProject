@@ -20,6 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
 import java.util.stream.Collectors;
 
 @RestController
@@ -28,6 +30,17 @@ import java.util.stream.Collectors;
 public class MemberRestController {
     private final MemberService memberService;
     private final CollectibleService collectibleService;
+    private static final String EMAIL_REGEX =
+            "^[0-9A-Za-z]([-_.]?[0-9A-Za-z])*@[0-9A-Za-z]([-_.]?[0-9A-Za-z])*\\.[A-Za-z]{2,3}$";
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
+
+    private static final String PASSWORD_REGEX =
+            "^(?=.*[A-Za-z])(?=.*[0-9]).+$";
+
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile(PASSWORD_REGEX);
 
     public MemberRestController(MemberService memberService, CollectibleService collectibleService) {
         this.memberService = memberService;
@@ -60,6 +73,17 @@ public class MemberRestController {
             System.out.println("회원가입 실패: 대표 캐릭터가 유효하지 않습니다.");
             return false; // 검증 실패
         }
+
+        //유효성검사
+        if (requestMap.get("email") == null) return false;
+        Matcher matcher = EMAIL_PATTERN.matcher(requestMap.get("email"));
+        if (!matcher.matches()) return false;
+        if (requestMap.get("PW") == null) return false;
+        Matcher matcher2 = PASSWORD_PATTERN.matcher(requestMap.get("PW"));
+        if (!matcher2.matches()) return false;
+
+
+
 
         List<MemberCharacter> memberCharacterList = memberService.getMemberCharacterList(characterInfoList, rosterLevel, requestMap.get("email"));
 
