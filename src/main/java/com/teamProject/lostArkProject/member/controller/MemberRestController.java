@@ -2,6 +2,7 @@ package com.teamProject.lostArkProject.member.controller;
 
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
+import com.teamProject.lostArkProject.common.utils.PasswordUtils;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import com.teamProject.lostArkProject.member.dto.CertificationDTO;
@@ -83,13 +84,13 @@ public class MemberRestController {
         if (!matcher2.matches()) return false;
 
 
-
+        String hashedPw = PasswordUtils.hash(requestMap.get("PW"));
 
         List<MemberCharacter> memberCharacterList = memberService.getMemberCharacterList(characterInfoList, rosterLevel, requestMap.get("email"));
 
         Member member = new Member();
         member.setMemberId(requestMap.get("email"));
-        member.setMemberPasswd(requestMap.get("PW"));
+        member.setMemberPasswd(hashedPw);
         member.setRepresentativeCharacterNickname(requestMap.get("representativeCharacter"));
 
         Member sessionMember = new Member();

@@ -13,6 +13,7 @@ import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.dto.EquipmentDTO;
 import com.teamProject.lostArkProject.member.dto.api.CharacterImageApiDTO;
 import com.teamProject.lostArkProject.member.dto.api.EquipmentApiDTO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
@@ -29,11 +30,13 @@ public class MemberService {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final MemberDAO memberDAO;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public MemberService(WebClient webClient, ObjectMapper objectMapper, MemberDAO memberDAO) {
+    public MemberService(WebClient webClient, ObjectMapper objectMapper, MemberDAO memberDAO, BCryptPasswordEncoder passwordEncoder) {
         this.webClient = webClient;
         this.objectMapper = objectMapper;
         this.memberDAO = memberDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //회원가입 로직
@@ -44,8 +47,7 @@ public class MemberService {
     //로그인 비밀번호 확인
     public boolean checkSignin(String memberId, String insertPW) {
         String DB_PW = memberDAO.getMemberPW(memberId);
-        if(DB_PW == null) return false;
-        return DB_PW.equals(insertPW);
+        return passwordEncoder.matches(insertPW, DB_PW);
     }
 
     //대표 캐릭터 닉네임 가져오기
