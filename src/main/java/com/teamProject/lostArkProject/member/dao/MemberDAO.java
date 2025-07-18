@@ -14,4 +14,5 @@ public interface MemberDAO {
     String getRepresentativeCharacter(String memberId);
     String checkMemberId(String memberId);
     void updateMemberPW(String memberId, String memberPW);
+    void updateCertification(String memberId);
 }

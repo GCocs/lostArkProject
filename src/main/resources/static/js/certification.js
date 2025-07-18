@@ -35,6 +35,10 @@ function selectBackground(grade) {
     return '';
 }
 
+async function checkCertification(nickname) {
+    return getRequest(`/member/${nickname}/checkCertification`);
+}
+
 // 캐릭터 이미지 불러오기
 async function fetchCharacterImage(nickname) {
     return getRequest(`/member/${nickname}/certification`);
@@ -147,8 +151,29 @@ async function requestCertification() {
 //                       인증 요청                           //
 // ======================================================== //
 // 장비 해제 인증하기 함수
-function submitCertification() {
+async function submitCertification() {
+    // nickname 값을 꺼내고
+    const nickname = $('#certificationCharacter').val().trim();
 
+    try {
+        // async/await 로 API 호출
+        const data = await checkCertification(nickname);
+
+        if (data === true) {
+            alert("성공적으로 인증을 마쳤습니다.");
+            $.ajax({
+                    url: '/member/finishCertification',
+                    type: 'POST',
+                    contentType: 'application/json',
+            });
+            window.location.href = "/"
+        } else {
+            alert("인증에 실패했습니다.");
+        }
+    } catch (err) {
+        console.error(err);
+        alert("인증 중 오류가 발생했습니다.");
+    }
 }
 
 // ======================================================== //

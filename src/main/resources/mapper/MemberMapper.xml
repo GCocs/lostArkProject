@@ -55,4 +55,11 @@
         WHERE MEMBER_ID = #{memberId}
     </update>
 
+    <!--인증완료 -->
+    <update id="updateCertification">
+        UPDATE MEMBER
+        SET VERIFIED_NICKNAME = REPRESENTATIVE_CHARACTER_NICKNAME
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
 </mapper>

@@ -2,8 +2,10 @@ package com.teamProject.lostArkProject.member.controller;
 
 import com.teamProject.lostArkProject.collectible.domain.CharacterInfo;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
+import com.teamProject.lostArkProject.common.utils.PasswordUtils;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
+import com.teamProject.lostArkProject.member.dto.CertificationDTO;
 import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
@@ -17,8 +19,13 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import reactor.core.publisher.Mono;
 
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.regex.Pattern;
+import java.util.regex.Matcher;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping ("/member")
@@ -27,6 +34,17 @@ import java.util.Map;
 public class MemberRestController {
     private final MemberService memberService;
     private final CollectibleService collectibleService;
+    private static final String EMAIL_REGEX =
+            "^[0-9A-Za-z]([-_.]?[0-9A-Za-z])*@[0-9A-Za-z]([-_.]?[0-9A-Za-z])*\\.[A-Za-z]{2,3}$";
+
+    private static final Pattern EMAIL_PATTERN =
+            Pattern.compile(EMAIL_REGEX, Pattern.CASE_INSENSITIVE);
+
+    private static final String PASSWORD_REGEX =
+            "^(?=.*[A-Za-z])(?=.*[0-9]).+$";
+
+    private static final Pattern PASSWORD_PATTERN =
+            Pattern.compile(PASSWORD_REGEX);
 
     public MemberRestController(MemberService memberService, CollectibleService collectibleService) {
         this.memberService = memberService;
@@ -60,11 +78,22 @@ public class MemberRestController {
             return false; // 검증 실패
         }
 
+        //유효성검사
+        if (requestMap.get("email") == null) return false;
+        Matcher matcher = EMAIL_PATTERN.matcher(requestMap.get("email"));
+        if (!matcher.matches()) return false;
+        if (requestMap.get("PW") == null) return false;
+        Matcher matcher2 = PASSWORD_PATTERN.matcher(requestMap.get("PW"));
+        if (!matcher2.matches()) return false;
+
+
+        String hashedPw = PasswordUtils.hash(requestMap.get("PW"));
+
         List<MemberCharacter> memberCharacterList = memberService.getMemberCharacterList(characterInfoList, rosterLevel, requestMap.get("email"));
 
         Member member = new Member();
         member.setMemberId(requestMap.get("email"));
-        member.setMemberPasswd(requestMap.get("PW"));
+        member.setMemberPasswd(hashedPw);
         member.setRepresentativeCharacterNickname(requestMap.get("representativeCharacter"));
 
         Member sessionMember = new Member();
@@ -182,4 +211,69 @@ public class MemberRestController {
         session.setAttribute("requiredEquipmentList", null);
         return ResponseEntity.ok("인증 초기화가 완료되었습니다.");
     }
+
+    @GetMapping("/{nickname}/checkCertification")
+    public boolean checkCertification(@PathVariable("nickname") String nickname, HttpSession session)  {
+        List<String> excludedList =
+                (List<String>) session.getAttribute("requiredEquipmentList");
+        if (excludedList == null) {
+            return false;
+        }
+
+        Set<String> excludedTypes = new HashSet<>(excludedList);
+
+        Mono<List<CertificationDTO>> equipmentList = memberService.getCertification(nickname);
+
+        List<CertificationDTO> certList = equipmentList.block();
+        certList.forEach(c -> System.out.println("Certification type = " + c.getType()));
+
+        Set<String> expectedTypes = Set.of(
+                "무기", "투구", "상의", "하의", "장갑",
+                "어깨", "목걸이", "귀걸이1", "귀걸이2",
+                "반지1", "반지2", "어빌리티 스톤", "팔찌", "나침반"
+        );
+
+        Set<String> actualTypes = certList.stream()
+                .map(CertificationDTO::getType)
+                .collect(Collectors.toSet());
+
+        if (excludedTypes.contains("귀걸이1") && !excludedTypes.contains("귀걸이2")) {
+            excludedTypes = excludedTypes.stream()
+                    .map(type -> type.equals("귀걸이1") ? "귀걸이2" : type)
+                    .collect(Collectors.toSet());
+        }
+
+        if (excludedTypes.contains("반지1") && !excludedTypes.contains("반지2")) {
+            excludedTypes = excludedTypes.stream()
+                    .map(type -> type.equals("반지1") ? "반지2" : type)
+                    .collect(Collectors.toSet());
+        }
+
+        System.out.println("first = " + actualTypes);
+
+        Set<String> intersection = new HashSet<>(actualTypes);
+        intersection.retainAll(excludedTypes);
+        if (!intersection.isEmpty()) {
+            System.out.println("중복된 excluded 타입 발견: " + intersection);
+            return false;
+        }
+
+        actualTypes.addAll(excludedTypes);
+
+        System.out.println("excluded = " + excludedTypes);
+        System.out.println("expected = " + expectedTypes);
+        System.out.println("restored = " + actualTypes);
+
+        return actualTypes.equals(expectedTypes);
+
+    }
+
+    @PostMapping("finishCertification")
+    public void finishCertification(HttpServletRequest request) {
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+
+        memberService.updateCertification(member.getMemberId());
+    }
+
 }

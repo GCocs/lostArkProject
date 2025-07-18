@@ -8,16 +8,19 @@ import com.teamProject.lostArkProject.common.utils.CommonUtils;
 import com.teamProject.lostArkProject.member.dao.MemberDAO;
 import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
+import com.teamProject.lostArkProject.member.dto.CertificationDTO;
 import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.dto.EquipmentDTO;
 import com.teamProject.lostArkProject.member.dto.api.CharacterImageApiDTO;
 import com.teamProject.lostArkProject.member.dto.api.EquipmentApiDTO;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -27,11 +30,13 @@ public class MemberService {
     private final WebClient webClient;
     private final ObjectMapper objectMapper;
     private final MemberDAO memberDAO;
+    private final BCryptPasswordEncoder passwordEncoder;
 
-    public MemberService(WebClient webClient, ObjectMapper objectMapper, MemberDAO memberDAO) {
+    public MemberService(WebClient webClient, ObjectMapper objectMapper, MemberDAO memberDAO, BCryptPasswordEncoder passwordEncoder) {
         this.webClient = webClient;
         this.objectMapper = objectMapper;
         this.memberDAO = memberDAO;
+        this.passwordEncoder = passwordEncoder;
     }
 
     //회원가입 로직
@@ -42,8 +47,7 @@ public class MemberService {
     //로그인 비밀번호 확인
     public boolean checkSignin(String memberId, String insertPW) {
         String DB_PW = memberDAO.getMemberPW(memberId);
-        if(DB_PW == null) return false;
-        return DB_PW.equals(insertPW);
+        return passwordEncoder.matches(insertPW, DB_PW);
     }
 
     //대표 캐릭터 닉네임 가져오기
@@ -154,7 +158,7 @@ public class MemberService {
             AtomicInteger ringIdx = new AtomicInteger(1);   // 반지 순번 정수 객체 (동시성 이슈)
             AtomicInteger earringIdx = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
             List<EquipmentApiDTO> filteredlist = equipmentApiDTOList.stream()
-                    .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()))  // 부적 제외
+                    .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()) && !"문장".equals(equipmentApiDTO.getType()))  // 부적 제외
                     .map(equipmentApiDTO -> {
                         if ("반지".equals(equipmentApiDTO.getType())) {
                             equipmentApiDTO.setType("반지" + ringIdx.getAndIncrement());
@@ -201,5 +205,42 @@ public class MemberService {
 
                     return new CharacterCertificationDTO(t1, t2);
                 });
+    }
+
+    public Mono<List<CertificationDTO>> getCertification(String nickname) {
+        Mono<List<EquipmentApiDTO>> equipmentApiMono = webClient.get()
+                .uri("/armories/characters/{name}/equipment", nickname)
+                .retrieve()
+                .bodyToFlux(EquipmentApiDTO.class)
+                .collectList();
+
+        return equipmentApiMono.map(equipmentApiDTOList -> {
+                    // 불필요한 장비 필터링, 중복 장비에 순번 부여
+                    AtomicInteger ringIdx = new AtomicInteger(1);   // 반지 순번 정수 객체 (동시성 이슈)
+                    AtomicInteger earringIdx = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
+
+
+                    return equipmentApiDTOList.stream()
+                    // 1) “부적” 제외
+                    .filter(dto -> !"부적".equals(dto.getType()) && !"문장".equals(dto.getType()))
+                    // 2) 타입에 순번 붙이고 CertificationDTO 생성
+                    .map(dto -> {
+                        String type = dto.getType();
+                        if ("반지".equals(type)) {
+                            type += ringIdx.getAndIncrement();
+                        } else if ("귀걸이".equals(type)) {
+                            type += earringIdx.getAndIncrement();
+                        }
+                        CertificationDTO cert = new CertificationDTO();
+                        cert.setType(type);
+                        return cert;
+                    })
+                    // 3) 최종 리스트로 수집
+                    .collect(Collectors.toList());
+        });
+    }
+
+    public void updateCertification(String memberId) {
+        memberDAO.updateCertification(memberId);
     }
 }
