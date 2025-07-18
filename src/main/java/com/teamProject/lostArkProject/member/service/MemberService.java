@@ -158,7 +158,7 @@ public class MemberService {
             AtomicInteger ringIdx = new AtomicInteger(1);   // 반지 순번 정수 객체 (동시성 이슈)
             AtomicInteger earringIdx = new AtomicInteger(1);  // map에서 숫자 연산/비교를 위한 정수 객체 (동시성 이슈)
             List<EquipmentApiDTO> filteredlist = equipmentApiDTOList.stream()
-                    .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()))  // 부적 제외
+                    .filter(equipmentApiDTO -> !"부적".equals(equipmentApiDTO.getType()) && !"문장".equals(equipmentApiDTO.getType()))  // 부적 제외
                     .map(equipmentApiDTO -> {
                         if ("반지".equals(equipmentApiDTO.getType())) {
                             equipmentApiDTO.setType("반지" + ringIdx.getAndIncrement());
