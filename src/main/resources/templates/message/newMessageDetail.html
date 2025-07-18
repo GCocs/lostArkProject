@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>LostArkProject</title>
+  <style>
+    .custom-list-btn {
+      border: 2px solid #6f42c1;
+      color: #6f42c1;
+      background: transparent;
+      margin: 0.5rem;
+      transition: background 0.2s, color 0.2s;
+    }
+    .custom-list-btn:hover {
+      background: #6f42c1;
+      color: #fff;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <!-- 화면: 멘토가 멘티 신청을 수락하는 폼 -->
+  <div class="container-fluid pt-4 px-4">
+    <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+      <div class="col-md-10 col-lg-8 col-xl-6">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h2 class="mb-4">멘티 신청 상세</h2>
+          <dl class="row mb-0">
+            <dt class="col-sm-4">멘티 ID</dt>
+            <dd class="col-sm-8" th:text="${apply.menteeMemberId}"></dd>
+
+            <dt class="col-sm-4">신청일</dt>
+            <dd class="col-sm-8" th:text="${#temporals.format(apply.createdAt, 'yyyy-MM-dd HH:mm')}"></dd>
+
+            <dt class="col-sm-4">멘티 대표 캐릭터</dt>
+            <dd class="col-sm-8" th:text="${menteeCharacter.characterNickname}"></dd>
+
+            <dt class="col-sm-4">캐릭터 레벨</dt>
+            <dd class="col-sm-8" th:text="${menteeCharacter.itemLevel}"></dd>
+
+            <dt class="col-sm-4">서버</dt>
+            <dd class="col-sm-8" th:text="${menteeCharacter.serverName}"></dd>
+
+            <dt class="col-sm-4">원정대 레벨</dt>
+            <dd class="col-sm-8" th:text="${menteeCharacter.rosterLevel}"></dd>
+          </dl>
+          <br>
+          <div style="font-size:1.05em; background-color: #23272b; border: 2px solid #6f42c1; border-radius: 0.5rem; color: #fff; padding: 1rem; margin-bottom: 1rem;">
+            <strong>멘티 신청을 수락하시겠습니까?</strong><br>
+            <span style="color:#b3e5fc;">수락</span>하시면 <b>Discord 아이디</b>를 멘티에게 전송합니다.<br>
+            <span style="color:#ffcdd2;">거절</span>하시면 멘티 신청이 거절됩니다.
+          </div>
+
+          <div class="mt-4">
+            <form th:action="@{/teaching/acceptMentee}" method="post" class="d-inline">
+              <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
+              <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
+              <input class="btn btn-outline-primary m-2" type="submit" value="수락하기"/>
+            </form>
+            <form th:action="@{/message/rejectReason}" class="d-inline">
+              <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
+              <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
+              <input class="btn btn-outline-danger m-2" type="submit" value="거절하기"/>
+            </form>
+            <a class="btn custom-list-btn" th:href="@{/message/list}">목록으로</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html>

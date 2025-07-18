@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>LostArkProject - 회원가입 페이지</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- Sign Up Start -->
+  <div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
+        <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
+          <form name="signupForm" th:action="@{/member/signup/process}" method="post">
+          <div class="d-flex align-items-center justify-content-between mb-3">
+            <a href="/" class="">
+              <img src="/img/loedu_white.png" style="width: 200px;" />
+            </a>
+            <h3>회원가입</h3>
+          </div>
+          <div class="form-floating mb-3 d-flex">
+            <input type="email" class="form-control" id="signupId" placeholder="" name="signupId">
+            <label for="signupId">이메일을 입력하세요</label>
+            <button class="btn btn-outline-primary nowrap" type="button" id="sendEmailBtn" onclick="sendEmail()">인증코드 발송</button>
+          </div>
+          <div class="form-floating mb-3 d-flex" style="display: none !important;" id="inputAuth">
+              <input type="text" class="form-control" id="checkAuth" placeholder="" name="checkAuth">
+              <label for="checkAuth">인증코드를 입력하세요</label>
+              <button class="btn btn-outline-primary nowrap" type="button" id="checkAuthBtn" onclick="checkAuthCode()">인증코드 확인</button>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="floatingInput" placeholder="" name="signupPW">
+            <label for="floatingInput">비밀번호를 입력하세요</label>
+          </div>
+          <div class="form-floating mb-3">
+            <input type="password" class="form-control" id="a" placeholder="" name="signupPWCheck">
+            <label for="floatingInput">비밀번호를 확인하세요</label>
+          </div>
+
+          <div class="form-floating mb-3">
+            <input type="text" class="form-control" id="b" placeholder="" name="signupRepresentativeCharacter">
+            <label for="floatingInput">대표캐릭터 이름을 입력하세요</label>
+          </div>
+          <div class="textarea">
+            <textarea class="form-control privacy-agreement-form" row="5">
+              [개인정보 이용 동의서]
+
+1. 개인정보의 수집 및 이용 목적
+회사는 다음의 목적을 위하여 개인정보를 수집 및 이용합니다.
+- 회원 가입 의사 확인, 회원제 서비스 제공에 따른 본인 식별 및 인증, 회원자격 유지 및 관리
+
+2. 수집하는 개인정보의 항목
+회사는 회원가입, 상담, 서비스 신청 등을 위해 아래와 같은 개인정보를 수집하고 있습니다.
+- 필수항목: 이름, 이메일, 비밀번호, 전화번호, 생년월일, 성별
+
+3. 개인정보의 보유 및 이용기간
+회사는 개인정보 수집 및 이용목적이 달성된 후에는 예외 없이 해당 정보를 지체 없이 파기합니다.
+
+4. 동의를 거부할 권리 및 동의 거부에 따른 불이익
+이용자는 개인정보 수집 및 이용 동의를 거부할 권리가 있으며, 동의 거부에 따른 서비스 이용에 제한이 있을 수 있습니다.
+            </textarea>
+          </div>
+          <div class="d-flex align-items-center justify-content-between mb-4">
+            <div class="form-check mt-2">
+              <input type="checkbox" class="form-check-input" id="exampleCheck1" name="signupAgreement">
+              <label class="form-check-label" for="exampleCheck1">개인정보 이용동의</label>
+            </div>
+          </div>
+          <button type="button" class="btn btn-primary py-3 w-100 mb-4" onclick="checkSignup()">회원가입</button>
+          <p class="text-center mb-0">계정을 이미 가지고 있나요? <a href="/member/signin">로그인</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Sign Up End -->
+    <script type="module" src="/js/member.js"></script>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>LostArkProject</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <!-- 화면: 멘티가 멘토 디스코드 아이디를 수신하는 페이지 -->
+  <div class="container-fluid pt-4 px-4">
+    <div class="row vh-100 bg-secondary rounded align-items-center justify-content-center mx-0">
+      <div class="col-md-6 text-center">
+        <h2 class="mb-4">멘토 디스코드 아이디 대기</h2>
+        <p>
+          멘토가 신청을 수락하면<br/>
+          디스코드 아이디가 여기에 표시됩니다:
+        </p>
+
+        <!-- SSE로 받은 mentorDiscordId를 표시할 영역 -->
+        <h4>멘토 디스코드 아이디: <span id="discordIdSpan"></span></h4>
+
+      </div>
+    </div>
+  </div>
+
+  <script th:inline="javascript">
+    const menteeMemberId = /*[[${menteeMemberId}]]*/ 'fallback';
+
+    function pollApplyStatus() {
+      fetch('/teaching/mentee/apply-status-detail/' + menteeMemberId)
+        .then(res => res.json())
+        .then(data => {
+          data.forEach(status => {
+            if (status.apply_status === 'ACCEPTED') {
+              document.getElementById("discordIdSpan").innerText = status.discord_id;
+              alert("멘토가 신청을 수락했습니다! 디스코드 ID: " + status.discord_id);
+            } else if (status.apply_status === 'REJECTED') {
+              alert("멘토가 신청을 거절했습니다.");
+            }
+          });
+        });
+    }
+
+    setInterval(pollApplyStatus, 10000); // 10초마다 확인
+  </script>
+
+
+</div>
+</body>
+</html>

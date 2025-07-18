@@ -1,0 +1,138 @@
+/************************************ 
+*  Tag
+*************************************/
+span, small, td {
+  color: #ccc
+}
+
+a {
+  color: #b19cd9;
+  text-decoration: none
+}
+
+a:hover {
+  color: #d1b5d6
+}
+
+/************************************ 
+*  Logo
+*************************************/
+.logo img {
+  width: 200px;
+}
+
+/************************************ 
+*  Navigation bar
+*************************************/
+.nav-image {
+  display: inline-block;
+  width: 40px;
+  height: 40px;
+  background-color: black;
+  text-align: center;
+  align-content: center;
+  border-radius: 50%;
+}
+
+.nav-image:hover {
+  background-color: #191c24;
+}
+
+.nav-image img {
+  width: 40px;
+  filter: grayscale(100%);
+}
+
+/************************************ 
+*  Modal
+*************************************/
+.modal-content {
+  background-color: #4f4f4f;
+}
+
+.modal-header, .modal-body {
+  overflow-wrap: break-word;
+  color: #FFF;
+}
+
+.modal.fade .modal-dialog {
+  transform: translate(0, 50px);
+}
+
+/************************************ 
+*  Button
+*************************************/
+.btn:disabled {
+  opacity: 0.35;
+}
+
+.btn-primary {
+  color: #fff;
+  background-color: #5fb49a;
+  border-color: transparent;
+}
+
+.btn-primary:hover {
+  color: #fff;
+  background-color: #82c9b3;
+  border-color: transparent;
+}
+
+.btn-primary:disabled {
+  color: #fff;
+  background-color: #5fb49a;
+  border-color: transparent;
+}
+
+.btn-primary.disabled {
+  color: #fff;
+  background-color: #424242;
+  border-color: transparent;
+}
+
+.btn-check:focus+.btn-primary, .btn-primary:focus {
+  color: #191c24;
+  background-color: #fff;
+  border-color: transparent;
+  box-shadow: 0px 0px 0px 0px rgb(255 255 255 / 0%);
+}
+
+.btn-check:focus+.btn, .btn:focus {
+  outline: 0;
+  box-shadow: 0px 0px 0px 0px rgb(255 255 255 / 0%);
+}
+
+/************************************ 
+*  Input
+*************************************/
+.form-check-input:disabled {
+  background: aliceblue;
+}
+
+.modal-checkbox-wrapper {
+  display: flex;
+  align-items: center;
+  position: relative;
+}
+
+.modal-checkbox-wrapper .form-check-input:disabled + .form-check-label::after {
+  position: absolute;
+  font-family: "Font Awesome 6 Free";
+  font-weight: 900;
+  content: "\f00d";
+  color: #000000;
+  top: 50%;
+  transform: translateY(-41%);
+  margin-left: -22px;
+}
+
+/************************************ 
+*  Tag Style
+*************************************/
+.tag {
+  background-color: #ccc;
+  color: #333;
+  border-radius: 2rem;
+  padding: 0.25rem 0.5rem;
+  font-size: 14px;
+}

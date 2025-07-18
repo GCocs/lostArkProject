@@ -1,0 +1,202 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamProject.lostArkProject.teaching.dao.TeachingDAO">
+
+    <resultMap id="mentorMap" type="hashMap">
+        <result column="MENTOR_MEMBER_ID" property="mentorMemberId"/>
+        <result column="CHARACTER_NICKNAME" property="characterNickname"/>
+        <result column="ITEM_LEVEL" property="itemLevel"/>
+        <result column="SERVER_NAME" property="serverName"/>
+        <result column="MENTOR_CONTENT_ID" property="mentorContentId"/>
+        <result column="MENTOR_WANT_TO_SAY" property="mentorWantToSay"/>
+    </resultMap>
+
+    <!--새로운 멘토 입력 -->
+    <insert id="newMentor" parameterType="MentorDTO">
+        INSERT INTO MENTOR(
+            MENTOR_MEMBER_ID,
+            MENTOR_WANT_TO_SAY,
+            MENTOR_DISCORD_ID
+            )
+        VALUES(
+            #{mentorMemberId},
+            #{mentorWantToSay},
+            #{mentorDiscordId}
+        )
+    </insert>
+    <insert id="insertMentorContent" parameterType="map">
+        INSERT INTO MENTOR_CONTENT (
+        MENTOR_MEMBER_ID,
+        MENTOR_CONTENT_ID
+        )
+        VALUES (
+        #{mentorMemberId},
+        #{mentorContentId}
+        )
+    </insert>
+
+
+    <!--새로운 멘티 입력 -->
+    <insert id="newMentee" parameterType="MenteeDTO">
+        INSERT INTO MENTEE(
+        MENTEE_WANT_TO_SAY,
+        MENTEE_MEMBER_ID,
+        MENTEE_CONTENT_ID)
+        VALUES(
+        #{menteeWantToSay},
+        #{menteeMemberId},
+        #{menteeContentId}
+        )
+    </insert>
+
+    <select id="getMentorList" parameterType="java.util.HashMap" resultType="hashMap">
+        SELECT
+        M.MENTOR_MEMBER_ID AS mentorMemberId,
+        M.MENTOR_WANT_TO_SAY AS mentorWantToSay
+        FROM MENTOR M
+    </select>
+    <select id="getMentorContent" parameterType="java.util.HashMap" resultType="hashMap">
+        SELECT
+        M.MENTOR_MEMBER_ID AS mentorMemberId,
+        GROUP_CONCAT(MC.MENTOR_CONTENT_ID) AS mentorContentNames
+        FROM MENTOR_CONTENT MC
+        JOIN MENTOR M ON MC.MENTOR_MEMBER_ID = M.MENTOR_MEMBER_ID
+        GROUP BY M.MENTOR_MEMBER_ID
+    </select>
+
+
+    <select id="getMemberCharacter" parameterType="java.util.HashMap" resultType="hashMap">
+        SELECT
+        C.MEMBER_ID AS mentorMemberId,
+        C.CHARACTER_NICKNAME AS characterNickname,
+        C.ITEM_LEVEL AS itemLevel,
+        C.SERVER_NAME AS serverName
+        FROM MEMBER_CHARACTER C
+        JOIN MEMBER M
+        ON C.CHARACTER_NICKNAME = M.REPRESENTATIVE_CHARACTER_NICKNAME
+    </select>
+
+    <select id="findDiscordIdByMentorId" parameterType="string" resultType="string">
+        SELECT mentor_discord_id
+        FROM MENTOR
+        WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+
+    <select id="getApplyStatusByMentee" resultType="map">
+        SELECT 
+            MA.apply_status,
+            MA.mentee_member_id,
+            M.mentor_discord_id
+        FROM MENTEE_APPLY MA
+        LEFT JOIN MENTOR M ON MA.mentor_member_id = M.mentor_member_id
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status IN ('REQUESTED', 'ACCEPTED', 'REJECTED')
+    </select>
+
+    <!-- 1) 멘티가 멘토에게 신청 INSERT -->
+    <insert id="insertMenteeApply" parameterType="MenteeApplyDTO">
+        INSERT INTO MENTEE_APPLY (
+        mentor_member_id,
+        mentee_member_id,
+        apply_status
+        )
+        VALUES (
+        #{mentorMemberId},
+        #{menteeMemberId},
+        'REQUESTED'
+        )
+    </insert>
+
+
+
+    <!-- 중복확인-->
+    <select id="isDuplicateMenteeApply" parameterType="MenteeApplyDTO" resultType="int">
+        SELECT COUNT(*)
+        FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+    </select>
+
+    <select id="getRequestedAppliesByMentor" parameterType="string" resultType="map">
+        SELECT 
+            MA.mentee_member_id,
+            MA.apply_status,
+            MC.CHARACTER_NICKNAME as mentee_nickname,
+            MC.ITEM_LEVEL as mentee_item_level,
+            MC.SERVER_NAME as mentee_server_name,
+            MA.mentor_member_id
+        FROM MENTEE_APPLY MA
+        JOIN MEMBER_CHARACTER MC ON MA.mentee_member_id = MC.MEMBER_ID
+        WHERE MA.mentor_member_id = #{mentorMemberId}
+        AND MA.apply_status = 'REQUESTED'
+        ORDER BY MA.mentee_member_id DESC
+    </select>
+
+    <select id="getAppliedMentorIdsByMentee" parameterType="string" resultType="string">
+        SELECT mentor_member_id 
+        FROM MENTEE_APPLY 
+        WHERE mentee_member_id = #{menteeId}
+    </select>
+
+    <select id="getAppliedMentorStatusByMentee" parameterType="string" resultType="map">
+        SELECT mentor_member_id, apply_status
+        FROM MENTEE_APPLY 
+        WHERE mentee_member_id = #{menteeId}
+    </select>
+
+    <select id="isBlockedMentee" parameterType="map" resultType="boolean">
+        SELECT COUNT(*) > 0
+        FROM DISABLE_MENTEE
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+    </select>
+
+    <select id="getMenteeApplyInfo" parameterType="map" resultType="map">
+        SELECT apply_status, updated_at
+        FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+        ORDER BY updated_at DESC
+        LIMIT 1
+    </select>
+
+    <select id="getExpiredRejectedApplies" resultType="map">
+        SELECT mentor_member_id, mentee_member_id, updated_at
+        FROM MENTEE_APPLY 
+        WHERE apply_status = 'REJECTED'
+        AND updated_at &lt;= DATE_SUB(NOW(), INTERVAL 3 DAY)
+    </select>
+
+    <delete id="deleteRejectedApply" parameterType="map">
+        DELETE FROM MENTEE_APPLY
+        WHERE mentor_member_id = #{mentorMemberId}
+        AND mentee_member_id = #{menteeMemberId}
+        AND apply_status = 'REJECTED'
+    </delete>
+
+    <select id="getMentorInfoById" parameterType="string" resultType="map">
+        SELECT * FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+    <select id="getMentorContentIdsById" parameterType="string" resultType="string">
+        SELECT mentor_content_id FROM MENTOR_CONTENT WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+
+    <select id="isMentorExists" parameterType="string" resultType="int">
+        SELECT COUNT(*) FROM MENTOR WHERE mentor_member_id = #{mentorMemberId}
+    </select>
+
+    <!--멘토 정보 수정-->
+    <update id="updateMentor" parameterType="MentorDTO">
+        UPDATE MENTOR
+        SET MENTOR_WANT_TO_SAY = #{mentorWantToSay},
+            MENTOR_DISCORD_ID = #{mentorDiscordId}
+        WHERE MENTOR_MEMBER_ID = #{mentorMemberId}
+    </update>
+
+    <!--멘토 콘텐츠 삭제-->
+    <delete id="deleteMentorContent" parameterType="string">
+        DELETE FROM MENTOR_CONTENT
+        WHERE MENTOR_MEMBER_ID = #{mentorMemberId}
+    </delete>
+
+</mapper>

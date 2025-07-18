@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title>MentorList</title>
+</head>
+<body>
+<div layout:fragment="content">
+    <div class="container-fluid vh-100 p-0 m-0">
+        <!-- Content Start -->
+        <div class="row">
+            <div class="col-12">
+                <div class="bg-secondary rounded h-100 p-4">
+                    <h2 class="mb-4">멘토리스트</h2>
+                    
+                    <div class="table-responsive w-100">
+                        <table class="table table-striped table-bordered text-center align-middle">
+                            <thead>
+                            <tr>
+                                <th scope="col">#</th>
+                                <th scope="col">대표캐릭터명</th>
+                                <th scope="col">캐릭터 레벨</th>
+                                <th scope="col">서버</th>
+                                <th scope="col">주로 하는 컨텐츠</th>
+                                <th scope="col">신청</th> <!-- 신청 버튼 열 추가 -->
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr th:each="mentor, iterStat : ${mentors}">
+                                <td th:text="${iterStat.index + 1}"></td>
+                                <td th:text="${mentor.characterNickname}"></td>
+                                <td th:text="${mentor.itemLevel}"></td>
+                                <td th:text="${mentor.serverName}"></td>
+                                <td th:text="${mentor.mentorContentIds}"></td>
+                                <td>
+                                    <th:block th:if="${appliedMentorIds.contains(mentor.mentorMemberId)}">
+                                        <!-- REQUESTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'REQUESTED'}">
+                                            <button class="btn btn-warning btn-sm" disabled>이미 신청했습니다</button>
+                                        </th:block>
+                                        <!-- ACCEPTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'ACCEPTED'}">
+                                            <button class="btn btn-success btn-sm" disabled>수락된 멘토입니다</button>
+                                        </th:block>
+                                        <!-- REJECTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'REJECTED'}">
+                                            <!-- 재신청 가능한 경우 -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == true}">
+                                                <form th:action="@{/teaching/mentorListDetail}" method="post">
+                                                    <input type="hidden" name="mentorMemberId" th:value="${mentor.mentorMemberId}" />
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm">재신청하기</button>
+                                                </form>
+                                            </th:block>
+                                            <!-- 재신청 불가능한 경우 -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == false}">
+                                                <button class="btn btn-danger btn-sm" disabled>재신청 불가</button>
+                                            </th:block>
+                                            <!-- 정보가 없는 경우 (기본값) -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == null}">
+                                                <button class="btn btn-secondary btn-sm" disabled>대기 중</button>
+                                            </th:block>
+                                        </th:block>
+                                    </th:block>
+                                    <th:block th:unless="${appliedMentorIds.contains(mentor.mentorMemberId)}">
+                                        <form th:action="@{/teaching/mentorListDetail}" method="post">
+                                            <input type="hidden" name="mentorMemberId" th:value="${mentor.mentorMemberId}" />
+                                            <button type="submit" class="btn btn-outline-primary btn-sm">신청하기</button>
+                                        </form>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <!-- Table End -->
+    </div>
+    <!-- Content End -->
+
+    <!-- Back to Top -->
+    <a href="#" class="btn btn-lg btn-primary btn-lg-square back-to-top"><i class="bi bi-arrow-up"></i></a>
+</div>
+</body>
+</html>

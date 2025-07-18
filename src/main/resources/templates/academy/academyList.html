@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>academy</title>
+  <link rel="stylesheet" href="/css/academy.css" />
+  <style>
+    .disabled {
+      opacity: 0.3;
+      cursor: default;
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body>
+<div layout:fragment="content">
+  <div class="container-fluid pt-4 px-4">
+    <!-- Content Start -->
+    <div class="row justify-content-center h-75">
+      <div class="col-10">
+        <div class="bg-secondary rounded h-100 p-4">
+          <h3 class="mb-4 text-center">학원팟</h3>
+          <div class="table-responsive">
+            <table class="table">
+              <tr>
+                <th class="col-md-2" scope="col">레이드</th>
+                <th class="col-md-2" scope="col">작성자</th>
+                <th class="col-md-6" scope="col">제목</th>
+                <th class="col-md-2" scope="col">작성일</th>
+              </tr>
+
+              <th:block th:if="${response.pagination.totalCount > 0}">
+                <tr th:each="academy: ${response.data}">
+                  <td class="pt-3 pb-3" th:text="${academy.raid}"></td>
+                  <td class="pt-3 pb-3" th:text="${academy.writer}"></td>
+                  <td class="title pt-3 pb-3"><a th:href="@{/academy/{id}(id=${academy.academyBoardNumber})}" th:text="${academy.title}"></a></td>
+                  <td class="pt-3 pb-3" th:text="${#temporals.format(academy.createdAt, 'YY.MM.dd')}"></td>
+                </tr>
+              </th:block>
+              <th:block th:if="${response.pagination.totalCount <= 0}">
+                <tr>
+                  <td colspan="4" class="text-center">게시글이 없습니다.</td>
+                </tr>
+              </th:block>
+            </table>
+
+            <div class="d-flex justify-content-center mt-5">
+              <a href="/academy/write" class="btn btn-link">작성</a>
+            </div>
+
+            <div class="d-flex justify-content-center mt-4 gap-3">
+              <a class="p-1"
+                 th:classappend="${response.pagination.currentPage <= 1} ? 'disabled' : ''"
+                 th:href="@{/academy?page=1}">
+                <i class="fa-solid fa-angles-left"></i>
+              </a>
+              <a class="p-1"
+                 th:classappend="${response.pagination.currentPage <= 1} ? 'disabled' : ''"
+                 th:href="@{/academy(page=${response.pagination.currentPage - 1})}"
+                 style="margin-right: 40px;">
+                <i class="fa-solid fa-angle-left"></i>
+              </a>
+              <th:block th:each="i: ${#numbers.sequence(response.pagination.startPage, response.pagination.endPage)}">
+                <th:block th:if="${i == response.pagination.currentPage}">
+                  <span class="p-1" th:text="${i}"></span>
+                </th:block>
+                <th:block th:if="${i != response.pagination.currentPage}">
+                  <a class="p-1" th:href="@{/academy(page=${i})}" th:text="${i}"></a>
+                </th:block>
+              </th:block>
+              <a class="p-1"
+                 th:classappend="${response.pagination.currentPage >= response.pagination.totalPages} ? 'disabled' : ''"
+                 th:href="@{/academy(page=${response.pagination.currentPage + 1})}"
+                 style="margin-left: 40px;">
+                <i class="fa-solid fa-angle-right"></i>
+              </a>
+              <a class="p-1"
+                 th:classappend="${response.pagination.currentPage >= response.pagination.totalPages} ? 'disabled' : ''"
+                 th:href="@{/academy(page=${response.pagination.totalPages})}">
+                <i class="fa-solid fa-angles-right"></i>
+              </a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- Content End -->
+</div>
+</body>
+</html>

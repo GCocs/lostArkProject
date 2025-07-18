@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="http://www.thymeleaf.org">
+<head>
+  <meta charset="utf-8">
+  <title>LostArkProject - 회원가입 페이지</title>
+</head>
+
+<body>
+<div layout:fragment="content">
+  <!-- myPage Start -->
+  <div class="container-fluid">
+    <div class="row h-100 align-items-center justify-content-center" style="min-height: 100vh;">
+      <div class="col-12 col-sm-8 col-md-8 col-lg-8 col-xl-6">
+        <div class="bg-secondary rounded p-4 p-sm-5 my-4 mx-3">
+          <form name="signupForm" th:action="@{/member/signup/process}" method="post">
+            <div class="d-flex align-items-center justify-content-between mb-3">
+              <a href="/" class="">
+                <img src="/img/loedu_white.png" style="width: 200px;" />
+              </a>
+              <h3>프로필 수정</h3>
+            </div>
+            <div class="form-floating mb-3 d-flex">
+              <input type="text" class="form-control" id="changeMemberId"
+                     th:value="${session.member.memberId}" disabled>
+              <label for="changeMemberId">이메일</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="changePassword">
+              <label for="changePassword">비밀번호 변경</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="password" class="form-control" id="changePasswordCheck">
+              <label for="changePasswordCheck">비밀번호 확인</label>
+            </div>
+            <div class="form-floating mb-3">
+              <input type="text" class="form-control" id="changeRepresentativeCharacterNickname"
+                     th:value="${session.member.representativeCharacterNickname}">
+              <label for="changeRepresentativeCharacterNickname">대표 캐릭터 닉네임</label>
+            </div>
+            <button type="button" class="btn btn-primary py-3 w-100 mb-4" onclick="changeProfile()">저장</button>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+  <!-- myPage End -->
+  <script type="module" src="/js/member.js"></script>
+</div>
+
+</body>
+
+</html>

@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE
+        mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.teamProject.lostArkProject.member.dao.MemberDAO">
+
+    <!--회원가입 -->
+    <insert id="insertMember" parameterType="member">
+        INSERT INTO MEMBER (MEMBER_ID, MEMBER_PASSWD, REPRESENTATIVE_CHARACTER_NICKNAME)
+        VALUES (#{memberId}, #{memberPasswd}, #{representativeCharacterNickname})
+    </insert>
+
+    <!--멤버캐릭터 삽입 -->
+    <insert id="insertMemberCharacter" parameterType="member">
+        INSERT INTO MEMBER_CHARACTER (MEMBER_ID, CHARACTER_NICKNAME, SERVER_NAME, CHARACTER_CLASS,
+        ITEM_LEVEL, ROSTER_LEVEL)
+        VALUES (#{memberId}, #{characterNickname}, #{serverName}, #{characterClass},
+        #{itemLevel}, #{rosterLevel})
+    </insert>
+
+    <delete id="deleteMemberCharacter">
+        DELETE FROM MEMBER_CHARACTER
+        WHERE MEMBER_ID = #{memberId}
+    </delete>
+
+    <!--대표캐릭터 수정 -->
+    <update id="updateRCN">
+        UPDATE MEMBER
+        SET REPRESENTATIVE_CHARACTER_NICKNAME = #{RCN}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <!--로그인 -->
+    <select id="getMemberPW" parameterType="memberPasswd">
+        SELECT MEMBER_PASSWD FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <!--대표캐릭터 반환 -->
+    <select id="getRepresentativeCharacter" parameterType="representativeCharacter">
+        SELECT REPRESENTATIVE_CHARACTER_NICKNAME FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <!--중복 이메일 확인 -->
+    <select id="checkMemberId" parameterType="checkEmail">
+        SELECT MEMBER_ID FROM MEMBER
+        WHERE MEMBER_ID = #{memberId}
+    </select>
+
+    <!--비밀번호 변경 -->
+    <update id="updateMemberPW" parameterType="memberPasswd">
+        UPDATE MEMBER
+        SET MEMBER_PASSWD = #{memberPW}
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+    <!--인증완료 -->
+    <update id="updateCertification">
+        UPDATE MEMBER
+        SET VERIFIED_NICKNAME = REPRESENTATIVE_CHARACTER_NICKNAME
+        WHERE MEMBER_ID = #{memberId}
+    </update>
+
+</mapper>
