@@ -34,7 +34,32 @@
                                 <td th:text="${mentor.mentorContentIds}"></td>
                                 <td>
                                     <th:block th:if="${appliedMentorIds.contains(mentor.mentorMemberId)}">
-                                        <button class="btn btn-secondary btn-sm" disabled>이미 신청했습니다</button>
+                                        <!-- REQUESTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'REQUESTED'}">
+                                            <button class="btn btn-warning btn-sm" disabled>이미 신청했습니다</button>
+                                        </th:block>
+                                        <!-- ACCEPTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'ACCEPTED'}">
+                                            <button class="btn btn-success btn-sm" disabled>수락된 멘토입니다</button>
+                                        </th:block>
+                                        <!-- REJECTED 상태 -->
+                                        <th:block th:if="${mentorStatusMap.get(mentor.mentorMemberId) == 'REJECTED'}">
+                                            <!-- 재신청 가능한 경우 -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == true}">
+                                                <form th:action="@{/teaching/mentorListDetail}" method="post">
+                                                    <input type="hidden" name="mentorMemberId" th:value="${mentor.mentorMemberId}" />
+                                                    <button type="submit" class="btn btn-outline-primary btn-sm">재신청하기</button>
+                                                </form>
+                                            </th:block>
+                                            <!-- 재신청 불가능한 경우 -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == false}">
+                                                <button class="btn btn-danger btn-sm" disabled>재신청 불가</button>
+                                            </th:block>
+                                            <!-- 정보가 없는 경우 (기본값) -->
+                                            <th:block th:if="${canReapplyMap.get(mentor.mentorMemberId) == null}">
+                                                <button class="btn btn-secondary btn-sm" disabled>대기 중</button>
+                                            </th:block>
+                                        </th:block>
                                     </th:block>
                                     <th:block th:unless="${appliedMentorIds.contains(mentor.mentorMemberId)}">
                                         <form th:action="@{/teaching/mentorListDetail}" method="post">

@@ -4,6 +4,7 @@ import com.teamProject.lostArkProject.member.domain.Member;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.ui.Model;
@@ -28,22 +29,18 @@ public class MessageController {
 
     @GetMapping("/newMessageDetail")
     public String newMessageDetail(@RequestParam("menteeMemberId") String menteeMemberId, HttpSession session, Model model) {
-        // 세션에서 멘토 아이디 꺼내기 (세션에 저장된 객체 타입에 따라 캐스팅 필요)
 
         Member memberObj = (Member) session.getAttribute("member");
         if (memberObj == null) {
             return "redirect:/member/signin";
         }
 
-        // Member 클래스에 정의된 memberId 사용
         String mentorMemberId = memberObj.getMemberId();
 
-        // 파라미터 맵 생성
         Map<String, Object> param = new HashMap<>();
         param.put("menteeMemberId", menteeMemberId);
         param.put("mentorMemberId", mentorMemberId);
 
-        // 서비스 호출
         MenteeApplyDTO apply = messageService.getMenteeApplyDetail(param);
         Map<String, Object> menteeCharacter = messageService.getMenteeCharacterInfo(menteeMemberId);
 
@@ -62,7 +59,6 @@ public class MessageController {
         }
         String mentorMemberId = memberObj.getMemberId();
 
-        // TeachingService의 getRequestedAppliesByMentor 사용
         List<Map<String, Object>> requestedList = teachingService.getRequestedAppliesByMentor(mentorMemberId);
 
         model.addAttribute("requestedList", requestedList);
@@ -75,8 +71,84 @@ public class MessageController {
         if (memberObj == null) {
             return "redirect:/member/signin";
         }
-        String mentorMemberId = memberObj.getMemberId();
-        return "mentorResultList";
+        String menteeMemberId = memberObj.getMemberId();
+        
+        // 현재 로그인된 사용자(멘티)가 보낸 모든 멘토링 신청 조회
+        List<Map<String, Object>> myApplies = messageService.getAllMenteeAppliesByMentee(menteeMemberId);
+        model.addAttribute("myApplies", myApplies);
+        
+        return "message/mentorResultList";
+    }
+
+    @GetMapping("/sentRequest")
+    public String sentRequest(@RequestParam("mentorMemberId") String mentorMemberId, HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        
+        String menteeMemberId = member.getMemberId();
+        
+        Map<String, Object> param = new HashMap<>();
+        param.put("menteeMemberId", menteeMemberId);
+        param.put("mentorMemberId", mentorMemberId);
+        
+        MenteeApplyDTO apply = messageService.getMenteeApplyDetail(param);
+        Map<String, Object> mentorCharacter = messageService.getMenteeCharacterInfo(mentorMemberId);
+        
+        model.addAttribute("apply", apply);
+        model.addAttribute("mentorMemberId", mentorMemberId);
+        model.addAttribute("mentorCharacter", mentorCharacter);
+        
+        return "message/sentRequest";
+    }
+
+    @GetMapping("/acceptedRequest")
+    public String acceptedRequest(@RequestParam("mentorMemberId") String mentorMemberId, HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        
+        String menteeMemberId = member.getMemberId();
+        
+        Map<String, Object> param = new HashMap<>();
+        param.put("menteeMemberId", menteeMemberId);
+        param.put("mentorMemberId", mentorMemberId);
+        
+        MenteeApplyDTO apply = messageService.getMenteeApplyDetail(param);
+        Map<String, Object> mentorCharacter = messageService.getMenteeCharacterInfo(mentorMemberId);
+        String mentorDiscordId = teachingService.getMentorDiscordId(mentorMemberId);
+        
+        model.addAttribute("apply", apply);
+        model.addAttribute("mentorMemberId", mentorMemberId);
+        model.addAttribute("mentorCharacter", mentorCharacter);
+        model.addAttribute("mentorDiscordId", mentorDiscordId);
+        
+        return "message/acceptedRequest";
+    }
+
+    @GetMapping("/rejectedRequest")
+    public String rejectedRequest(@RequestParam("mentorMemberId") String mentorMemberId, HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        
+        String menteeMemberId = member.getMemberId();
+        
+        Map<String, Object> param = new HashMap<>();
+        param.put("menteeMemberId", menteeMemberId);
+        param.put("mentorMemberId", mentorMemberId);
+        
+        MenteeApplyDTO apply = messageService.getMenteeApplyDetail(param);
+        Map<String, Object> mentorCharacter = messageService.getMenteeCharacterInfo(mentorMemberId);
+        
+        model.addAttribute("apply", apply);
+        model.addAttribute("mentorMemberId", mentorMemberId);
+        model.addAttribute("mentorCharacter", mentorCharacter);
+        
+        return "message/rejectedRequest";
     }
 
     @GetMapping("/all-applies")
@@ -97,6 +169,34 @@ public class MessageController {
             return java.util.Collections.emptyList();
         }
         return messageService.getAllMenteeAppliesByMentee(member.getMemberId());
+    }
+
+    @GetMapping("/rejectReason")
+    public String rejectReason(@RequestParam("menteeMemberId") String menteeMemberId, HttpSession session, Model model) {
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        model.addAttribute("menteeMemberId", menteeMemberId);
+        return "/message/rejectReason";
+    }
+
+    @PostMapping("/rejectMentee")
+    public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
+                              @RequestParam("menteeMemberId") String menteeMemberId,
+                              @RequestParam("finalRejectReason") String rejectReason,
+                              @RequestParam("blockMentee") String blockMentee,
+                              HttpSession session) {
+        
+        Member member = (Member) session.getAttribute("member");
+        if (member == null) {
+            return "redirect:/member/signin";
+        }
+        
+        boolean shouldBlock = "Y".equals(blockMentee);
+        messageService.rejectMenteeApplyWithReason(mentorMemberId, menteeMemberId, rejectReason, shouldBlock);
+        
+        return "redirect:/message/list";
     }
 
 }

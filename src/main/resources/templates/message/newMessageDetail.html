@@ -31,9 +31,6 @@
             <dt class="col-sm-4">멘티 ID</dt>
             <dd class="col-sm-8" th:text="${apply.menteeMemberId}"></dd>
 
-            <!-- <dt class="col-sm-4">상태</dt>
-            <dd class="col-sm-8" th:text="${apply.applyStatus}"></dd> -->
-
             <dt class="col-sm-4">신청일</dt>
             <dd class="col-sm-8" th:text="${#temporals.format(apply.createdAt, 'yyyy-MM-dd HH:mm')}"></dd>
 
@@ -62,7 +59,7 @@
               <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
               <input class="btn btn-outline-primary m-2" type="submit" value="수락하기"/>
             </form>
-            <form th:action="@{/teaching/rejectMentee}" method="post" class="d-inline">
+            <form th:action="@{/message/rejectReason}" class="d-inline">
               <input type="hidden" name="mentorMemberId" th:value="${session.member.memberId}"/>
               <input type="hidden" name="menteeMemberId" th:value="${menteeMemberId}"/>
               <input class="btn btn-outline-danger m-2" type="submit" value="거절하기"/>

@@ -11,7 +11,11 @@ public interface MessageService {
     List<MenteeDTO> getMenteeDetail(String menteeMemberId);
     Map<String, Object> getMenteeCharacterInfo(String menteeMemberId);
     void acceptMenteeApply(String mentorMemberId, String menteeMemberId);
-    void rejectMenteeApply(String mentorMemberId, String menteeMemberId);
+    void rejectMenteeApplyWithReason(String mentorMemberId, String menteeMemberId, String rejectReason, boolean blockMentee);
     List<Map<String, Object>> getAllMenteeAppliesByMentor(String mentorMemberId);
     List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId);
+  
+
+
+  
 }

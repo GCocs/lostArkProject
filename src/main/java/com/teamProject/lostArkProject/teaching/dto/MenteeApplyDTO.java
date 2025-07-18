@@ -10,6 +10,7 @@ public class MenteeApplyDTO {
     private String mentorMemberId;
     private String menteeMemberId;
     private String applyStatus; // REQUESTED, ACCEPTED, REJECTED 등
+    private String rejectedReason;
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }
