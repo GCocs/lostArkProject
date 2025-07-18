@@ -12,19 +12,27 @@
           AND apply_status = 'REQUESTED'
     </update>
 
-    <!--  멘토가 멘티 신청을 거절(REJECTED)으로 UPDATE -->
-    <update id="rejectMenteeApply" parameterType="MenteeApplyDTO">
+    <!--  멘토가 멘티 신청을 거절(REJECTED)과 거절 사유와 함께 UPDATE -->
+    <update id="rejectMenteeApplyWithReason" parameterType="MenteeApplyDTO">
         UPDATE MENTEE_APPLY
-        SET apply_status = 'REJECTED'
+        SET apply_status = 'REJECTED',
+            rejected_reason = #{rejectedReason}
         WHERE mentor_member_id = #{mentorMemberId}
           AND mentee_member_id = #{menteeMemberId}
           AND apply_status = 'REQUESTED'
     </update>
 
+    <!--  차단된 멘티 정보를 DISABLE_MENTEE 테이블에 INSERT -->
+    <insert id="insertDisableMentee" parameterType="map">
+        INSERT INTO DISABLE_MENTEE (MENTOR_MEMBER_ID, MENTEE_MEMBER_ID)
+        VALUES (#{mentorMemberId}, #{menteeMemberId})
+    </insert>
+
     <select id="getMenteeApplyDetail" parameterType="map" resultType="MenteeApplyDTO">
         SELECT 
             mentee_member_id as menteeMemberId,
             apply_status as applyStatus,
+            rejected_reason as rejectedReason,
             created_at as createdAt
         FROM MENTEE_APPLY
         WHERE mentee_member_id = #{menteeMemberId}

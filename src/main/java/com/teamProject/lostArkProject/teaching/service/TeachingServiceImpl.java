@@ -10,6 +10,9 @@ import org.springframework.stereotype.Service;
 
 import java.util.*;
 import java.util.stream.Collectors;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.sql.Timestamp;
 
 @Service
 public class TeachingServiceImpl implements TeachingService {
@@ -153,6 +156,80 @@ public class TeachingServiceImpl implements TeachingService {
     }
 
     @Override
+    public Map<String, String> getAppliedMentorStatusByMentee(String menteeId) {
+        List<Map<String, Object>> results = teachingDAO.getAppliedMentorStatusByMentee(menteeId);
+        Map<String, String> statusMap = new HashMap<>();
+        
+        for (Map<String, Object> result : results) {
+            String mentorId = String.valueOf(result.get("mentor_member_id"));
+            String status = String.valueOf(result.get("apply_status"));
+            statusMap.put(mentorId, status);
+        }
+        
+        return statusMap;
+    }
+
+    @Override
+    public boolean canReapplyToMentor(String mentorMemberId, String menteeMemberId) {
+
+        if (teachingDAO.isBlockedMentee(mentorMemberId, menteeMemberId)) {
+            return false; // 차단된 경우 재신청 불가
+        }
+        
+
+        Map<String, Object> applyInfo = teachingDAO.getMenteeApplyInfo(mentorMemberId, menteeMemberId);
+        if (applyInfo == null || !"REJECTED".equals(applyInfo.get("apply_status"))) {
+            return true;
+        }
+        
+
+        Object updatedAtObj = applyInfo.get("updated_at");
+        if (updatedAtObj == null) {
+            return true;
+        }
+        
+        try {
+            LocalDateTime rejectedTime;
+            if (updatedAtObj instanceof Timestamp) {
+                rejectedTime = ((Timestamp) updatedAtObj).toLocalDateTime();
+            } else {
+                return true; // 시간 정보가 없으면 신청 가능
+            }
+            
+            LocalDateTime now = LocalDateTime.now();
+            LocalDateTime reapplyAllowedTime = rejectedTime.plusDays(7); // 7일 후 재신청 가능
+            
+            return now.isAfter(reapplyAllowedTime);
+        } catch (Exception e) {
+            System.err.println("Error parsing date: " + e.getMessage());
+            return true;
+        }
+    }
+
+    @Override
+    public void cleanupExpiredRejectedApplies() {
+        try {
+           
+            List<Map<String, Object>> expiredApplies = teachingDAO.getExpiredRejectedApplies();
+            
+            for (Map<String, Object> apply : expiredApplies) {
+                String mentorMemberId = String.valueOf(apply.get("mentor_member_id"));
+                String menteeMemberId = String.valueOf(apply.get("mentee_member_id"));
+                
+                
+                boolean isBlocked = teachingDAO.isBlockedMentee(mentorMemberId, menteeMemberId);
+                
+                if (!isBlocked) {
+                    teachingDAO.deleteRejectedApply(mentorMemberId, menteeMemberId);
+                    System.out.println("Deleted expired rejected apply: mentor=" + mentorMemberId + ", mentee=" + menteeMemberId);
+                }
+            }
+        } catch (Exception e) {
+            System.err.println("Error cleaning up expired rejected applies: " + e.getMessage());
+        }
+    }
+
+    @Override
     public Map<String, Object> getMentorInfoById(String mentorMemberId) {
         return teachingDAO.getMentorInfoById(mentorMemberId);
     }
@@ -167,4 +244,16 @@ public class TeachingServiceImpl implements TeachingService {
         return teachingDAO.isMentorExists(mentorMemberId) > 0;
     }
 
+    @Override
+    public void updateMentor(MentorDTO mentorDTO) {
+
+        teachingDAO.updateMentor(mentorDTO);
+        teachingDAO.deleteMentorContent(mentorDTO.getMentorMemberId());
+        if (mentorDTO.getMentorContentId() != null && !mentorDTO.getMentorContentId().isEmpty()) {
+            String[] contentIds = mentorDTO.getMentorContentId().split(", ");
+            for (String contentId : contentIds) {
+                teachingDAO.insertMentorContent(mentorDTO.getMentorMemberId(), contentId.trim());
+            }
+        }
+    }
 }
