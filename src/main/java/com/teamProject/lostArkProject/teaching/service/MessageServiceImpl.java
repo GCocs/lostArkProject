@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import com.teamProject.lostArkProject.teaching.dto.MenteeApplyDTO;
 import com.teamProject.lostArkProject.teaching.dto.MenteeDTO;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -43,11 +44,22 @@ public class MessageServiceImpl implements MessageService {
     }
 
     @Override
-    public void rejectMenteeApply(String mentorMemberId, String menteeMemberId) {
+    public void rejectMenteeApplyWithReason(String mentorMemberId, String menteeMemberId, String rejectReason, boolean blockMentee) {
+        // 1. 멘티 신청을 거절 사유와 함께 업데이트
         MenteeApplyDTO dto = new MenteeApplyDTO();
         dto.setMentorMemberId(mentorMemberId);
         dto.setMenteeMemberId(menteeMemberId);
-        messageDAO.rejectMenteeApply(dto);
+        dto.setRejectedReason(rejectReason);
+        
+        messageDAO.rejectMenteeApplyWithReason(dto);
+        
+        // 2. 차단 여부가 true인 경우 DISABLE_MENTEE 테이블에 추가
+        if (blockMentee) {
+            Map<String, String> params = new HashMap<>();
+            params.put("mentorMemberId", mentorMemberId);
+            params.put("menteeMemberId", menteeMemberId);
+            messageDAO.insertDisableMentee(params);
+        }
     }
 
     @Override
@@ -59,5 +71,8 @@ public class MessageServiceImpl implements MessageService {
     public List<Map<String, Object>> getAllMenteeAppliesByMentee(String menteeMemberId) {
         return messageDAO.getAllMenteeAppliesByMentee(menteeMemberId);
     }
+
+
+
 
 }

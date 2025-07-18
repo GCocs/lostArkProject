@@ -21,7 +21,11 @@ public interface TeachingService {
     boolean isDuplicateMenteeApply(String mentorId, String menteeId);
     List<Map<String, Object>> getRequestedAppliesByMentor(String mentorMemberId);
     Set<String> getAppliedMentorIdsByMentee(String menteeId);
+    Map<String, String> getAppliedMentorStatusByMentee(String menteeId);
+    boolean canReapplyToMentor(String mentorMemberId, String menteeMemberId);
+    void cleanupExpiredRejectedApplies();
     Map<String, Object> getMentorInfoById(String mentorMemberId);
     List<String> getMentorContentIdsById(String mentorMemberId);
     boolean isMentorExists(String mentorMemberId);
+    void updateMentor(MentorDTO mentorDTO);
 }

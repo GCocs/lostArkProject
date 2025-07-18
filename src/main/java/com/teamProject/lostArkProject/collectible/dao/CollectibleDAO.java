@@ -2,9 +2,8 @@ package com.teamProject.lostArkProject.collectible.dao;
 
 import com.teamProject.lostArkProject.collectible.domain.CollectiblePoint;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
-import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
-import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleDetailDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleFullDTO;
 import org.apache.ibatis.annotations.Mapper;
 
 import java.util.List;
@@ -18,4 +17,8 @@ public interface CollectibleDAO {
     List<RecommendCollectibleFullDTO> getRecommendFullCollectible(String memberId);
     List<CollectiblePointSummaryDTO> getCollectiblePointSummary(String memberId);
     void deleteCollectible(String memberId);
+
+    // 추천내실
+    void insertRecommendCollectible(RecommendCollectible recommendCollectible);
+    void deleteRecommendCollectible();
 }

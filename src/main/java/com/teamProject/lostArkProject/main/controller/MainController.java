@@ -3,8 +3,8 @@ package com.teamProject.lostArkProject.main.controller;
 import com.teamProject.lostArkProject.alarm.domain.Alarm;
 import com.teamProject.lostArkProject.alarm.service.AlarmService;
 import com.teamProject.lostArkProject.collectible.domain.RecommendCollectible;
-import com.teamProject.lostArkProject.collectible.domain.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.dto.CollectiblePointSummaryDTO;
+import com.teamProject.lostArkProject.collectible.dto.RecommendCollectibleFullDTO;
 import com.teamProject.lostArkProject.collectible.service.CollectibleService;
 import com.teamProject.lostArkProject.common.dto.PaginatedRequestDTO;
 import com.teamProject.lostArkProject.common.dto.PaginatedResponseDTO;
@@ -17,9 +17,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.SessionAttribute;
 
 import java.util.List;
 

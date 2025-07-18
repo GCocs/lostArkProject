@@ -8,6 +8,8 @@ import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import com.teamProject.lostArkProject.member.dto.CertificationDTO;
 import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
 import com.teamProject.lostArkProject.member.service.MemberService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,6 +30,7 @@ import java.util.stream.Collectors;
 @RestController
 @RequestMapping ("/member")
 @Slf4j
+@Tag(name = "회원 RestAPI", description = "MemberRestController")
 public class MemberRestController {
     private final MemberService memberService;
     private final CollectibleService collectibleService;
@@ -154,25 +157,7 @@ public class MemberRestController {
         }
     }
 
-    @PostMapping("changeRCN")
-    public boolean changeRCN(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
-        HttpSession session = request.getSession();
-        Member member = (Member) session.getAttribute("member");
-
-        if(requestMap.get("RCN") == null || member.getRepresentativeCharacterNickname().equals(requestMap.get("RCN"))) return false;
-        if(memberService.updateRCN(requestMap.get("email"), requestMap.get("RCN"))) {
-            collectibleService.updateCollectible(requestMap.get("email"), requestMap.get("RCN"));
-            Member sessionMember = new Member();
-            sessionMember.setMemberId(requestMap.get("email"));
-            sessionMember.setRepresentativeCharacterNickname(requestMap.get("RCN"));
-
-            session.setAttribute("member", sessionMember);
-            return true;
-        }
-        return false;
-    }
-
-    // 캐릭터 인증 요청
+    @Operation(summary = "캐릭터 인증 요청", description = "캐릭터 인증을 위한 장신구 데이터를 세션에 저장합니다.")
     @GetMapping("/{nickname}/certification")
     public Mono<CharacterCertificationDTO> getCharacterImage(@PathVariable("nickname") String nickname, HttpSession session) {
         // 예외 처리
@@ -197,7 +182,25 @@ public class MemberRestController {
         );
     }
 
-    // 캐릭터 인증 상태 초기화
+    @PostMapping("changeRCN")
+    public boolean changeRCN(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
+        HttpSession session = request.getSession();
+        Member member = (Member) session.getAttribute("member");
+
+        if(requestMap.get("RCN") == null || member.getRepresentativeCharacterNickname().equals(requestMap.get("RCN"))) return false;
+        if(memberService.updateRCN(requestMap.get("email"), requestMap.get("RCN"))) {
+            collectibleService.updateCollectible(requestMap.get("email"), requestMap.get("RCN"));
+            Member sessionMember = new Member();
+            sessionMember.setMemberId(requestMap.get("email"));
+            sessionMember.setRepresentativeCharacterNickname(requestMap.get("RCN"));
+
+            session.setAttribute("member", sessionMember);
+            return true;
+        }
+        return false;
+    }
+
+    @Operation(summary = "캐릭터 인증 초기화", description = "세션에 저장된 장신구 데이터를 제거합니다.")
     @DeleteMapping("/certification/reset")
     public ResponseEntity<String> resetCertificationState(HttpSession session) {
         // 예외 처리

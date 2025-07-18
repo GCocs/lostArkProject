@@ -15,10 +15,8 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+
 @Controller
 @RequestMapping("/teaching")
 public class TeachingController {
@@ -87,12 +85,50 @@ public class TeachingController {
     }   
 
 
+    @PostMapping("/mentorUpdate")
+    public String mentorUpdate(@ModelAttribute MentorDTO mentorDTO,
+                            @RequestParam(value = "mentorContentId[]", required = false) String[] contentIds,
+                            HttpSession session,
+                            RedirectAttributes redirectAttributes) {
+
+        Member memberObj = (Member) session.getAttribute("member");
+        if (memberObj == null) {
+            return "redirect:/member/signin";
+        }
+
+        String memberId = memberObj.getMemberId();
+        mentorDTO.setMentorMemberId(memberId);
+
+        // 콘텐츠 ID 처리 (아무것도 선택하지 않은 경우 대비)
+        if (contentIds != null && contentIds.length > 0) {
+            String joinedContentIds = String.join(", ", contentIds);
+            mentorDTO.setMentorContentId(joinedContentIds);
+        } else {
+            // 아무것도 선택하지 않은 경우 빈 문자열로 설정
+            mentorDTO.setMentorContentId("");
+        }
+
+        try {
+            teachingService.updateMentor(mentorDTO);
+            redirectAttributes.addFlashAttribute("successMessage", "멘토 정보가 성공적으로 수정되었습니다.");
+        } catch (Exception e) {
+            redirectAttributes.addFlashAttribute("errorMessage", "멘토 정보 수정 중 오류가 발생했습니다.");
+            return "redirect:/teaching/mentorUpdate";
+        }
+
+        return "redirect:/teaching/mentorList";
+    }
+
+
     @GetMapping("/mentorList")
     public String mentorList(HttpSession session, Model model) {
         Object memberObj = session.getAttribute("member");
         if (memberObj == null) {
             return "redirect:/member/signin";
         }
+
+        // 3일 경과한 REJECTED 신청 자동 정리 (차단되지 않은 경우)
+        teachingService.cleanupExpiredRejectedApplies();
 
         // Member 클래스에 맞게 캐스팅
         Member member = (Member) memberObj;
@@ -101,7 +137,7 @@ public class TeachingController {
         // 전체 멘토 리스트 조회
         List<MentorListDTO> allMentors = teachingService.getMentorList();
 
-        // 🔥 로그인한 사용자 자신은 제외
+        // 로그인한 사용자 자신은 제외
         List<MentorListDTO> filteredMentors = allMentors.stream()
                 .filter(mentor -> !loginMemberId.equals(mentor.getMentorMemberId()))
                 .toList();
@@ -110,7 +146,21 @@ public class TeachingController {
         String menteeId = ((Member) session.getAttribute("member")).getMemberId();
         // 이미 신청한 멘토 ID 목록 조회 (service/dao에서 구현 필요)
         Set<String> appliedMentorIds = teachingService.getAppliedMentorIdsByMentee(menteeId);
+        // 멘토별 신청 상태 조회
+        Map<String, String> mentorStatusMap = teachingService.getAppliedMentorStatusByMentee(menteeId);
+        
+        // 재신청 가능 여부 확인
+        Map<String, Boolean> canReapplyMap = new HashMap<>();
+        for (MentorListDTO mentor : filteredMentors) {
+            if ("REJECTED".equals(mentorStatusMap.get(mentor.getMentorMemberId()))) {
+                boolean canReapply = teachingService.canReapplyToMentor(mentor.getMentorMemberId(), menteeId);
+                canReapplyMap.put(mentor.getMentorMemberId(), canReapply);
+            }
+        }
+        
         model.addAttribute("appliedMentorIds", appliedMentorIds);
+        model.addAttribute("mentorStatusMap", mentorStatusMap);
+        model.addAttribute("canReapplyMap", canReapplyMap);
 
         model.addAttribute("mentors", filteredMentors);
         return "teaching/mentorList";
@@ -163,11 +213,5 @@ public class TeachingController {
         return "redirect:/message/list";
     }
 
-    @PostMapping("/rejectMentee")
-    public String rejectMentee(@RequestParam("mentorMemberId") String mentorMemberId,
-                              @RequestParam("menteeMemberId") String menteeMemberId) {
-        messageService.rejectMenteeApply(mentorMemberId, menteeMemberId);
-        return "redirect:/message/list";
-    }
 
 }

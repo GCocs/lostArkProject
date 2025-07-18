@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html layout:decorate="~{/layout.html}"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      xmlns:th="http://www.thymeleaf.org">
+<head>
+  <title>보낸 멘토링 신청 상세</title>
+</head>
+<body>
+<div layout:fragment="content">
+
+  <div class="container-fluid pt-4 px-4">
+    <div class="row bg-dark rounded mx-0 p-4">
+      <div class="col-12">
+        <h2 class="mb-4 text-center text-light">보낸 멘토링 신청 상세</h2>
+        
+        <!-- 첫 번째 행: 멘토 정보와 신청 정보 -->
+        <div class="row mb-4">
+          <!-- 멘토 정보 -->
+          <div class="col-md-6">
+            <div class="card h-100 bg-dark border-secondary">
+              <div class="card-header bg-dark border-secondary">
+                <h5 class="card-title mb-0 text-light">🎮 멘토 정보</h5>
+              </div>
+              <div class="card-body bg-dark text-light">
+                <div class="row">
+                  <div class="col-6">
+                    <!-- <p class="mb-2"><strong>멘토 ID:</strong><br><span th:text="${mentorMemberId}"></span></p> -->
+                    <p class="mb-2"><strong>캐릭터 닉네임:</strong><br><span th:text="${mentorCharacter?.characterNickname ?: '정보 없음'}"></span></p>
+                    <p class="mb-2"><strong>아이템 레벨:</strong><br><span th:text="${mentorCharacter?.itemLevel ?: '정보 없음'}"></span></p>
+                  </div>
+                  <div class="col-6">
+                    <p class="mb-2"><strong>서버:</strong><br><span th:text="${mentorCharacter?.serverName ?: '정보 없음'}"></span></p>
+                    <p class="mb-2"><strong>원정대 레벨:</strong><br><span th:text="${mentorCharacter?.rosterLevel ?: '정보 없음'}"></span></p>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- 신청 정보 -->
+          <div class="col-md-6">
+            <div class="card h-100 bg-dark border-secondary">
+              <div class="card-header bg-dark border-secondary">
+                <h5 class="card-title mb-0 text-light">📋 신청 정보</h5>
+              </div>
+              <div class="card-body bg-dark text-light">
+                <p class="mb-3">
+                  <strong>신청 상태:</strong> 
+                  <span class="badge bg-warning text-dark ms-2">대기중</span>
+                </p>
+                <p class="mb-3">
+                  <strong>신청 날짜:</strong><br>
+                  <span th:text="${#temporals.format(apply?.createdAt, 'yyyy-MM-dd HH:mm')}"></span>
+                </p>
+                <div class="alert text-white mb-0" role="alert" style="background-color: #5FB49A; border-color: #5FB49A; color: white !important;">
+                  <i class="fas fa-info-circle me-2"></i>
+                  <strong style="color: white !important;">잠시만 기다려주세요!</strong><br>
+                  멘토가 아직 신청을 확인하지 않았습니다. 조금 더 기다려주세요.
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 하단 버튼 -->
+        <div class="d-flex justify-content-between">
+          <a class="btn btn-secondary" th:href="@{/message/myRequest}">
+            <i class="fas fa-arrow-left me-2"></i>목록으로 돌아가기
+          </a>
+          <a class="btn btn-primary" th:href="@{/teaching/mentorList}">
+            <i class="fas fa-search me-2"></i>다른 멘토 찾기
+          </a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</body>
+</html> 
