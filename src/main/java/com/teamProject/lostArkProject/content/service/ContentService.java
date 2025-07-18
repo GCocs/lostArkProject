@@ -18,7 +18,6 @@ import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 
 import java.time.LocalDateTime;
-import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 
@@ -33,7 +32,7 @@ public class ContentService {
     // 외부 api의 Calendar 데이터를 프로젝트의 도메인 형식으로 변환 후 db에 저장
     @Transactional
     @Scheduled(cron = "0 0 4 ? * WED") // 매주 수요일 오전 4시에 로직 실행
-    public void saveContent() {
+    public void saveContents() {
         // 이미 실행 중이라면 메서드 호출 방지
         if(running) {
             log.warn("saveContent 작업이 이미 실행 중입니다.");
@@ -46,15 +45,15 @@ public class ContentService {
             contentDAO.deleteStartTime();
             contentDAO.deleteReward();
             contentDAO.deleteContent();
-            log.info("저장되어 있는 모든 Content 데이터 삭제");
+            log.info("기존 컨텐츠 데이터 삭제");
         })
         .then(fetchCalendarsFromApi()) // Mono<List<...>>
         .flatMapMany(Flux::fromIterable) // Mono<List<...>>를 Flux<...>로 변환
         .map(this::toDomain) // api 객체를 도메인 객체로 변환하는 메서드 호출
-        .flatMap(this::saveToDatabase) // 변환된 데이터를 db에 저장하는 메서드 호출
-        .then(Mono.just("Content 데이터가 성공적으로 저장되었습니다."))
+        .flatMap(this::insertContents) // 변환된 데이터를 db에 저장하는 메서드 호출
+        .then(Mono.just("컨텐츠 데이터 저장 완료"))
         .doOnSuccess(log::info)
-        .doOnError(e -> log.error("Content 데이터 저장 중 에러가 발생했습니다. \n{}", e.getMessage()))
+        .doOnError(e -> log.error("컨텐츠 데이터 저장 중 에러 발생: \n{}", e.getMessage()))
         .doFinally(signalType -> running = false) // 플래그 변수 초기화
         .subscribe(); // 등록 (구독)
         /**
@@ -107,7 +106,7 @@ public class ContentService {
 
     // db 저장
     @Transactional
-    protected Mono<Void> saveToDatabase(Content content) {
+    protected Mono<Void> insertContents(Content content) {
         return Mono.fromRunnable(() -> {
             // content 테이블 저장
             contentDAO.saveContent(content);

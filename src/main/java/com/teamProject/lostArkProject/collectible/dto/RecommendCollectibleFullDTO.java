@@ -1,4 +1,4 @@
-package com.teamProject.lostArkProject.collectible.domain;
+package com.teamProject.lostArkProject.collectible.dto;
 
 import lombok.*;
 import org.apache.ibatis.type.Alias;

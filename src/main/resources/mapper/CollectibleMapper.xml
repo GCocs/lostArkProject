@@ -79,4 +79,22 @@
         DELETE FROM COLLECTIBLE_POINT
         WHERE MEMBER_ID = #{memberId};
     </delete>
+
+    <!-- 추천 내실 초기 데이터 insert -->
+    <insert id="insertRecommendCollectible" parameterType="recommend_collectible">
+        INSERT INTO RECOMMEND_COLLECTIBLE (
+            RECOMMEND_COLLECTIBLE_NAME,
+            RECOMMEND_COLLECTIBLE_URL
+        ) VALUES (
+            #{recommendCollectibleName},
+            #{recommendCollectibleURL}
+                 );
+    </insert>
+
+    <!-- 추천 내실 초기 데이터 delete -->
+    <delete id="deleteRecommendCollectible">
+        SET SQL_SAFE_UPDATES = 0;
+        DELETE FROM RECOMMEND_COLLECTIBLE;
+        SET SQL_SAFE_UPDATES = 1;
+    </delete>
 </mapper>

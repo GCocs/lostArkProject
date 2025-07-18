@@ -1,5 +1,6 @@
 package com.teamProject.lostArkProject.content.domain;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Getter;
 import lombok.Setter;
 import org.apache.ibatis.type.Alias;
@@ -7,6 +8,7 @@ import org.apache.ibatis.type.Alias;
 @Getter
 @Setter
 @Alias("reward")
+@Schema(description = "컨텐츠 보상 Entity")
 public class Reward {
     private int rewardId;
     private int contentNumber;
