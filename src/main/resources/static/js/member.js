@@ -208,11 +208,12 @@ window.send_password_reset_email = function() {
 //인증번호 확인
 window.checkAuthCodeChangePassword = function() {
     const authCode = $('#authCode').val();
+    const email = $('#signupId').val();
     $.ajax({
         url: '/member/check-auth',
         type: 'POST',
         contentType: 'application/json',
-        data: JSON.stringify({ authCode: authCode }),
+        data: JSON.stringify({ authCode: authCode, email: email }),
         success: function(response) {
             if (response === "true") {
                 isAuthentication = true;

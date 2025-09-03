@@ -15,4 +15,7 @@ public interface MemberDAO {
     String checkMemberId(String memberId);
     void updateMemberPW(String memberId, String memberPW);
     void updateCertification(String memberId);
+    void insertAuthCode(String memberId, String authCode);
+    String getAuthCode(String memberId);
+    void deleteAuthCode(String memberId);
 }

@@ -7,6 +7,7 @@ import com.teamProject.lostArkProject.member.domain.Member;
 import com.teamProject.lostArkProject.member.domain.MemberCharacter;
 import com.teamProject.lostArkProject.member.dto.CertificationDTO;
 import com.teamProject.lostArkProject.member.dto.CharacterCertificationDTO;
+import com.teamProject.lostArkProject.member.service.EmailService;
 import com.teamProject.lostArkProject.member.service.MemberService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.tags.Tag;
@@ -34,6 +35,7 @@ import java.util.stream.Collectors;
 public class MemberRestController {
     private final MemberService memberService;
     private final CollectibleService collectibleService;
+    private final EmailService emailService;
     private static final String EMAIL_REGEX =
             "^[0-9A-Za-z]([-_.]?[0-9A-Za-z])*@[0-9A-Za-z]([-_.]?[0-9A-Za-z])*\\.[A-Za-z]{2,3}$";
 
@@ -46,9 +48,10 @@ public class MemberRestController {
     private static final Pattern PASSWORD_PATTERN =
             Pattern.compile(PASSWORD_REGEX);
 
-    public MemberRestController(MemberService memberService, CollectibleService collectibleService) {
+    public MemberRestController(MemberService memberService, CollectibleService collectibleService, EmailService emailService) {
         this.memberService = memberService;
         this.collectibleService = collectibleService;
+        this.emailService = emailService;
     }
 
     @PostMapping("/check-email")
@@ -148,9 +151,14 @@ public class MemberRestController {
             return "expiration";
         }
 
+        if (!requestMap.get("authCode").equals(emailService.getAuthCode(requestMap.get("email")))) {
+            return "false";
+        }
+
         if (requestMap.get("authCode").equals((String) session.getAttribute("checkCode"))) {
             session.invalidate();
             session.setMaxInactiveInterval(3600); //1 * 60 * 60 1시간
+            emailService.deleteAuthCode(requestMap.get("email"));
             return "true";
         } else {
             return "false";
