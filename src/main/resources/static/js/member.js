@@ -211,7 +211,7 @@ window.checkAuthCodeChangePassword = function() {
     const email = $('#signupId').val();
     $.ajax({
         url: '/member/check-auth',
-        type: 'POST',
+        type: 'GET',
         contentType: 'application/json',
         data: JSON.stringify({ authCode: authCode, email: email }),
         success: function(response) {
@@ -323,7 +323,7 @@ window.changeProfile = function() {
 
         const changePassword = $.ajax({
             url: '/member/changePassword-process',
-            type: 'POST',
+            type: 'PATCH',
             contentType: 'application/json',
             data: JSON.stringify({ email: memberId, PW: PW}),
             success: function(response) {
@@ -339,7 +339,7 @@ window.changeProfile = function() {
     }
     const changeRCN = $.ajax({
         url: '/member/changeRCN',
-        type: 'POST',
+        type: 'PATCH',
         contentType: 'application/json',
         data: JSON.stringify({ email: memberId, RCN: RCN}),
         success: function(response) {

@@ -12,7 +12,7 @@ window.toggleCleared = function(checkbox) {
 
     $.ajax({
       url: '/collectible/clear-status',
-      method: 'POST',
+      method: 'PATCH',
       contentType: 'application/json; charset=UTF-8',
       data: JSON.stringify({
         recommendCollectibleID: id,
@@ -99,7 +99,7 @@ window.changeCollectible = function() {
 
     $.ajax({
         url: '/collectible/getRecommendCollectibleList',
-        type: 'POST',
+        type: 'GET',
         contentType: 'application/json',
         success: function(recommendCollectibleList) {
             const tbody = document.getElementById('recommendTbody');
@@ -140,7 +140,7 @@ window.collectibleClear = function(btn) {
 
         $.ajax({
             url: '/collectible/clear',
-            type: 'POST',
+            type: 'PATCH',
             contentType: 'application/json',
             data: JSON.stringify({ collectibleId: id }),
             success: function() {
@@ -152,7 +152,7 @@ window.collectibleClear = function(btn) {
 window.loadFullList = function() {
   $.ajax({
     url: '/collectible/getRecommendFullCollectibleList',   // JSON 반환용 컨트롤러 엔드포인트
-    type: 'POST',
+    type: 'GET',
     dataType: 'json',
     success: function(recommendFullCollectibleList) {
 
