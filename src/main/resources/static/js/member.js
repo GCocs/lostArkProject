@@ -273,6 +273,7 @@ window.sendEmail = function() {
         error: function () {
             alert("중복 확인 중 문제가 발생했습니다.");
             isEmailAvailable = false;
+            isEmailAvailable = false;
         }
     });
 }
@@ -282,11 +283,12 @@ console.log('[sendEmail] 정의 직후:', typeof window.sendEmail);
 //인증번호 확인
 window.checkAuthCode = function() {
     const authCode = $('#checkAuth').val();
+    const email = $('#signupId').val();
     $.ajax({
         url: '/member/check-auth',
-        type: 'POST',
+        type: 'GET',
         contentType: 'application/json',
-        data: JSON.stringify({ authCode: authCode }),
+        data: { authCode: authCode, email: email },
         success: function(response) {
             if (response === "true") {
                 isAuthentication = true;

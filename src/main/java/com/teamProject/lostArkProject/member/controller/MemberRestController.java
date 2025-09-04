@@ -140,21 +140,21 @@ public class MemberRestController {
 
     @GetMapping("/check-auth")
     @Operation(summary = "이메일 중복 확인", description = "중복 이메일인지 확인합니다.")
-    public String checkAuth(HttpServletRequest request, @RequestBody Map<String, String> requestMap) {
+    public String checkAuth(HttpServletRequest request, @RequestParam String authCode, @RequestParam String email) {
         HttpSession session = request.getSession();
 
         if (session.getAttribute("checkCode") == null) {
             return "expiration";
         }
 
-        if (!requestMap.get("authCode").equals(emailService.getAuthCode(requestMap.get("email")))) {
+        if (!authCode.equals(emailService.getAuthCode(email))) {
             return "false";
         }
 
-        if (requestMap.get("authCode").equals((String) session.getAttribute("checkCode"))) {
-            session.invalidate();
+        if (authCode.equals((String) session.getAttribute("checkCode"))) {
             session.setMaxInactiveInterval(3600); //1 * 60 * 60 1시간
-            emailService.deleteAuthCode(requestMap.get("email"));
+            session.invalidate();
+            emailService.deleteAuthCode(email);
             return "true";
         } else {
             return "false";
