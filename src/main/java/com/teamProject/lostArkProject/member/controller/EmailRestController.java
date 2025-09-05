@@ -26,6 +26,7 @@ public class EmailRestController {
     @Operation(summary = "인증번호 전송", description = "이메일 인증을 위해 해당 이메일에 인증번호를 전송합니다.")
     public void emailCheck(HttpServletRequest request, @RequestBody Map<String, String> requestMap) throws MessagingException, UnsupportedEncodingException {
         String authCode = emailService.sendSimpleMessage(requestMap.get("email"));
+        emailService.deleteAuthCode(requestMap.get("email"));
         emailService.saveAuthCode(requestMap.get("email"), authCode);
 
         HttpSession session = request.getSession();

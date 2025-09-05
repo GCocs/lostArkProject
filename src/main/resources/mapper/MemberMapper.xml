@@ -76,7 +76,7 @@
 
     <!--인증번호 정보 삭제 -->
     <delete id="deleteAuthCode">
-        DELETE AUTH_CODE
+        DELETE FROM AUTH_CODE
         WHERE MEMBER_ID = #{memberId}
     </delete>
 

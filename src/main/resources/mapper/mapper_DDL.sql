@@ -214,7 +214,7 @@ CREATE TABLE CLEAR_COLLECTIBLE
 -- 인증번호 저장
 CREATE TABLE AUTH_CODE
 (
-    MEMBER_ID                VARCHAR(50),
+    MEMBER_ID                VARCHAR(50)        PRIMARY KEY,
     CODE                     VARCHAR(50)
 );
 
